@@ -196,6 +196,8 @@
   }
   .event-chip:hover { filter: brightness(.93); transform: translateY(-1px); }
   .event-chip .chip-time { opacity: .75; font-size: 9.5px; margin-right: 3px; font-family: 'JetBrains Mono', monospace; }
+  .event-chip .chip-mod { display: none; } /* nur auf Mobile sichtbar, siehe Media Query unten */
+  .event-chip .chip-room { opacity: .8; font-weight: 500; }
 
   .more-btn {
     font-size: 10px;
@@ -303,6 +305,7 @@
     padding-top: 2px;
   }
   .info-value { color: var(--text); line-height: 1.4; }
+  .info-value.placeholder { color: var(--muted); font-style: italic; }
   .info-value.mono {
     font-family: 'JetBrains Mono', monospace;
     font-size: 12px;
@@ -388,6 +391,15 @@
       padding: 7px 9px;
     }
     .event-chip .chip-time { font-size: 11px; }
+    .event-chip .chip-mod {
+      display: inline-block;
+      font-weight: 700;
+      font-size: 11px;
+      margin-right: 5px;
+      padding: 1px 5px;
+      border-radius: 4px;
+      background: rgba(0,0,0,.08);
+    }
   }
 </style>
 </head>
@@ -518,6 +530,20 @@ const EVENTS = [
   {date:"2026-12-12",start:"10:00",end:"17:00",modul:"ZA",lvnr:"–",pg:"1",title:"Aus der Ohnmacht ins Handeln kommen – Für eine Politisierung Sozialer Arbeit",lehrperson:"Andreas Foitzik"},
 ];
 
+// ─── RÄUME / VERANSTALTUNGSORTE ─────────────────────────────────────────────
+// Platzhalter: sobald die Raumnummern feststehen, hier einfach pro LV-Nummer
+// eintragen – gilt dann automatisch für alle Termine dieser Veranstaltung.
+// Beispiel:  "1-1-0021-1-12357-206206620209731": "Raum 2.14",
+const ROOMS = {
+  // "1-1-XXXX-1-XXXXX-XXXXXXXXXXXXXXX": "Gebäude/Raum",
+};
+
+// Raum je Termin setzen (LV-Nummer-Lookup; einzelne Termine können das mit
+// einem eigenen "raum:"-Feld direkt im EVENTS-Eintrag überschreiben)
+EVENTS.forEach(ev => {
+  if (!ev.raum) ev.raum = ROOMS[ev.lvnr] || null;
+});
+
 // Sort by start time within same date
 EVENTS.sort((a,b)=>a.start.localeCompare(b.start));
 
@@ -647,7 +673,9 @@ function renderMonth(idx){
     events.slice(0,MAX_CHIPS).forEach(ev=>{
       const chip = document.createElement('span');
       chip.className = `event-chip chip-${ev.modul}`;
-      chip.innerHTML = `<span class="chip-time">${ev.start}</span>${ev.title.replace(' ⭐','⭐')}`;
+      const modLabel = ev.modul === 'ZA' ? 'ZA' : ev.modul;
+      const roomHtml = ev.raum ? ` <span class="chip-room">· 📍 ${ev.raum}</span>` : '';
+      chip.innerHTML = `<span class="chip-time">${ev.start}</span><span class="chip-mod">${modLabel}</span>${ev.title.replace(' ⭐','⭐')}${roomHtml}`;
       chip.onclick = (e)=>{ e.stopPropagation(); openModal(ev); };
       cell.appendChild(chip);
     });
@@ -698,6 +726,7 @@ function openModal(ev){
   const rows = [
     ['Datum',    dateStr],
     ['Uhrzeit',  `${ev.start} – ${ev.end} Uhr`],
+    ['Raum',     ev.raum || 'wird noch bekannt gegeben'],
     ['Modul',    m.label],
     ['Lehrperson', ev.lehrperson],
     ['LV-Nummer', ev.lvnr],
@@ -706,7 +735,7 @@ function openModal(ev){
 
   document.getElementById('modalInfo').innerHTML = rows.map(([l,v])=>`
     <span class="info-label">${l}</span>
-    <span class="info-value${l==='LV-Nummer'?' mono':''}">${v}</span>
+    <span class="info-value${l==='LV-Nummer'?' mono':''}${l==='Raum' && !ev.raum ? ' placeholder':''}">${v}</span>
   `).join('');
 
   overlay.classList.add('open');
