@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vorlesungsverzeichnis</title>
+<title>Vorlesungskalender</title>
 <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PGNpcmNsZSBjeD0iMzIiIGN5PSIzMiIgcj0iMjciIGZpbGw9IiM1QjNGQzgiLz48L3N2Zz4=">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
@@ -85,6 +85,26 @@
     text-align: center;
     letter-spacing: -.2px;
   }
+
+  /* ── NÄCHSTE VERANSTALTUNG ── */
+  .next-up {
+    display: none; /* wird per JS auf 'flex' gesetzt, sobald ein kommender Termin feststeht */
+    align-items: center;
+    gap: 9px;
+    padding: 11px 24px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    cursor: pointer;
+    flex-wrap: wrap;
+    transition: filter .12s;
+  }
+  .next-up:hover { filter: brightness(.96); }
+  .next-up-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .next-up-label { font-weight: 700; letter-spacing: .1px; }
+  .next-up-when { font-family: 'JetBrains Mono', monospace; font-size: 12px; opacity: .8; }
+  .next-up-sep { opacity: .45; }
+  .next-up-title { font-weight: 500; }
 
   /* ── LEGEND ── */
   .legend {
@@ -348,6 +368,8 @@
     .calendar-wrap { padding: 12px; }
     .legend { display: none; }
     header { padding: 12px; }
+    .next-up { padding: 10px 12px; font-size: 12.5px; }
+    .next-up-label { display: none; } /* auf Mobile reicht Uhrzeit + Titel, spart Platz */
 
     /* Wochentagsleiste ausblenden – Wochentag steht jetzt direkt am Datum */
     .weekday-header { display: none; }
@@ -417,6 +439,9 @@
     <button class="nav-btn" id="nextBtn">&#8594;</button>
   </div>
 </header>
+
+<!-- NÄCHSTE VERANSTALTUNG -->
+<div class="next-up" id="nextUp"></div>
 
 <!-- LEGEND -->
 <div class="legend" id="legend"></div>
@@ -773,8 +798,51 @@ overlay.onclick = e=>{ if(e.target===overlay) closeModal(); };
   }, {passive:true});
 })();
 
+// ─── NÄCHSTE VERANSTALTUNG ──────────────────────────────────────────────────
+function renderNextUp(){
+  const el = document.getElementById('nextUp');
+  if(!el) return;
+
+  const now = new Date();
+  const upcoming = EVENTS
+    .map(ev => ({ ev, dt: new Date(`${ev.date}T${ev.start}:00`) }))
+    .filter(x => x.dt.getTime() >= now.getTime())
+    .sort((a, b) => a.dt - b.dt)[0];
+
+  if(!upcoming){
+    el.style.display = 'none';
+    return;
+  }
+
+  const { ev } = upcoming;
+  const m = MODS[ev.modul];
+  const todayISO = isoDate(now.getFullYear(), now.getMonth(), now.getDate());
+  const isToday = ev.date === todayISO;
+
+  const days = ['So','Mo','Di','Mi','Do','Fr','Sa'];
+  const monthsShort = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+  const dObj = new Date(ev.date + 'T12:00:00Z');
+  const whenLabel = isToday
+    ? `heute, ${ev.start} Uhr`
+    : `${days[dObj.getUTCDay()]}, ${dObj.getUTCDate()}. ${monthsShort[dObj.getUTCMonth()]}, ${ev.start} Uhr`;
+
+  el.style.display = 'flex';
+  el.style.background = m.bg;
+  el.style.color = m.tx;
+  el.style.borderBottom = `1px solid ${m.bd}`;
+  el.innerHTML = `
+    <span class="next-up-dot" style="background:${m.dot}"></span>
+    <span class="next-up-label">Nächste Veranstaltung</span>
+    <span class="next-up-when">${whenLabel}</span>
+    <span class="next-up-sep">·</span>
+    <span class="next-up-title">${ev.title.replace(' ⭐','')}</span>
+  `;
+  el.onclick = () => openModal(ev);
+}
+
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 renderMonth(0);
+renderNextUp();
 </script>
 <style>
   #pw-overlay {
@@ -843,7 +911,7 @@ renderMonth(0);
 
 <div id="pw-overlay">
   <div id="pw-box">
-    <h2>Vorlesungsverzeichnis</h2>
+    <h2>Vorlesungskalender</h2>
     <p>Bitte Passwort eingeben</p>
     <input id="pw-input" type="password" placeholder="Passwort" autofocus />
     <button id="pw-btn">Weiter</button>
