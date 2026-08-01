@@ -1,4 +1,4 @@
-# Vorlesungsverzeichnis
+# Vorlesungskalender
 
 Privater, passwortgeschützter Vorlesungskalender für das Studium (Bachelor Soziale Arbeit, 2. Fachsemester) – als einzelne, selbstständige HTML-Seite, gehostet über GitHub Pages.
 
@@ -30,6 +30,10 @@ Solange kein Raum hinterlegt ist, zeigt die Detailansicht "wird noch bekannt geg
 ## Aktualisieren
 
 Die Seite besteht aus einer einzigen Datei (`index.html`), die bei Änderungen ersetzt und auf den `main`-Branch gepusht wird. GitHub Pages baut die Seite danach automatisch neu (meist innerhalb von 1–2 Minuten).
+
+## Versionshistorie
+
+Alle Änderungen werden in [CHANGELOG.md](CHANGELOG.md) dokumentiert (aktuelle Version: **1.3.0**).
 
 ## Tech-Stack
 
