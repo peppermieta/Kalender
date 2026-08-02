@@ -7,6 +7,15 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [1.3.1] - 2026-08-01
+
+### Removed
+- Alte ⭐-Prioritäts-Markierungen aus drei Veranstaltungstiteln entfernt
+  (Workshop/Methodikseminar Kunst, Sozialverwaltungsrecht, Rechtliche
+  Grundlagen und Einführung in das Grundsicherungsrecht) – Überbleibsel aus
+  der ursprünglichen Belegungs-/Priorisierungsphase, ohne aktuelle Bedeutung.
+  Termine, Räume, Lehrpersonen und LV-Nummern bleiben unverändert.
+
 ## [1.3.0] - 2026-08-01
 
 ### Added

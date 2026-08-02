@@ -33,7 +33,7 @@ Die Seite besteht aus einer einzigen Datei (`index.html`), die bei Änderungen e
 
 ## Versionshistorie
 
-Alle Änderungen werden in [CHANGELOG.md](CHANGELOG.md) dokumentiert (aktuelle Version: **1.3.0**).
+Alle Änderungen werden in [CHANGELOG.md](CHANGELOG.md) dokumentiert (aktuelle Version: **1.3.1**).
 
 ## Tech-Stack
 
