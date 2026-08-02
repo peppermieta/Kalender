@@ -594,6 +594,9 @@ const MONTHS = [
   {year:2027,month:1},  // Feb
 ];
 const MONTH_NAMES = ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
+const MONTH_NAMES_SHORT = MONTH_NAMES.map(m => m.slice(0,3));
+// Sonntag-first, passend zu Date.getDay() (0=So); für die Mo-first-Rastergrafik wird mit (i+1)%7 hineinindiziert
+const WEEKDAY_ABBR = ['So','Mo','Di','Mi','Do','Fr','Sa'];
 
 let currentMonthIdx = 0;
 
@@ -642,6 +645,10 @@ function renderMonth(idx){
   const today = new Date();
   const todayISO = isoDate(today.getFullYear(), today.getMonth(), today.getDate());
 
+  // Einmal pro Renderdurchlauf berechnen statt pro Zelle (Punkt 4)
+  const isMobile = window.matchMedia('(max-width: 700px)').matches;
+  const MAX_CHIPS = isMobile ? 6 : 3;
+
   // Fill grid: 6 weeks = 42 cells
   for(let i=0; i<42; i++){
     let dayNum, cellYear, cellMonth, otherMonth=false;
@@ -672,9 +679,7 @@ function renderMonth(idx){
       + (isFerien?' has-ferien':'');
 
     // Day number (mit Wochentagskürzel für die mobile Listenansicht)
-    const WD_ABBR = ['Mo','Di','Mi','Do','Fr','Sa','So'];
-    const dowIdx = (new Date(cellYear, cellMonth, dayNum).getDay() + 6) % 7; // 0=Mo
-    const dowLabel = `<span class="day-dow">${WD_ABBR[dowIdx]}</span>`;
+    const dowLabel = `<span class="day-dow">${WEEKDAY_ABBR[(i+1)%7]}</span>`;
 
     const dnEl = document.createElement('div');
     dnEl.className = 'day-num';
@@ -692,13 +697,11 @@ function renderMonth(idx){
     }
 
     // Event chips (auf Mobile mehr Platz, da Termine dort umbrechen statt abgeschnitten zu werden)
-    const isMobile = window.matchMedia('(max-width: 700px)').matches;
-    const MAX_CHIPS = isMobile ? 6 : 3;
     events.sort((a,b)=>a.start.localeCompare(b.start));
     events.slice(0,MAX_CHIPS).forEach(ev=>{
       const chip = document.createElement('span');
       chip.className = `event-chip chip-${ev.modul}`;
-      const modLabel = ev.modul === 'ZA' ? 'ZA' : ev.modul;
+      const modLabel = ev.modul;
       const roomHtml = ev.raum ? ` <span class="chip-room">· 📍 ${ev.raum}</span>` : '';
       chip.innerHTML = `<span class="chip-time">${ev.start}</span><span class="chip-mod">${modLabel}</span>${ev.title}${roomHtml}`;
       chip.onclick = (e)=>{ e.stopPropagation(); openModal(ev); };
@@ -744,16 +747,13 @@ function openModal(ev){
   document.getElementById('modalTitle').textContent = ev.title;
 
   const d = new Date(ev.date+'T12:00:00Z');
-  const days = ['So','Mo','Di','Mi','Do','Fr','Sa'];
-  const months = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
-  const dateStr = `${days[d.getUTCDay()]}, ${d.getUTCDate()}. ${months[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+  const dateStr = `${WEEKDAY_ABBR[d.getUTCDay()]}, ${d.getUTCDate()}. ${MONTH_NAMES[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
 
   const rows = [
     ['Datum',    dateStr],
     ['Uhrzeit',  `${ev.start} – ${ev.end} Uhr`],
     ['Raum',     ev.raum || 'wird noch bekannt gegeben'],
     ['Modul',    m.label],
-    ['Lehrperson', ev.lehrperson],
     ['LV-Nummer', ev.lvnr],
     ['Parallelgruppe', `PG ${ev.pg}`],
   ];
@@ -819,12 +819,10 @@ function renderNextUp(){
   const todayISO = isoDate(now.getFullYear(), now.getMonth(), now.getDate());
   const isToday = ev.date === todayISO;
 
-  const days = ['So','Mo','Di','Mi','Do','Fr','Sa'];
-  const monthsShort = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
   const dObj = new Date(ev.date + 'T12:00:00Z');
   const whenLabel = isToday
     ? `heute, ${ev.start} Uhr`
-    : `${days[dObj.getUTCDay()]}, ${dObj.getUTCDate()}. ${monthsShort[dObj.getUTCMonth()]}, ${ev.start} Uhr`;
+    : `${WEEKDAY_ABBR[dObj.getUTCDay()]}, ${dObj.getUTCDate()}. ${MONTH_NAMES_SHORT[dObj.getUTCMonth()]}, ${ev.start} Uhr`;
 
   el.style.display = 'flex';
   el.style.background = m.bg;
