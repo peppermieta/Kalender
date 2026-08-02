@@ -7,6 +7,20 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [1.5.0] - 2026-08-01
+
+### Added
+- Neue Datei `PALETTE.md` mit der tatsächlich verwendeten Website-Farbpalette
+  (Basis-UI + Modul-Akzentfarben), inklusive visueller Vorschaugrafik
+  (`docs/website-palette.svg`) und Werten in mehreren Formaten (CSV, Hex,
+  Array, Object, Extended Array mit RGB/CMYK/HSB/HSL/Lab, XML) unter
+  `docs/website-palette.txt`.
+- Neuer Abschnitt "Farbpalette" in der README mit eingebetteter Vorschau.
+
+### Fixed
+- Veraltete Erwähnung von "Lehrperson" in der README-Funktionsliste entfernt
+  (seit Version 1.4.0 nicht mehr in der Termin-Detailansicht sichtbar).
+
 ## [1.4.0] - 2026-08-01
 
 ### Changed

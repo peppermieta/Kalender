@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="600" viewBox="0 0 880 600" font-family="Helvetica,Arial,sans-serif">
+<rect width="880" height="600" fill="#FFFFFF"/>
+<rect x="0" y="0" width="220" height="200" fill="#f7f6f3"/>
+<text x="18" y="154" font-size="15" font-weight="700" fill="#1A1A18">Hintergrund</text>
+<text x="18" y="178" font-size="13" font-family="monospace" fill="#1A1A18" opacity="0.85">#f7f6f3</text>
+<rect x="220" y="0" width="220" height="200" fill="#ffffff"/>
+<text x="238" y="154" font-size="15" font-weight="700" fill="#1A1A18">Flaeche</text>
+<text x="238" y="178" font-size="13" font-family="monospace" fill="#1A1A18" opacity="0.85">#ffffff</text>
+<rect x="440" y="0" width="220" height="200" fill="#e2e0d8"/>
+<text x="458" y="154" font-size="15" font-weight="700" fill="#1A1A18">Rahmen</text>
+<text x="458" y="178" font-size="13" font-family="monospace" fill="#1A1A18" opacity="0.85">#e2e0d8</text>
+<rect x="660" y="0" width="220" height="200" fill="#1a1a18"/>
+<text x="678" y="154" font-size="15" font-weight="700" fill="#FFFFFF">Text</text>
+<text x="678" y="178" font-size="13" font-family="monospace" fill="#FFFFFF" opacity="0.85">#1a1a18</text>
+<rect x="0" y="200" width="220" height="200" fill="#7a7870"/>
+<text x="18" y="354" font-size="15" font-weight="700" fill="#FFFFFF">Gedaempft</text>
+<text x="18" y="378" font-size="13" font-family="monospace" fill="#FFFFFF" opacity="0.85">#7a7870</text>
+<rect x="220" y="200" width="220" height="200" fill="#5b3fc8"/>
+<text x="238" y="354" font-size="15" font-weight="700" fill="#FFFFFF">Akzent-Lila / M07</text>
+<text x="238" y="378" font-size="13" font-family="monospace" fill="#FFFFFF" opacity="0.85">#5b3fc8</text>
+<rect x="440" y="200" width="220" height="200" fill="#2050c8"/>
+<text x="458" y="354" font-size="15" font-weight="700" fill="#FFFFFF">M02 - Beratung</text>
+<text x="458" y="378" font-size="13" font-family="monospace" fill="#FFFFFF" opacity="0.85">#2050c8</text>
+<rect x="660" y="200" width="220" height="200" fill="#1a8c70"/>
+<text x="678" y="354" font-size="15" font-weight="700" fill="#FFFFFF">M06 - Inklusion</text>
+<text x="678" y="378" font-size="13" font-family="monospace" fill="#FFFFFF" opacity="0.85">#1a8c70</text>
+<rect x="0" y="400" width="220" height="200" fill="#c48a00"/>
+<text x="18" y="554" font-size="15" font-weight="700" fill="#FFFFFF">M08 - Recht</text>
+<text x="18" y="578" font-size="13" font-family="monospace" fill="#FFFFFF" opacity="0.85">#c48a00</text>
+<rect x="220" y="400" width="220" height="200" fill="#2e8b57"/>
+<text x="238" y="554" font-size="15" font-weight="700" fill="#FFFFFF">M09 - Aesthetik</text>
+<text x="238" y="578" font-size="13" font-family="monospace" fill="#FFFFFF" opacity="0.85">#2e8b57</text>
+<rect x="440" y="400" width="220" height="200" fill="#c41a50"/>
+<text x="458" y="554" font-size="15" font-weight="700" fill="#FFFFFF">M10 - Forschung</text>
+<text x="458" y="578" font-size="13" font-family="monospace" fill="#FFFFFF" opacity="0.85">#c41a50</text>
+<rect x="660" y="400" width="220" height="200" fill="#777775"/>
+<text x="678" y="554" font-size="15" font-weight="700" fill="#FFFFFF">ZA - Zusatzangebot</text>
+<text x="678" y="578" font-size="13" font-family="monospace" fill="#FFFFFF" opacity="0.85">#777775</text>
+</svg>

@@ -1,0 +1,38 @@
+/* Vorlesungskalender – Website-Palette */
+
+- CSV
+
+f7f6f3,ffffff,e2e0d8,1a1a18,7a7870,5b3fc8,2050c8,1a8c70,c48a00,2e8b57,c41a50,777775
+
+- With #
+
+#f7f6f3, #ffffff, #e2e0d8, #1a1a18, #7a7870, #5b3fc8, #2050c8, #1a8c70, #c48a00, #2e8b57, #c41a50, #777775
+
+- Array
+
+["f7f6f3", "ffffff", "e2e0d8", "1a1a18", "7a7870", "5b3fc8", "2050c8", "1a8c70", "c48a00", "2e8b57", "c41a50", "777775"]
+
+- Object
+
+{"Hintergrund": "f7f6f3", "Flaeche": "ffffff", "Rahmen": "e2e0d8", "Text": "1a1a18", "Gedaempft": "7a7870", "Akzent-Lila / M07": "5b3fc8", "M02 - Beratung": "2050c8", "M06 - Inklusion": "1a8c70", "M08 - Recht": "c48a00", "M09 - Aesthetik": "2e8b57", "M10 - Forschung": "c41a50", "ZA - Zusatzangebot": "777775"}
+
+- Extended Array
+
+[{"name": "Hintergrund", "hex": "f7f6f3", "rgb": [247, 246, 243], "cmyk": [0, 0, 2, 3], "hsb": [45, 2, 97], "hsl": [45, 20, 96], "lab": [97, 0, 2]}, {"name": "Flaeche", "hex": "ffffff", "rgb": [255, 255, 255], "cmyk": [0, 0, 0, 0], "hsb": [0, 0, 100], "hsl": [0, 0, 100], "lab": [100, 0, 0]}, {"name": "Rahmen", "hex": "e2e0d8", "rgb": [226, 224, 216], "cmyk": [0, 1, 4, 11], "hsb": [48, 4, 89], "hsl": [48, 15, 87], "lab": [89, -1, 4]}, {"name": "Text", "hex": "1a1a18", "rgb": [26, 26, 24], "cmyk": [0, 0, 8, 90], "hsb": [60, 8, 10], "hsl": [60, 4, 10], "lab": [9, 0, 1]}, {"name": "Gedaempft", "hex": "7a7870", "rgb": [122, 120, 112], "cmyk": [0, 2, 8, 52], "hsb": [48, 8, 48], "hsl": [48, 4, 46], "lab": [50, -1, 5]}, {"name": "Akzent-Lila / M07", "hex": "5b3fc8", "rgb": [91, 63, 200], "cmyk": [54, 68, 0, 22], "hsb": [252, 68, 78], "hsl": [252, 55, 52], "lab": [38, 47, -67]}, {"name": "M02 - Beratung", "hex": "2050c8", "rgb": [32, 80, 200], "cmyk": [84, 60, 0, 22], "hsb": [223, 84, 78], "hsl": [223, 72, 45], "lab": [38, 30, -67]}, {"name": "M06 - Inklusion", "hex": "1a8c70", "rgb": [26, 140, 112], "cmyk": [81, 0, 20, 45], "hsb": [165, 81, 55], "hsl": [165, 69, 33], "lab": [52, -37, 6]}, {"name": "M08 - Recht", "hex": "c48a00", "rgb": [196, 138, 0], "cmyk": [0, 30, 100, 23], "hsb": [42, 100, 77], "hsl": [42, 100, 38], "lab": [62, 13, 67]}, {"name": "M09 - Aesthetik", "hex": "2e8b57", "rgb": [46, 139, 87], "cmyk": [67, 0, 37, 45], "hsb": [146, 67, 55], "hsl": [146, 50, 36], "lab": [52, -40, 20]}, {"name": "M10 - Forschung", "hex": "c41a50", "rgb": [196, 26, 80], "cmyk": [0, 87, 59, 23], "hsb": [341, 87, 77], "hsl": [341, 77, 44], "lab": [43, 65, 15]}, {"name": "ZA - Zusatzangebot", "hex": "777775", "rgb": [119, 119, 117], "cmyk": [0, 0, 2, 53], "hsb": [60, 2, 47], "hsl": [60, 1, 46], "lab": [50, 0, 1]}]
+
+- XML
+
+<palette>
+  <color name="Hintergrund" hex="f7f6f3" r="247" g="246" b="243" />
+  <color name="Flaeche" hex="ffffff" r="255" g="255" b="255" />
+  <color name="Rahmen" hex="e2e0d8" r="226" g="224" b="216" />
+  <color name="Text" hex="1a1a18" r="26" g="26" b="24" />
+  <color name="Gedaempft" hex="7a7870" r="122" g="120" b="112" />
+  <color name="Akzent-Lila / M07" hex="5b3fc8" r="91" g="63" b="200" />
+  <color name="M02 - Beratung" hex="2050c8" r="32" g="80" b="200" />
+  <color name="M06 - Inklusion" hex="1a8c70" r="26" g="140" b="112" />
+  <color name="M08 - Recht" hex="c48a00" r="196" g="138" b="0" />
+  <color name="M09 - Aesthetik" hex="2e8b57" r="46" g="139" b="87" />
+  <color name="M10 - Forschung" hex="c41a50" r="196" g="26" b="80" />
+  <color name="ZA - Zusatzangebot" hex="777775" r="119" g="119" b="117" />
+</palette>
