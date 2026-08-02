@@ -7,6 +7,17 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [1.4.0] - 2026-08-01
+
+### Changed
+- Code-Aufräumen: doppelte Wochentags-/Monatsnamen-Arrays zu zentralen
+  Konstanten zusammengeführt, unnötige Neuberechnungen pro Kalenderzelle
+  entfernt, überflüssige no-op-Bedingung vereinfacht. Rein intern – per
+  Pixel-Diff gegen die Vorversion als visuell identisch verifiziert.
+- Lehrperson-Zeile aus der Termin-Detailansicht entfernt (nur Anzeige). Das
+  Datenfeld bleibt in den Terminen erhalten, z. B. für eine spätere
+  ICS-Export-Funktion.
+
 ## [1.3.1] - 2026-08-01
 
 ### Removed
