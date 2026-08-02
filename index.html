@@ -488,7 +488,7 @@ const EVENTS = [
   ...["2026-10-08","2026-10-15","2026-10-22","2026-10-29","2026-11-05","2026-11-12","2026-11-19","2026-11-26","2026-12-03","2026-12-10","2026-12-17","2027-01-21","2027-02-04"].map(d=>({
     date:d, start:"08:00", end:"10:15", modul:"M09",
     lvnr:"1-1-0763-1-12340-209209209207000", pg:"3",
-    title:"Workshop/Methodikseminar Kunst ⭐", lehrperson:"Sara Focke-Levin"
+    title:"Workshop/Methodikseminar Kunst", lehrperson:"Sara Focke-Levin"
   })),
   // M7 – VL Entwicklungstheorien (Mo, wöchentlich)
   ...["2026-10-05","2026-10-12","2026-10-19","2026-10-26","2026-11-02","2026-11-09","2026-11-16","2026-11-23","2026-11-30","2026-12-07","2026-12-14","2027-01-11","2027-01-18","2027-01-25","2027-02-01"].map(d=>({
@@ -518,17 +518,17 @@ const EVENTS = [
     lvnr:"1-1-0027-1-12340-208208208313000", pg:"1",
     title:"Grundlagen des Kinder- und Jugendhilfe- sowie Familienrechts", lehrperson:"Prof. Dr.in Annette Rabe"
   })),
-  // M9 – Sozialverwaltungsrecht ⭐ (Mi, 07.10.–25.11.)
+  // M9 – Sozialverwaltungsrecht (Mi, 07.10.–25.11.)
   ...["2026-10-07","2026-10-14","2026-10-21","2026-10-28","2026-11-04","2026-11-11","2026-11-18","2026-11-25"].map(d=>({
     date:d, start:"08:00", end:"09:30", modul:"M08",
     lvnr:"1-1-0029-1-12340-208208208313000", pg:"1",
-    title:"Sozialverwaltungsrecht ⭐", lehrperson:"Prof. Dr. Marc Sieper"
+    title:"Sozialverwaltungsrecht", lehrperson:"Prof. Dr. Marc Sieper"
   })),
-  // M9 – Grundsicherungsrecht ⭐ (Mi, 07.10.–18.11., PG1 – Paket mit Sozialverwaltungsrecht)
+  // M9 – Grundsicherungsrecht (Mi, 07.10.–18.11., PG1 – Paket mit Sozialverwaltungsrecht)
   ...["2026-10-07","2026-10-14","2026-10-21","2026-10-28","2026-11-04","2026-11-11","2026-11-18"].map(d=>({
     date:d, start:"09:45", end:"11:15", modul:"M08",
     lvnr:"1-1-0028-1-12340-208208208313000", pg:"1",
-    title:"Rechtliche Grundlagen und Einführung in das Grundsicherungsrecht ⭐", lehrperson:"Prof. Dr.in Tamara Bloch"
+    title:"Rechtliche Grundlagen und Einführung in das Grundsicherungsrecht", lehrperson:"Prof. Dr.in Tamara Bloch"
   })),
   // M9 – Arbeitsfelder (Block)
   {date:"2026-10-09",start:"14:00",end:"18:15",modul:"M08",lvnr:"1-1-0030-1-12340-208208208313000",pg:"5",title:"Arbeitsfelder und Aufträge Sozialer Arbeit",lehrperson:"M.A. Jeannette Schiwek-Kleijweg"},
@@ -700,7 +700,7 @@ function renderMonth(idx){
       chip.className = `event-chip chip-${ev.modul}`;
       const modLabel = ev.modul === 'ZA' ? 'ZA' : ev.modul;
       const roomHtml = ev.raum ? ` <span class="chip-room">· 📍 ${ev.raum}</span>` : '';
-      chip.innerHTML = `<span class="chip-time">${ev.start}</span><span class="chip-mod">${modLabel}</span>${ev.title.replace(' ⭐','⭐')}${roomHtml}`;
+      chip.innerHTML = `<span class="chip-time">${ev.start}</span><span class="chip-mod">${modLabel}</span>${ev.title}${roomHtml}`;
       chip.onclick = (e)=>{ e.stopPropagation(); openModal(ev); };
       cell.appendChild(chip);
     });
@@ -741,7 +741,7 @@ function openModal(ev){
   badge.textContent = ev.modul === 'ZA' ? 'Zusatzangebot' : ev.modul;
   badge.style.cssText = `background:${m.bg};color:${m.tx};border-color:${m.bd}`;
 
-  document.getElementById('modalTitle').textContent = ev.title.replace(' ⭐','');
+  document.getElementById('modalTitle').textContent = ev.title;
 
   const d = new Date(ev.date+'T12:00:00Z');
   const days = ['So','Mo','Di','Mi','Do','Fr','Sa'];
@@ -835,7 +835,7 @@ function renderNextUp(){
     <span class="next-up-label">Nächste Veranstaltung</span>
     <span class="next-up-when">${whenLabel}</span>
     <span class="next-up-sep">·</span>
-    <span class="next-up-title">${ev.title.replace(' ⭐','')}</span>
+    <span class="next-up-title">${ev.title}</span>
   `;
   el.onclick = () => openModal(ev);
 }
