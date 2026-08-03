@@ -50,7 +50,7 @@ Das Skript liest die Termine direkt aus `index.html` aus – es gibt also nur ei
 
 ## Versionshistorie
 
-Alle Änderungen werden in [CHANGELOG.md](CHANGELOG.md) dokumentiert (aktuelle Version: **1.8.0**).
+Alle Änderungen werden in [CHANGELOG.md](CHANGELOG.md) dokumentiert (aktuelle Version: **1.8.1**).
 
 ## Farbpalette
 

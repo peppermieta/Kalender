@@ -7,7 +7,16 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
-## [1.8.0] - 2026-08-01
+## [1.8.1] - 2026-08-03
+
+### Fixed
+- Versionsdaten im Changelog korrigiert: Ab Version 1.3.1 stand überall
+  fälschlich "2026-08-01" (ein Platzhalter, der nach dem ersten Tag nicht
+  mehr aktualisiert wurde). Anhand der echten Commit-Zeitstempel richtig-
+  gestellt: 1.3.1–1.5.0 fanden am 2026-08-02 statt, 1.6.0–1.8.0 am
+  2026-08-03. Versionen 1.0.0–1.3.0 waren bereits korrekt (2026-08-01).
+
+## [1.8.0] - 2026-08-03
 
 ### Added
 - **Neue Seite `module.html` – Modulverzeichnis:** Alle 28 Module des
@@ -27,7 +36,7 @@ _Noch keine offenen Änderungen._
 - Verlinkung zwischen den Seiten: "Modulverzeichnis →" im Kalender-Header,
   "← Zurück zum Kalender" im Modulverzeichnis
 
-## [1.7.0] - 2026-08-01
+## [1.7.0] - 2026-08-03
 
 ### Added
 - **Kalender-Abo (ICS):** Neue abonnierbare Kalenderdatei zum automatischen
@@ -47,7 +56,7 @@ _Noch keine offenen Änderungen._
   vorhanden, Aktivierung ist eine Ein-Zeilen-Änderung in
   `eventMatchesQuery()`).
 
-## [1.6.1] - 2026-08-01
+## [1.6.1] - 2026-08-03
 
 ### Fixed
 - Passwortabfrage funktionierte nach Einrichtung der eigenen Domain nicht mehr
@@ -58,7 +67,7 @@ _Noch keine offenen Änderungen._
   nur in sicheren Kontexten (HTTPS) läuft. "Enforce HTTPS" in den
   GitHub-Pages-Einstellungen aktiviert, Fehler behoben und bestätigt getestet.
 
-## [1.6.0] - 2026-08-01
+## [1.6.0] - 2026-08-03
 
 ### Added
 - Eigene Domain eingerichtet: `CNAME`-Datei mit `kalender.xn--peppermita-lnb.de`
@@ -68,7 +77,7 @@ _Noch keine offenen Änderungen._
 - README-Live-Link auf die neue Domain aktualisiert; die bisherige
   `peppermieta.github.io/Kalender/`-Adresse bleibt zusätzlich erreichbar.
 
-## [1.5.0] - 2026-08-01
+## [1.5.0] - 2026-08-02
 
 ### Added
 - Neue Datei `PALETTE.md` mit der tatsächlich verwendeten Website-Farbpalette
@@ -82,7 +91,7 @@ _Noch keine offenen Änderungen._
 - Veraltete Erwähnung von "Lehrperson" in der README-Funktionsliste entfernt
   (seit Version 1.4.0 nicht mehr in der Termin-Detailansicht sichtbar).
 
-## [1.4.0] - 2026-08-01
+## [1.4.0] - 2026-08-02
 
 ### Changed
 - Code-Aufräumen: doppelte Wochentags-/Monatsnamen-Arrays zu zentralen
@@ -93,7 +102,7 @@ _Noch keine offenen Änderungen._
   Datenfeld bleibt in den Terminen erhalten, z. B. für eine spätere
   ICS-Export-Funktion.
 
-## [1.3.1] - 2026-08-01
+## [1.3.1] - 2026-08-02
 
 ### Removed
 - Alte ⭐-Prioritäts-Markierungen aus drei Veranstaltungstiteln entfernt
