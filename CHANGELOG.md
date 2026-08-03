@@ -7,6 +7,16 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [1.6.0] - 2026-08-01
+
+### Added
+- Eigene Domain eingerichtet: `CNAME`-Datei mit `kalender.xn--peppermita-lnb.de`
+  ergänzt (Punycode-Version der Domain `kalender.peppermięta.de`, da GitHub
+  Pages bei internationalisierten Domainnamen die Punycode-Schreibweise
+  verlangt). DNS (CNAME-Record bei Strato) wurde vom Nutzer vorab eingerichtet.
+- README-Live-Link auf die neue Domain aktualisiert; die bisherige
+  `peppermieta.github.io/Kalender/`-Adresse bleibt zusätzlich erreichbar.
+
 ## [1.5.0] - 2026-08-01
 
 ### Added
