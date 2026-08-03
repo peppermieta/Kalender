@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 480 480">
+    <defs>
+      <filter id="iconShadow" x="-50%" y="-50%" width="200%" height="200%">
+        <feDropShadow dx="0" dy="14" stdDeviation="20" flood-color="#403f4c" flood-opacity="0.35"></feDropShadow>
+      </filter>
+      <filter id="bodyShadow" x="-50%" y="-50%" width="200%" height="200%">
+        <feDropShadow dx="0" dy="6" stdDeviation="7" flood-color="#403f4c" flood-opacity="0.3"></feDropShadow>
+      </filter>
+    </defs>
+    <circle cx="240" cy="240" r="220" fill="#dfbbea" filter="url(#iconShadow)"></circle>
+    <rect x="174" y="155" width="16" height="30" rx="8" fill="#403f4c"></rect>
+    <rect x="290" y="155" width="16" height="30" rx="8" fill="#403f4c"></rect>
+    <rect x="160" y="175" width="160" height="150" rx="28" fill="#403f4c" filter="url(#bodyShadow)"></rect>
+    <rect x="180" y="192" width="120" height="10" rx="5" fill="#dfbbea"></rect>
+    <rect x="186" y="222" width="28" height="22" rx="6" fill="#dfbbea"></rect>
+    <rect x="226" y="222" width="28" height="22" rx="6" fill="#dfbbea"></rect>
+    <rect x="266" y="222" width="28" height="22" rx="6" fill="#dfbbea"></rect>
+    <rect x="186" y="254" width="28" height="22" rx="6" fill="#dfbbea"></rect>
+    <rect x="226" y="254" width="28" height="22" rx="6" fill="#dfbbea"></rect>
+    <rect x="266" y="254" width="28" height="22" rx="6" fill="#dfbbea"></rect>
+  </svg>

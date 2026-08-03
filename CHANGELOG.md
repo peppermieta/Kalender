@@ -7,6 +7,19 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [1.9.0] - 2026-08-03
+
+### Added
+- Neues Logo (eigenes Design des Nutzers, Kalender-Icon in der
+  "Textmarker og"-Farbpalette) als Favicon auf beiden Seiten (Kalender +
+  Modulverzeichnis) gesetzt, ersetzt das bisherige violette Punkt-Icon.
+- Vollständiger Icon-Satz unter `icons/` abgelegt: `favicon.ico`,
+  16/32/48 px PNGs (schattenfreie Flachversion – der Schlagschatten des
+  Originaldesigns ist bei so kleinen Größen kontraproduktiv), Apple-Touch-Icon
+  (180 px), sowie 192 px und 512 px PNGs sowie eine maskable-Variante
+  (512 px, vollflächiger Hintergrund + Sicherheitsabstand) für die künftige
+  PWA-Umsetzung. Vektor-Quelldatei als `icons/logo.svg` mit abgelegt.
+
 ## [1.8.1] - 2026-08-03
 
 ### Fixed
