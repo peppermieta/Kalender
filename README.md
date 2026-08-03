@@ -12,6 +12,7 @@ Privater, passwortgeschützter Vorlesungskalender für das Studium (Bachelor Soz
 - **Termin-Details per Klick/Tap** – Datum, Uhrzeit, Raum, Modul, LV-Nummer und Parallelgruppe
 - **Suche** – Freitextsuche nach Veranstaltung oder Modulname direkt im Header; Klick auf ein Ergebnis springt zum passenden Monat und öffnet die Detailansicht
 - **Kalender-Abo (ICS)** – Termine lassen sich per `webcal://`-Link in Google/Apple/Outlook-Kalender abonnieren, inkl. automatischer Aktualisierung bei Änderungen (siehe Abschnitt "Kalender-Abo" unten)
+- **Modulverzeichnis** – separate Seite (`module.html`, verlinkt aus dem Kalender-Header) mit allen 28 Modulen des Studiengangs, Studienverlaufsplan-Grafik nach Semestern, Bausteinen, Modulprüfungen und Voraussetzungen (klickbar verlinkt). Frei zugänglich, ohne Passwortschutz. Bewusst ohne Modulverantwortliche.
 - **Passwortschutz** – rein clientseitig (SHA-256-Hash im Quellcode), reicht aus, um die Seite vor Suchmaschinen/Zufallsbesucher:innen zu verbergen, ist aber **kein** echter Sicherheitsmechanismus
 - **Anonymisiert** – keine Angaben zu Name, Matrikelnummer oder Hochschule im Code
 
@@ -49,7 +50,7 @@ Das Skript liest die Termine direkt aus `index.html` aus – es gibt also nur ei
 
 ## Versionshistorie
 
-Alle Änderungen werden in [CHANGELOG.md](CHANGELOG.md) dokumentiert (aktuelle Version: **1.7.0**).
+Alle Änderungen werden in [CHANGELOG.md](CHANGELOG.md) dokumentiert (aktuelle Version: **1.8.0**).
 
 ## Farbpalette
 

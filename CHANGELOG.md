@@ -7,6 +7,26 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [1.8.0] - 2026-08-01
+
+### Added
+- **Neue Seite `module.html` – Modulverzeichnis:** Alle 28 Module des
+  Studiengangs (Modul 01–28), basierend auf dem Modulhandbuch (Stand
+  03/2026). Bewusst **ohne Modulverantwortliche**.
+  - Studienverlaufsplan-Grafik: alle Module nach Semestern (1.–7.) sortiert,
+    aktuelles Semester (2.) farblich identisch zu den Modulfarben im
+    Kalender, frühere Semester gedimmt, kommende neutral dargestellt
+  - Pro Modul: Bausteine (inkl. PL/UPL-Kennzeichnung), Modulprüfung
+    (Nummer, Art, benotet/unbenotet), CP, SWS, Modulart (z. B.
+    Wahlpflichtmodul)
+  - Voraussetzungen als klickbare Verweise auf die jeweiligen Module (zeigt,
+    wie Module aufeinander aufbauen, z. B. Praxissemester setzt Module
+    01–18 voraus)
+  - Frei zugänglich ohne Passwortschutz (Modulhandbuch-Inhalte sind nicht
+    privat)
+- Verlinkung zwischen den Seiten: "Modulverzeichnis →" im Kalender-Header,
+  "← Zurück zum Kalender" im Modulverzeichnis
+
 ## [1.7.0] - 2026-08-01
 
 ### Added
