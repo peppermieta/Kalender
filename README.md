@@ -10,6 +10,8 @@ Privater, passwortgeschützter Vorlesungskalender für das Studium (Bachelor Soz
 - **Farbcodierung nach Modul** – jede Veranstaltung ist ihrem Modul farblich zugeordnet, Legende oben auf der Seite (sortiert M02 → M10, Zusatzangebot am Ende)
 - **Mobile Ansicht** – unter 700px Breite wechselt die Seite automatisch von der 7-Spalten-Rasteransicht zu einer einspaltigen Tagesliste, damit Termine nicht abgeschnitten werden; Modulkürzel werden dort direkt am Termin angezeigt
 - **Termin-Details per Klick/Tap** – Datum, Uhrzeit, Raum, Modul, LV-Nummer und Parallelgruppe
+- **Suche** – Freitextsuche nach Veranstaltung oder Modulname direkt im Header; Klick auf ein Ergebnis springt zum passenden Monat und öffnet die Detailansicht
+- **Kalender-Abo (ICS)** – Termine lassen sich per `webcal://`-Link in Google/Apple/Outlook-Kalender abonnieren, inkl. automatischer Aktualisierung bei Änderungen (siehe Abschnitt "Kalender-Abo" unten)
 - **Passwortschutz** – rein clientseitig (SHA-256-Hash im Quellcode), reicht aus, um die Seite vor Suchmaschinen/Zufallsbesucher:innen zu verbergen, ist aber **kein** echter Sicherheitsmechanismus
 - **Anonymisiert** – keine Angaben zu Name, Matrikelnummer oder Hochschule im Code
 
@@ -31,9 +33,23 @@ Solange kein Raum hinterlegt ist, zeigt die Detailansicht "wird noch bekannt geg
 
 Die Seite besteht aus einer einzigen Datei (`index.html`), die bei Änderungen ersetzt und auf den `main`-Branch gepusht wird. GitHub Pages baut die Seite danach automatisch neu (meist innerhalb von 1–2 Minuten).
 
+## Kalender-Abo (ICS)
+
+Über den Button "📅 Kalender abonnieren" (bzw. den kopierbaren Link daneben) lässt sich der Kalender in Google/Apple/Outlook Kalender **abonnieren** statt einmalig zu importieren – neue oder geänderte Termine (z. B. Raumnummern) erscheinen dann automatisch, ohne erneuten manuellen Export.
+
+**Wichtiger Sicherheitshinweis:** Die ICS-Datei liegt technisch bedingt **außerhalb des Passwortschutzes** – Kalender-Apps rufen die Datei automatisch im Hintergrund ab und können dabei kein Passwort eingeben. Einziger Schutz ist der **zufällige, nicht erratbare Dateiname** (`feed-<zufälliger-hex-code>.ics`). Diesen Link daher nicht öffentlich teilen.
+
+**Aktualisieren:** Bei Änderungen an den Terminen (z. B. neue Raumnummern) die ICS-Datei neu generieren:
+
+```
+node scripts/generate-ics.js
+```
+
+Das Skript liest die Termine direkt aus `index.html` aus – es gibt also nur eine einzige Datenquelle. Der Dateiname bleibt dabei automatisch gleich (fest im Skript hinterlegt), damit bestehende Abos nicht brechen.
+
 ## Versionshistorie
 
-Alle Änderungen werden in [CHANGELOG.md](CHANGELOG.md) dokumentiert (aktuelle Version: **1.6.1**).
+Alle Änderungen werden in [CHANGELOG.md](CHANGELOG.md) dokumentiert (aktuelle Version: **1.7.0**).
 
 ## Farbpalette
 

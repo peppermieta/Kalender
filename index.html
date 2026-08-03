@@ -106,6 +106,67 @@
   .next-up-sep { opacity: .45; }
   .next-up-title { font-weight: 500; }
 
+  /* ── SUCHE + ABO-TOOLBAR ── */
+  .toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 24px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .search-wrap { position: relative; flex: 1 1 260px; max-width: 360px; }
+  .search-icon {
+    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    font-size: 13px; opacity: .55; pointer-events: none;
+  }
+  #searchInput {
+    width: 100%; box-sizing: border-box;
+    padding: 8px 12px 8px 34px;
+    border: 1px solid var(--border); border-radius: 8px;
+    font-family: 'Inter', sans-serif; font-size: 13px;
+    background: var(--bg); color: var(--text);
+  }
+  #searchInput:focus { outline: none; border-color: #5B3FC8; background: var(--surface); }
+  .search-results {
+    display: none;
+    position: absolute; top: calc(100% + 6px); left: 0; right: 0;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    box-shadow: var(--shadow);
+    max-height: 320px; overflow-y: auto;
+    z-index: 50;
+  }
+  .search-result {
+    display: flex; align-items: center; gap: 8px;
+    padding: 9px 12px; cursor: pointer; font-size: 12.5px;
+    border-bottom: 1px solid var(--border);
+  }
+  .search-result:last-child { border-bottom: none; }
+  .search-result:hover { background: var(--bg); }
+  .search-result-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .search-result-date {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted);
+    flex-shrink: 0; white-space: nowrap;
+  }
+  .search-result-title { color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .search-empty { padding: 12px; font-size: 12.5px; color: var(--muted); text-align: center; }
+
+  .subscribe-wrap { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .subscribe-link {
+    font-size: 12.5px; font-weight: 600; color: #5B3FC8; text-decoration: none;
+    white-space: nowrap;
+  }
+  .subscribe-link:hover { text-decoration: underline; }
+  .subscribe-copy {
+    font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500;
+    padding: 6px 10px; border-radius: 7px; border: 1px solid var(--border);
+    background: var(--bg); color: var(--muted); cursor: pointer; white-space: nowrap;
+  }
+  .subscribe-copy:hover { background: var(--surface); color: var(--text); }
+  .subscribe-copy.copied { color: #1A8C70; border-color: #8DD4C2; }
+
   /* ── LEGEND ── */
   .legend {
     display: flex;
@@ -370,6 +431,9 @@
     header { padding: 12px; }
     .next-up { padding: 10px 12px; font-size: 12.5px; }
     .next-up-label { display: none; } /* auf Mobile reicht Uhrzeit + Titel, spart Platz */
+    .toolbar { padding: 10px 12px; gap: 10px; }
+    .search-wrap { max-width: none; flex: 1 1 100%; }
+    .subscribe-wrap { flex: 1 1 100%; justify-content: space-between; }
 
     /* Wochentagsleiste ausblenden – Wochentag steht jetzt direkt am Datum */
     .weekday-header { display: none; }
@@ -442,6 +506,19 @@
 
 <!-- NÄCHSTE VERANSTALTUNG -->
 <div class="next-up" id="nextUp"></div>
+
+<!-- SUCHE + KALENDER-ABO -->
+<div class="toolbar">
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input id="searchInput" type="text" placeholder="Veranstaltung suchen…" autocomplete="off" />
+    <div id="searchResults" class="search-results"></div>
+  </div>
+  <div class="subscribe-wrap">
+    <a id="subscribeLink" class="subscribe-link" href="webcal://kalender.xn--peppermita-lnb.de/feed-7b77b19da1cb.ics">📅 Kalender abonnieren</a>
+    <button id="copyFeedBtn" class="subscribe-copy" type="button">🔗 Link kopieren</button>
+  </div>
+</div>
 
 <!-- LEGEND -->
 <div class="legend" id="legend"></div>
@@ -837,6 +914,87 @@ function renderNextUp(){
   `;
   el.onclick = () => openModal(ev);
 }
+
+// ─── SUCHE ───────────────────────────────────────────────────────────────────
+// Durchsucht Titel + Modulname. ev.lehrperson könnte hier künftig ergänzt
+// werden, sobald eine Dozierenden-Suche wieder gewünscht ist (Datenfeld ist
+// in EVENTS bereits vorhanden) – dazu einfach MODS[ev.modul].label um
+// ev.lehrperson erweitern:
+//   const haystack = [ev.title, MODS[ev.modul].label, ev.lehrperson];
+function eventMatchesQuery(ev, query) {
+  const q = query.toLowerCase();
+  const haystack = [ev.title, MODS[ev.modul].label];
+  return haystack.some(f => f.toLowerCase().includes(q));
+}
+
+function jumpToEvent(ev) {
+  const [y, m] = ev.date.split('-').map(Number);
+  const idx = MONTHS.findIndex(mo => mo.year === y && mo.month === (m - 1));
+  if (idx !== -1) goTo(idx);
+  openModal(ev);
+}
+
+const searchInput = document.getElementById('searchInput');
+const searchResultsEl = document.getElementById('searchResults');
+
+function renderSearchResults(query) {
+  if (!query.trim()) {
+    searchResultsEl.style.display = 'none';
+    searchResultsEl.innerHTML = '';
+    return;
+  }
+  const matches = EVENTS
+    .filter(ev => eventMatchesQuery(ev, query))
+    .sort((a, b) => (a.date + a.start).localeCompare(b.date + b.start))
+    .slice(0, 8);
+
+  if (!matches.length) {
+    searchResultsEl.innerHTML = `<div class="search-empty">Keine Treffer</div>`;
+    searchResultsEl.style.display = 'block';
+    return;
+  }
+
+  searchResultsEl.innerHTML = matches.map((ev, i) => {
+    const m = MODS[ev.modul];
+    const d = new Date(ev.date + 'T12:00:00Z');
+    const dateLabel = `${d.getUTCDate()}. ${MONTH_NAMES_SHORT[d.getUTCMonth()]}`;
+    return `<div class="search-result" data-i="${i}">
+      <span class="search-result-dot" style="background:${m.dot}"></span>
+      <span class="search-result-date">${dateLabel}, ${ev.start}</span>
+      <span class="search-result-title">${ev.title}</span>
+    </div>`;
+  }).join('');
+  searchResultsEl.style.display = 'block';
+
+  searchResultsEl.querySelectorAll('.search-result').forEach(el => {
+    el.addEventListener('click', () => {
+      const ev = matches[Number(el.dataset.i)];
+      searchResultsEl.style.display = 'none';
+      searchInput.value = '';
+      jumpToEvent(ev);
+    });
+  });
+}
+
+searchInput.addEventListener('input', () => renderSearchResults(searchInput.value));
+searchInput.addEventListener('focus', () => { if (searchInput.value.trim()) renderSearchResults(searchInput.value); });
+document.addEventListener('click', e => {
+  if (!e.target.closest('.search-wrap')) searchResultsEl.style.display = 'none';
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { searchResultsEl.style.display = 'none'; searchInput.blur(); }
+});
+
+// ─── KALENDER-ABO (ICS) ──────────────────────────────────────────────────────
+const copyFeedBtn = document.getElementById('copyFeedBtn');
+copyFeedBtn.addEventListener('click', () => {
+  const httpsUrl = document.getElementById('subscribeLink').href.replace(/^webcal:/, 'https:');
+  navigator.clipboard.writeText(httpsUrl).then(() => {
+    copyFeedBtn.textContent = '✓ Kopiert';
+    copyFeedBtn.classList.add('copied');
+    setTimeout(() => { copyFeedBtn.textContent = '🔗 Link kopieren'; copyFeedBtn.classList.remove('copied'); }, 2000);
+  });
+});
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 renderMonth(0);

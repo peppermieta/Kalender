@@ -7,6 +7,26 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [1.7.0] - 2026-08-01
+
+### Added
+- **Kalender-Abo (ICS):** Neue abonnierbare Kalenderdatei zum automatischen
+  Import in Google/Apple/Outlook Kalender (`webcal://`-Link + kopierbare
+  Alternative). Datei liegt unter einem zufälligen, nicht erratbaren
+  Dateinamen (`feed-<hex>.ics`), da ICS-Feeds technisch bedingt außerhalb des
+  Passwortschutzes liegen. Enthält Modul, Raum, LV-Nummer, Parallelgruppe und
+  Lehrperson pro Termin, inkl. korrekter Zeitzonenbehandlung (Europe/Berlin,
+  auch über die Zeitumstellung im Oktober hinweg getestet).
+- Neues Skript `scripts/generate-ics.js` zur Neugenerierung der ICS-Datei
+  direkt aus den EVENTS-Daten in `index.html` (eine einzige Datenquelle,
+  Dateiname bleibt bei jeder Neugenerierung stabil).
+- **Suchfunktion:** Freitextsuche nach Veranstaltung/Modulname in neuer
+  Toolbar unterhalb der "Nächste Veranstaltung"-Anzeige. Ergebnis-Klick
+  springt zum passenden Monat und öffnet die Detailansicht. Suche nach
+  Dozierenden ist im Code vorbereitet, aber noch nicht aktiviert (Datenfeld
+  vorhanden, Aktivierung ist eine Ein-Zeilen-Änderung in
+  `eventMatchesQuery()`).
+
 ## [1.6.1] - 2026-08-01
 
 ### Fixed
