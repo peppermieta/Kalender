@@ -7,6 +7,17 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [1.6.1] - 2026-08-01
+
+### Fixed
+- Passwortabfrage funktionierte nach Einrichtung der eigenen Domain nicht mehr
+  (Klick auf "Weiter"/Enter reagierte nicht) – Ursache: Die Domain wurde über
+  unverschlüsseltes HTTP statt HTTPS ausgeliefert (`https_enforced` war noch
+  nicht aktiviert), wodurch die für die Passwortprüfung genutzte
+  Web-Crypto-API (`crypto.subtle`) im Browser nicht verfügbar war, da diese
+  nur in sicheren Kontexten (HTTPS) läuft. "Enforce HTTPS" in den
+  GitHub-Pages-Einstellungen aktiviert, Fehler behoben und bestätigt getestet.
+
 ## [1.6.0] - 2026-08-01
 
 ### Added
