@@ -7,6 +7,31 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [1.10.0] - 2026-08-03
+
+### Added
+- **"Heute"-Button** neben der Monatsnavigation, springt direkt zum
+  aktuellen Monat. Liegt "heute" außerhalb des angezeigten Semester-
+  zeitraums (z. B. vor Vorlesungsbeginn), springt der Button stattdessen
+  zum jeweils nächstgelegenen Rand (erster bzw. letzter angezeigter Monat).
+
+### Changed
+- Code-Aufräumen (per Pixel-Diff gegen die Vorversion verifiziert, keine
+  sichtbaren Änderungen):
+  * Modulfarben (Hintergrund/Text/Rahmen pro Modul) waren doppelt gepflegt
+    – einmal hartkodiert als CSS-Variablen, einmal im JS-Objekt `MODS`.
+    Die CSS-Variablen werden jetzt zur Laufzeit aus `MODS` gesetzt, `MODS`
+    ist die einzige Quelle. Dabei auch uneinheitliche Schreibweise der
+    Variablennamen (`--m10-bg`/`--za-bg` klein vs. Rest groß) vereinheitlicht.
+  * Überflüssige zweite Sortierung der Termine pro Tageszelle entfernt
+    (Termine kommen bereits sortiert aus dem `byDate`-Index, da `EVENTS`
+    schon vorab global sortiert wird)
+  * Zwei separate `keydown`-Listener (einer für Pfeiltasten/Escape, einer
+    nur für Escape bei der Suche) zu einem gemeinsamen Listener
+    zusammengeführt
+  * `subscribeLink`-Element wird beim "Link kopieren"-Klick jetzt einmal
+    gecacht statt bei jedem Klick neu per `getElementById` gesucht
+
 ## [1.9.0] - 2026-08-03
 
 ### Added

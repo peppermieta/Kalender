@@ -6,7 +6,7 @@ Privater, passwortgeschützter Vorlesungskalender für das Studium (Bachelor Soz
 
 ## Funktionen
 
-- **Monatsansicht** mit Navigation über Pfeile, Tastatur (←/→) oder Wisch­geste auf Touch-Geräten
+- **Monatsansicht** mit Navigation über Pfeile, Tastatur (←/→), Wisch­geste auf Touch-Geräten oder direktem Sprung zum aktuellen Monat über den "Heute"-Button
 - **Farbcodierung nach Modul** – jede Veranstaltung ist ihrem Modul farblich zugeordnet, Legende oben auf der Seite (sortiert M02 → M10, Zusatzangebot am Ende)
 - **Mobile Ansicht** – unter 700px Breite wechselt die Seite automatisch von der 7-Spalten-Rasteransicht zu einer einspaltigen Tagesliste, damit Termine nicht abgeschnitten werden; Modulkürzel werden dort direkt am Termin angezeigt
 - **Termin-Details per Klick/Tap** – Datum, Uhrzeit, Raum, Modul, LV-Nummer und Parallelgruppe
@@ -50,7 +50,7 @@ Das Skript liest die Termine direkt aus `index.html` aus – es gibt also nur ei
 
 ## Versionshistorie
 
-Alle Änderungen werden in [CHANGELOG.md](CHANGELOG.md) dokumentiert (aktuelle Version: **1.9.0**).
+Alle Änderungen werden in [CHANGELOG.md](CHANGELOG.md) dokumentiert (aktuelle Version: **1.10.0**).
 
 ## Farbpalette
 

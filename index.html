@@ -20,14 +20,9 @@
     --muted:    #7A7870;
     --shadow:   0 2px 8px rgba(0,0,0,.07);
     --radius:   10px;
-
-    --M09-bg: #E8F5ED; --M09-tx: #1A5C34; --M09-bd: #A8D5B5; --M09-dot: #2E8B57;
-    --M07-bg: #EDE8FF; --M07-tx: #3B1D8C; --M07-bd: #B8A8F0; --M07-dot: #5B3FC8;
-    --M06-bg: #E0F4EF; --M06-tx: #0D5A4A; --M06-bd: #8DD4C2; --M06-dot: #1A8C70;
-    --M08-bg: #FEF3E2; --M08-tx: #7A5500; --M08-bd: #F5CC80; --M08-dot: #C48A00;
-    --m10-bg:#FCE8EF; --m10-tx:#7A1038; --m10-bd:#F0A0BC; --m10-dot:#C41A50;
-    --za-bg: #EEEEEC; --za-tx: #444440; --za-bd: #BBBBBA; --za-dot: #777775;
-    --M02-bg: #E0EEFF; --M02-tx: #1A3A8C; --M02-bd: #A0BCEA; --M02-dot: #2050C8;
+    /* Modulfarben (--M02-bg usw.) werden zur Laufzeit aus dem MODS-Objekt
+       im JavaScript weiter unten gesetzt – so gibt es dafür nur eine einzige
+       Quelle statt hartkodierter Werte hier plus im JS. */
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -84,6 +79,14 @@
     font-weight: 500;
   }
   .nav-btn:hover { background: var(--border); }
+  .today-btn {
+    margin-left: 4px;
+    font-size: 12.5px;
+    padding: 7px 11px;
+    color: #5B3FC8;
+    border-color: #B8A8F0;
+  }
+  .today-btn:hover { background: #EDE8FF; }
   .month-label {
     font-size: 16px;
     font-weight: 700;
@@ -304,8 +307,8 @@
   .chip-M07  { background: var(--M07-bg);  color: var(--M07-tx);  border-color: var(--M07-bd); }
   .chip-M06  { background: var(--M06-bg);  color: var(--M06-tx);  border-color: var(--M06-bd); }
   .chip-M08  { background: var(--M08-bg);  color: var(--M08-tx);  border-color: var(--M08-bd); }
-  .chip-M10 { background: var(--m10-bg); color: var(--m10-tx); border-color: var(--m10-bd); }
-  .chip-ZA  { background: var(--za-bg);  color: var(--za-tx);  border-color: var(--za-bd); }
+  .chip-M10 { background: var(--M10-bg); color: var(--M10-tx); border-color: var(--M10-bd); }
+  .chip-ZA  { background: var(--ZA-bg);  color: var(--ZA-tx);  border-color: var(--ZA-bd); }
   .chip-M02  { background: var(--M02-bg);  color: var(--M02-tx);  border-color: var(--M02-bd); }
 
   /* ── MODAL ── */
@@ -507,6 +510,7 @@
     <button class="nav-btn" id="prevBtn">&#8592;</button>
     <span class="month-label" id="monthLabel"></span>
     <button class="nav-btn" id="nextBtn">&#8594;</button>
+    <button class="nav-btn today-btn" id="todayBtn">Heute</button>
   </div>
 </header>
 
@@ -564,6 +568,14 @@ const MODS = {
   M10: { label:'M10 – Forschung',                            bg:'#FCE8EF', tx:'#7A1038', bd:'#F0A0BC', dot:'#C41A50' },
   ZA:  { label:'Freiwilliges Zusatzangebot',                 bg:'#EEEEEC', tx:'#444440', bd:'#BBBBBA', dot:'#777775' },
 };
+
+// CSS-Variablen für die Chip-Farben (.chip-M02 usw.) aus MODS ableiten,
+// statt die Werte zusätzlich hartkodiert in :root zu pflegen
+Object.entries(MODS).forEach(([key, m]) => {
+  document.documentElement.style.setProperty(`--${key}-bg`, m.bg);
+  document.documentElement.style.setProperty(`--${key}-tx`, m.tx);
+  document.documentElement.style.setProperty(`--${key}-bd`, m.bd);
+});
 
 // ─── ALL EVENTS ─────────────────────────────────────────────────────────────
 const EVENTS = [
@@ -780,7 +792,7 @@ function renderMonth(idx){
     }
 
     // Event chips (auf Mobile mehr Platz, da Termine dort umbrechen statt abgeschnitten zu werden)
-    events.sort((a,b)=>a.start.localeCompare(b.start));
+    // events kommt bereits sortiert aus byDate (siehe globales EVENTS.sort() oben)
     events.slice(0,MAX_CHIPS).forEach(ev=>{
       const chip = document.createElement('span');
       chip.className = `event-chip chip-${ev.modul}`;
@@ -809,12 +821,33 @@ function goTo(idx){
   currentMonthIdx=idx;
   renderMonth(idx);
 }
+
+// Springt zum aktuellen Monat; liegt "heute" außerhalb des angezeigten
+// Semesterzeitraums, wird zum jeweils nächstgelegenen Rand gesprungen
+// (z.B. vor Semesterbeginn -> erster Monat, nach Semesterende -> letzter)
+function goToToday(){
+  const today = new Date();
+  const y = today.getFullYear(), m = today.getMonth();
+  let idx = MONTHS.findIndex(mo => mo.year===y && mo.month===m);
+  if(idx === -1){
+    const first = MONTHS[0], last = MONTHS[MONTHS.length-1];
+    const firstStart = new Date(first.year, first.month, 1).getTime();
+    idx = today.getTime() < firstStart ? 0 : MONTHS.length-1;
+  }
+  goTo(idx);
+}
+
 document.getElementById('prevBtn').onclick=()=>goTo(currentMonthIdx-1);
 document.getElementById('nextBtn').onclick=()=>goTo(currentMonthIdx+1);
+document.getElementById('todayBtn').onclick=goToToday;
 document.addEventListener('keydown',e=>{
   if(e.key==='ArrowLeft') goTo(currentMonthIdx-1);
   if(e.key==='ArrowRight') goTo(currentMonthIdx+1);
-  if(e.key==='Escape') closeModal();
+  if(e.key==='Escape'){
+    closeModal();
+    searchResultsEl.style.display = 'none';
+    searchInput.blur();
+  }
 });
 
 // ─── MODAL ───────────────────────────────────────────────────────────────────
@@ -987,14 +1020,13 @@ searchInput.addEventListener('focus', () => { if (searchInput.value.trim()) rend
 document.addEventListener('click', e => {
   if (!e.target.closest('.search-wrap')) searchResultsEl.style.display = 'none';
 });
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { searchResultsEl.style.display = 'none'; searchInput.blur(); }
-});
+// Escape-Behandlung für die Suche steckt im zentralen keydown-Listener oben (bei ArrowLeft/Right)
 
 // ─── KALENDER-ABO (ICS) ──────────────────────────────────────────────────────
 const copyFeedBtn = document.getElementById('copyFeedBtn');
+const subscribeLinkEl = document.getElementById('subscribeLink');
 copyFeedBtn.addEventListener('click', () => {
-  const httpsUrl = document.getElementById('subscribeLink').href.replace(/^webcal:/, 'https:');
+  const httpsUrl = subscribeLinkEl.href.replace(/^webcal:/, 'https:');
   navigator.clipboard.writeText(httpsUrl).then(() => {
     copyFeedBtn.textContent = '✓ Kopiert';
     copyFeedBtn.classList.add('copied');
