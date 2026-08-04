@@ -14,7 +14,7 @@ Privater, passwortgeschützter Vorlesungskalender für das Studium (Bachelor Soz
 - **Installierbare App (PWA)** – auf Android als App installierbar (eigenes Icon, kein Browser-Rahmen), funktioniert dank Service Worker auch ohne Internetverbindung
 - **Suche** – Freitextsuche nach Veranstaltung oder Modulname direkt im Header; Klick auf ein Ergebnis springt zum passenden Monat und öffnet die Detailansicht
 - **Kalender-Abo (ICS)** – Termine lassen sich per `webcal://`-Link in Google/Apple/Outlook-Kalender abonnieren, inkl. automatischer Aktualisierung bei Änderungen (siehe Abschnitt "Kalender-Abo" unten)
-- **Modulverzeichnis** – separate Seite (`module.html`, verlinkt aus dem Kalender-Header) mit allen 28 Modulen des Studiengangs, Studienverlaufsplan-Grafik nach Semestern, Bausteinen, Modulprüfungen und Voraussetzungen (klickbar verlinkt). Frei zugänglich, ohne Passwortschutz. Bewusst ohne Modulverantwortliche.
+- **Modulverzeichnis** – seit Version 2.1.0 ein eigenständiges, öffentlich mit anderen Studierenden geteiltes Projekt: [module.xn--peppermita-lnb.de](https://module.xn--peppermita-lnb.de/) (eigenes Repo: [peppermieta/Modulverzeichnis](https://github.com/peppermieta/Modulverzeichnis)), verlinkt aus dem Kalender-Header. Alle 28 Module, Semesterauswahl, Farben nach Studienbereich, Modulverantwortliche, Workload-Aufteilung, Verwendbarkeit in anderen Studiengängen. Frei zugänglich, ohne Passwortschutz.
 - **Passwortschutz** – rein clientseitig (SHA-256-Hash im Quellcode), reicht aus, um die Seite vor Suchmaschinen/Zufallsbesucher:innen zu verbergen, ist aber **kein** echter Sicherheitsmechanismus
 - **Anonymisiert** – keine Angaben zu Name, Matrikelnummer oder Hochschule im Code
 
@@ -50,9 +50,13 @@ node scripts/generate-ics.js
 
 Das Skript liest die Termine direkt aus `index.html` aus – es gibt also nur eine einzige Datenquelle. Der Dateiname bleibt dabei automatisch gleich (fest im Skript hinterlegt), damit bestehende Abos nicht brechen.
 
-## Geplant
+## Modulverzeichnis ausgelagert
 
-Das Modulverzeichnis (`module.html`) soll perspektivisch zu einem eigenständigen, öffentlich mit anderen Studierenden teilbaren Projekt (eigenes Repo + eigene Subdomain, Semesterauswahl, alle 28 Module farbig nach Studienbereich, Modulverantwortliche u. v. m.) werden. Details siehe [PLANUNG_Modulverzeichnis-v2.md](PLANUNG_Modulverzeichnis-v2.md). Zurückgestellt bis nach der PWA-Umsetzung.
+Das Modulverzeichnis lebt seit Version 2.1.0 nicht mehr in diesem Repo, sondern als eigenständiges,
+öffentlich geteiltes Projekt unter [module.xn--peppermita-lnb.de](https://module.xn--peppermita-lnb.de/)
+([Repo](https://github.com/peppermieta/Modulverzeichnis)). Die alte `module.html` in diesem Repo
+leitet automatisch dorthin weiter. Details zur Migration siehe
+[PLANUNG_Modulverzeichnis-v2.md](PLANUNG_Modulverzeichnis-v2.md).
 
 ## App-Installation (PWA)
 
@@ -67,7 +71,7 @@ Danach startet der Kalender wie eine normale App (eigenes Icon, kein Browser-Rah
 
 ## Versionshistorie
 
-Alle Änderungen werden in [CHANGELOG.md](CHANGELOG.md) dokumentiert (aktuelle Version: **2.0.2**).
+Alle Änderungen werden in [CHANGELOG.md](CHANGELOG.md) dokumentiert (aktuelle Version: **2.1.0**).
 
 ## Farbpalette
 

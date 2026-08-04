@@ -7,6 +7,20 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [2.1.0] - 2026-08-04
+
+### Changed
+- Modulverzeichnis-Link im Header zeigt jetzt auf die neue, eigenständige
+  Modulverzeichnis-v2-Seite (https://module.xn--peppermita-lnb.de/, eigenes
+  Repo `peppermieta/Modulverzeichnis`) statt auf die interne `module.html`.
+- README aktualisiert: "Geplant"-Abschnitt durch Hinweis auf die
+  abgeschlossene Migration ersetzt, Funktionsliste angepasst.
+
+### Removed
+- Inhalt der alten `module.html` entfernt und durch eine kurze
+  Weiterleitungsseite ersetzt (automatischer Redirect nach 3 Sekunden +
+  manueller Link), falls noch alte Lesezeichen im Umlauf sind.
+
 ## [2.0.2] - 2026-08-04
 
 ### Added
