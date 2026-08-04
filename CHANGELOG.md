@@ -7,6 +7,16 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [2.1.1] - 2026-08-04
+
+### Changed
+- `module.html` (Weiterleitung auf das neue, eigenständige Modulverzeichnis)
+  stark vereinfacht: statt einer gestalteten Seite mit Erklärtext, Emoji und
+  3-Sekunden-Countdown jetzt nur noch ein sofortiger Redirect (0 Sekunden)
+  plus einfacher Fallback-Link. Betrifft praktisch nur noch alte
+  Lesezeichen, da der eigentliche Header-Link im Kalender bereits direkt
+  auf die neue Domain zeigt.
+
 ## [2.1.0] - 2026-08-04
 
 ### Changed
