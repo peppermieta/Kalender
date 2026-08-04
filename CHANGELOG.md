@@ -7,6 +7,22 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [2.0.2] - 2026-08-04
+
+### Added
+- `PLANUNG_Modulverzeichnis-v2.md` aktualisiert: mehrere Infrastruktur-
+  Schritte als erledigt markiert.
+  * Repo `peppermieta/Modulverzeichnis` angelegt (public, MIT-Lizenz)
+  * Subdomain `module.xn--peppermita-lnb.de` eingerichtet, GitHub Pages
+    aktiv, HTTPS erzwungen und bestätigt live
+  * `info@peppermięta.de` eingerichtet (als Alias, da der Strato-Tarif nur
+    1 Postfach erlaubt) und Weiterleitung an die Uni-Mail erfolgreich
+    getestet – damit auch die offene E-Mail-Ziel-Frage entschieden
+  * Praxis-Erkenntnis ergänzt: Custom-Domain-Einrichtung per API brauchte
+    zusätzlich `administration=write`, was bewusst nicht ins Token
+    aufgenommen wurde – dieser eine Schritt lief daher manuell, wie beim
+    Kalender
+
 ## [2.0.1] - 2026-08-04
 
 ### Added

@@ -28,7 +28,7 @@
 - **Ein Token für beide** → beim Erstellen eines Fine-grained-Tokens lassen sich mehrere konkrete Repos auswählen (nicht "alle Repos"). Weniger Verwaltungsaufwand, etwas größerer Radius im Ernstfall
 - **Entscheidung noch offen**, beides ist unproblematisch umsetzbar
 
-**Neue Berechtigung empfohlen:** Zusätzlich zu `Contents: Read and write` diesmal auch **`Pages: Read and write`** mit ins Token aufnehmen. Grund: Beim Kalender musste "Enforce HTTPS" mangels Berechtigung manuell in den GitHub-Einstellungen angeklickt werden – mit dieser zusätzlichen Berechtigung ließe sich das beim Modulverzeichnis von Anfang an vollständig automatisiert erledigen, ohne manuellen Zwischenschritt.
+**Berechtigungen – Erkenntnis aus der Praxis:** `Contents: Read and write` + `Pages: Read and write` wurden für dieses Repo verwendet. Damit ließen sich Dateien pushen und GitHub Pages grundsätzlich verwalten – **für das Setzen der Custom Domain samt "Enforce HTTPS" per API reichte das aber nicht**: Dieser eine Endpunkt verlangt laut GitHub zusätzlich `administration=write`, eine deutlich weitreichendere Berechtigung (generelle Repo-Verwaltung). Da das nicht extra beantragt werden sollte nur für diesen einen Schritt, wurde die Custom-Domain-Einrichtung + HTTPS-Aktivierung einmalig **manuell** über die GitHub-Weboberfläche erledigt (analog zum Kalender-Setup). Alles andere (Dateien pushen, Inhalte pflegen) läuft weiterhin normal über den Token. Für ein künftiges drittes Projekt: `Administration: Read and write` nur dann mit aufnehmen, wenn die Custom-Domain-Einrichtung wirklich vollautomatisch laufen soll – sonst reicht die schlankere Kombination.
 
 ## 3. Funktionale Änderungen gegenüber der aktuellen Version
 
@@ -87,24 +87,24 @@ So soll der Umzug ablaufen, ohne dass die laufende Kalender-Seite währenddessen
 
 ## 8. Abhängigkeiten zu anderen offenen Punkten
 
-- **E-Mail-Ziel für `info@peppermieta.de` noch offen:** Hotmail (wie ursprünglich geplant) oder doch die Uni-E-Mail? Uni-Mail passt inhaltlich besser (akademisches Feedback-Postfach), hält privat/akademisch getrennt – **muss aber vorher mit der EH-IT geklärt werden**, da manche Hochschul-Mailsysteme automatische Weiterleitungen an externe Adressen aus Sicherheits-/Compliance-Gründen blockieren. Hotmail bleibt die unkompliziertere Alternative ohne dieses Risiko.
-- Die Kontakt-E-Mail setzt außerdem voraus, dass die Domain bei Strato freigegeben ist und die E-Mail-Weiterleitung eingerichtet wurde (siehe frühere Planung dazu) – diese Abhängigkeit im Blick behalten.
-- Sobald die Haupt-Subdomain (`peppermięta.de`) verfügbar ist, auch die neue Modulverzeichnis-Subdomain mit einrichten.
+- ~~E-Mail-Ziel für `info@peppermieta.de` noch offen~~ **✅ Erledigt:** `info@peppermięta.de` ist eingerichtet (als Alias zum bestehenden Postfach, da der Strato-Tarif nur 1 Postfach + 20 Aliase erlaubt) und leitet erfolgreich an die **Uni-Mail** weiter – getestet und bestätigt funktionierend.
+- ~~Die Kontakt-E-Mail setzt außerdem voraus, dass die Domain bei Strato freigegeben ist und die E-Mail-Weiterleitung eingerichtet wurde~~ **✅ Erledigt.**
+- Sobald die Haupt-Subdomain (`peppermięta.de`) verfügbar ist, auch die neue Modulverzeichnis-Subdomain mit einrichten. **✅ Erledigt:** Subdomain `module.xn--peppermita-lnb.de` ist eingerichtet, GitHub Pages aktiv, HTTPS erzwungen (Zertifikat gültig bis 02.11.2026). Repo `peppermieta/Modulverzeichnis` (public, MIT-Lizenz) angelegt, enthält bisher nur README/LICENSE/CNAME – der eigentliche Seiteninhalt (Abschnitte 3–7) steht noch aus.
 
 ## 9. Noch zu erledigen bei Umsetzungsbeginn
 
-- [ ] Neues GitHub-Repo anlegen (public), Name + Lizenzfrage klären
-- [ ] Entscheidung: getrennte Tokens oder ein gemeinsames Token für beide Repos
-- [ ] Neuen Token mit `Contents: Read and write` **und** `Pages: Read and write` erstellen
-- [ ] Subdomain-Namen final festlegen
+- [x] Neues GitHub-Repo anlegen (public), Name + Lizenzfrage klären → `peppermieta/Modulverzeichnis`, MIT-Lizenz
+- [x] Entscheidung: getrennte Tokens oder ein gemeinsames Token für beide Repos → gemeinsames Token gewählt
+- [x] Neuen Token mit `Contents: Read and write` **und** `Pages: Read and write` erstellen (Hinweis: für Custom-Domain/HTTPS-Einrichtung reichte das nicht ganz – siehe Abschnitt 2, wurde einmalig manuell nachgeholt)
+- [x] Subdomain-Namen final festlegen → `module.xn--peppermita-lnb.de`, DNS + GitHub Pages + HTTPS eingerichtet und bestätigt live
 - [ ] Modulverantwortliche für alle 28 Module aus dem Handbuch nachtragen (bisher nur Teilmenge bekannt)
 - [ ] Workload-Aufteilung (Kontaktzeit/Selbststudium/Praxis) für alle 28 Module nachtragen
 - [ ] Verwendbarkeit in anderen Studiengängen für alle 28 Module nachtragen
 - [ ] Terrakotta-Farbe (Studienbereich 6) final festlegen
 - [ ] Semesterauswahl-Logik (JS) entwickeln – aktuell ist `module.html` reines HTML/CSS ohne JavaScript, das ändert sich damit
 - [ ] Disclaimer- und Kontakt-Text final formulieren
-- [ ] QR-Code generieren, sobald Subdomain live ist
-- [ ] E-Mail-Weiterleitungsziel entscheiden (Hotmail vs. Uni-Mail, siehe Abschnitt 8)
+- [ ] QR-Code generieren, sobald Subdomain live ist (Domain steht jetzt – Umsetzung noch offen)
+- [x] E-Mail-Weiterleitungsziel entscheiden → **Uni-Mail** gewählt, `info@peppermięta.de` eingerichtet (als Alias) und Weiterleitung getestet/bestätigt
 - [ ] Nach Fertigstellung: Link im Kalender-Header umbiegen, alte `module.html` entfernen/durch Weiterleitungs-Hinweis ersetzen
 
 ---
