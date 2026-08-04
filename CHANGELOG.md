@@ -7,6 +7,19 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [1.10.1] - 2026-08-04
+
+### Added
+- Planungsdokument `PLANUNG_Modulverzeichnis-v2.md` ergänzt: dokumentiert
+  den Plan, das Modulverzeichnis zu einem eigenständigen, öffentlich mit
+  anderen Studierenden teilbaren Projekt auszubauen (eigenes Repo + eigene
+  Subdomain, Semesterauswahl statt fester Vorauswahl, alle 28 Module farbig
+  nach Studienbereich statt nur 6, Modulverantwortliche, Workload-Aufteilung,
+  Verwendbarkeit in anderen Studiengängen, Link zum offiziellen PDF-Hand-
+  buch, Stand-Hinweis, Disclaimer, Kontakt-E-Mail, QR-Code). Reine Doku-
+  mentation, keine Umsetzung – zurückgestellt bis nach der PWA-Einführung.
+- Kurzer Verweis darauf in der README ("Geplant"-Abschnitt) ergänzt.
+
 ## [1.10.0] - 2026-08-03
 
 ### Added

@@ -48,9 +48,13 @@ node scripts/generate-ics.js
 
 Das Skript liest die Termine direkt aus `index.html` aus – es gibt also nur eine einzige Datenquelle. Der Dateiname bleibt dabei automatisch gleich (fest im Skript hinterlegt), damit bestehende Abos nicht brechen.
 
+## Geplant
+
+Das Modulverzeichnis (`module.html`) soll perspektivisch zu einem eigenständigen, öffentlich mit anderen Studierenden teilbaren Projekt (eigenes Repo + eigene Subdomain, Semesterauswahl, alle 28 Module farbig nach Studienbereich, Modulverantwortliche u. v. m.) werden. Details siehe [PLANUNG_Modulverzeichnis-v2.md](PLANUNG_Modulverzeichnis-v2.md). Zurückgestellt bis nach der PWA-Umsetzung.
+
 ## Versionshistorie
 
-Alle Änderungen werden in [CHANGELOG.md](CHANGELOG.md) dokumentiert (aktuelle Version: **1.10.0**).
+Alle Änderungen werden in [CHANGELOG.md](CHANGELOG.md) dokumentiert (aktuelle Version: **1.10.1**).
 
 ## Farbpalette
 
