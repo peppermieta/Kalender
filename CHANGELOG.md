@@ -7,6 +7,26 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [1.11.0] - 2026-08-04
+
+### Added
+- **PWA Phase 1 – Installierbarkeit & Offline-Fähigkeit:**
+  * `manifest.webmanifest` ergänzt (Name, Icons, Standalone-Anzeige,
+    Theme-Farbe) – Kalender ist auf Android jetzt als App installierbar
+  * `sw.js` (Service Worker) ergänzt: Network-first für HTML-Seiten (bei
+    bestehender Verbindung immer aktuellster Stand, da laufend Updates
+    kommen), Cache-first für statische Assets (Icons). Per Playwright mit
+    echtem Offline-Modus getestet (Netzwerk vollständig deaktiviert) –
+    Kalender und Modulverzeichnis laden beide korrekt aus dem Cache
+  * Service-Worker-Registrierung in `index.html` UND `module.html` (beide
+    Seiten funktionieren offline, unabhängig vom Einstiegspunkt)
+- **Private Notizen pro Termin:** neues Textfeld in der Termin-Detailan-
+  sicht, rein lokal im `localStorage` gespeichert (kein Server, kein Sync,
+  bleibt auf dem jeweiligen Gerät). Automatisches Speichern mit kurzer
+  Bestätigung ("Gespeichert ✓").
+- README um Abschnitt "App-Installation (PWA)" ergänzt, inkl. Hinweis zur
+  `CACHE_VERSION` in `sw.js` bei künftigen Updates.
+
 ## [1.10.1] - 2026-08-04
 
 ### Added

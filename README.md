@@ -10,6 +10,8 @@ Privater, passwortgeschützter Vorlesungskalender für das Studium (Bachelor Soz
 - **Farbcodierung nach Modul** – jede Veranstaltung ist ihrem Modul farblich zugeordnet, Legende oben auf der Seite (sortiert M02 → M10, Zusatzangebot am Ende)
 - **Mobile Ansicht** – unter 700px Breite wechselt die Seite automatisch von der 7-Spalten-Rasteransicht zu einer einspaltigen Tagesliste, damit Termine nicht abgeschnitten werden; Modulkürzel werden dort direkt am Termin angezeigt
 - **Termin-Details per Klick/Tap** – Datum, Uhrzeit, Raum, Modul, LV-Nummer und Parallelgruppe
+- **Private Notizen** – pro Termin, rein lokal im Browser gespeichert (kein Sync, kein Server), z. B. "Buch mitbringen"
+- **Installierbare App (PWA)** – auf Android als App installierbar (eigenes Icon, kein Browser-Rahmen), funktioniert dank Service Worker auch ohne Internetverbindung
 - **Suche** – Freitextsuche nach Veranstaltung oder Modulname direkt im Header; Klick auf ein Ergebnis springt zum passenden Monat und öffnet die Detailansicht
 - **Kalender-Abo (ICS)** – Termine lassen sich per `webcal://`-Link in Google/Apple/Outlook-Kalender abonnieren, inkl. automatischer Aktualisierung bei Änderungen (siehe Abschnitt "Kalender-Abo" unten)
 - **Modulverzeichnis** – separate Seite (`module.html`, verlinkt aus dem Kalender-Header) mit allen 28 Modulen des Studiengangs, Studienverlaufsplan-Grafik nach Semestern, Bausteinen, Modulprüfungen und Voraussetzungen (klickbar verlinkt). Frei zugänglich, ohne Passwortschutz. Bewusst ohne Modulverantwortliche.
@@ -52,9 +54,20 @@ Das Skript liest die Termine direkt aus `index.html` aus – es gibt also nur ei
 
 Das Modulverzeichnis (`module.html`) soll perspektivisch zu einem eigenständigen, öffentlich mit anderen Studierenden teilbaren Projekt (eigenes Repo + eigene Subdomain, Semesterauswahl, alle 28 Module farbig nach Studienbereich, Modulverantwortliche u. v. m.) werden. Details siehe [PLANUNG_Modulverzeichnis-v2.md](PLANUNG_Modulverzeichnis-v2.md). Zurückgestellt bis nach der PWA-Umsetzung.
 
+## App-Installation (PWA)
+
+Der Kalender lässt sich auf Android als App installieren:
+
+1. Seite in **Chrome** öffnen: http://kalender.xn--peppermita-lnb.de/
+2. Menü (⋮) → **"App installieren"** bzw. **"Zum Startbildschirm hinzufügen"**
+
+Danach startet der Kalender wie eine normale App (eigenes Icon, kein Browser-Rahmen) und funktioniert dank Service Worker auch **ohne Internetverbindung** – zuletzt geladene Termine, Suche, Modulverzeichnis etc. bleiben offline nutzbar.
+
+**Wichtig bei Code-Änderungen:** Der Service Worker (`sw.js`) lädt HTML-Seiten "network-first" (bei bestehender Verbindung immer die neueste Version), damit Updates nicht durch veraltete Caches verzögert werden. Trotzdem bei jeder inhaltlichen Änderung `CACHE_VERSION` in `sw.js` erhöhen – das räumt alte Caches sauber auf.
+
 ## Versionshistorie
 
-Alle Änderungen werden in [CHANGELOG.md](CHANGELOG.md) dokumentiert (aktuelle Version: **1.10.1**).
+Alle Änderungen werden in [CHANGELOG.md](CHANGELOG.md) dokumentiert (aktuelle Version: **1.11.0**).
 
 ## Farbpalette
 

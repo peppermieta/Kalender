@@ -1032,5 +1032,14 @@
     </div>
 </div>
 
+<script>
+  // PWA: Service Worker auch hier registrieren, falls diese Seite als erste
+  // aufgerufen wird (nicht nur über den Umweg über index.html)
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    });
+  }
+</script>
 </body>
 </html>
