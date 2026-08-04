@@ -7,7 +7,12 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
-## [1.11.0] - 2026-08-04
+## [2.0.0] - 2026-08-04
+
+_Versionssprung auf 2.0 statt 1.11: Der Kalender wechselt hier die Kategorie
+– von "Website, die man besucht" zu "App, die man installiert und auch
+offline nutzen kann". Das ist ein größerer Schritt als ein normales
+Funktions-Update, daher die erste Ziffer statt nur die zweite._
 
 ### Added
 - **PWA Phase 1 – Installierbarkeit & Offline-Fähigkeit:**
