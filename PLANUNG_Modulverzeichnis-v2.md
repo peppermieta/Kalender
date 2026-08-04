@@ -105,7 +105,7 @@ So soll der Umzug ablaufen, ohne dass die laufende Kalender-Seite währenddessen
 - [ ] Disclaimer- und Kontakt-Text final formulieren
 - [ ] QR-Code generieren, sobald Subdomain live ist (Domain steht jetzt – Umsetzung noch offen)
 - [x] E-Mail-Weiterleitungsziel entscheiden → **Uni-Mail** gewählt, `info@peppermięta.de` eingerichtet (als Alias) und Weiterleitung getestet/bestätigt
-- [ ] Nach Fertigstellung: Link im Kalender-Header umbiegen, alte `module.html` entfernen/durch Weiterleitungs-Hinweis ersetzen
+- [x] Nach Fertigstellung: Link im Kalender-Header umbiegen, alte `module.html` entfernen/durch Weiterleitungs-Hinweis ersetzen → **erledigt am 4.8.2026**, Link zeigt jetzt auf https://module.xn--peppermita-lnb.de/, alte `module.html` durch Weiterleitungsseite ersetzt
 
 ---
 
