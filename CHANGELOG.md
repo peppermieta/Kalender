@@ -7,6 +7,21 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [2.0.1] - 2026-08-04
+
+### Added
+- `PLANUNG_Modulverzeichnis-v2.md` um vier Abschnitte erweitert:
+  * Repository- & Token-Setup (public vs. private, Struktur, Lizenzfrage,
+    getrennte vs. gemeinsame Tokens, neu empfohlene `Pages: Read and write`-
+    Berechtigung für vollautomatisches HTTPS-Enforcement)
+  * Loslösung vom Kalender-Repo (Migrationsplan: erst v2 fertigstellen,
+    dann Verweis umbiegen, alte `module.html` entfernen/weiterleiten)
+  * Offene Frage zum E-Mail-Weiterleitungsziel (Hotmail vs. Uni-Mail,
+    inkl. Hinweis auf mögliche Einschränkungen bei Hochschul-Mailsystemen)
+  * Notiz zum Status von PWA Phase 1 (abgeschlossen) und Phase 2 (ntfy,
+    zurückgestellt)
+- Reine Dokumentation, keine Umsetzung.
+
 ## [2.0.0] - 2026-08-04
 
 _Versionssprung auf 2.0 statt 1.11: Der Kalender wechselt hier die Kategorie
