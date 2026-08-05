@@ -7,6 +7,15 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [2.2.0] - 2026-08-05
+
+### Added
+- **Modul-Badge im Event-Modal ist jetzt klickbar**: Führt direkt zum
+  passenden Modul im Modulverzeichnis (`module.xn--peppermita-lnb.de/#modul-N`,
+  in neuem Tab). Die Modulnummer wird aus dem Modul-Code abgeleitet (z. B.
+  M07 → `#modul-7`). Beim Zusatzangebot (ZA), das im Modulhandbuch nicht
+  geführt wird, bleibt der Badge unverlinkt.
+
 ## [2.1.1] - 2026-08-04
 
 ### Changed

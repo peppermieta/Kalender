@@ -71,7 +71,7 @@ Danach startet der Kalender wie eine normale App (eigenes Icon, kein Browser-Rah
 
 ## Versionshistorie
 
-Alle Änderungen werden in [CHANGELOG.md](CHANGELOG.md) dokumentiert (aktuelle Version: **2.1.1**).
+Alle Änderungen werden in [CHANGELOG.md](CHANGELOG.md) dokumentiert (aktuelle Version: **2.2.0**).
 
 ## Farbpalette
 

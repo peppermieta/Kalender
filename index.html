@@ -357,7 +357,11 @@
     letter-spacing: .3px;
     white-space: nowrap;
     flex-shrink: 0;
+    text-decoration: none;
+    display: inline-block;
   }
+  .modal-modul-badge.linked { cursor: pointer; }
+  .modal-modul-badge.linked:hover { opacity: .8; }
   .modal-close {
     background: var(--bg);
     border: 1px solid var(--border);
@@ -565,7 +569,7 @@
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal" id="modal">
     <div class="modal-header">
-      <span class="modal-modul-badge" id="modalBadge"></span>
+      <a class="modal-modul-badge" id="modalBadge" target="_blank" rel="noopener"></a>
       <button class="modal-close" id="modalClose">✕</button>
     </div>
     <div class="modal-title" id="modalTitle"></div>
@@ -899,8 +903,16 @@ modalNoteEl.addEventListener('input', () => {
 function openModal(ev){
   const m = MODS[ev.modul];
   const badge = document.getElementById('modalBadge');
-  badge.textContent = ev.modul === 'ZA' ? 'Zusatzangebot' : ev.modul;
+  badge.textContent = ev.modul === 'ZA' ? 'Zusatzangebot' : `${ev.modul} ↗`;
   badge.style.cssText = `background:${m.bg};color:${m.tx};border-color:${m.bd}`;
+  if (ev.modul === 'ZA') {
+    badge.removeAttribute('href');
+    badge.classList.remove('linked');
+  } else {
+    const modNr = parseInt(ev.modul.slice(1), 10);
+    badge.href = `https://module.xn--peppermita-lnb.de/#modul-${modNr}`;
+    badge.classList.add('linked');
+  }
 
   document.getElementById('modalTitle').textContent = ev.title;
 
