@@ -7,6 +7,24 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [2.3.0] - 2026-08-05
+
+### Added
+- **Tagesansicht** (Fokus-Ansicht / Tagesausblick): Klick auf eine Tageszelle
+  im Monatsraster öffnet einen eigenen Vollbild-Screen mit allen Terminen
+  dieses Tages. Für den heutigen Tag zusätzlich ein Live-Status mit
+  Countdown zum laufenden oder nächsten Termin (aktualisiert alle 30s).
+  Klick auf einen Termin in der Liste öffnet das gewohnte Detail-Modal
+  (inkl. privater Notiz).
+- **Teilbarer Link zu einem Tag**: Die Tagesansicht setzt die URL auf
+  `#YYYY-MM-DD`; ein direkter Aufruf mit diesem Hash springt automatisch
+  zum richtigen Monat und öffnet den Tag. "🔗 Link kopieren" im Kopfbereich
+  kopiert die fertige URL. Browser-Zurück/Vor funktioniert dank
+  `history.pushState`/`popstate` wie erwartet.
+- Der "+N weitere"-Button bei vielen Terminen an einem Tag öffnet jetzt
+  korrekt die vollständige Tagesansicht statt (Bug) nur den 4. Termin im
+  Detail-Modal zu zeigen.
+
 ## [2.2.0] - 2026-08-05
 
 ### Added

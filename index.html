@@ -439,6 +439,75 @@
     margin-top: 4px;
   }
 
+  /* ── TAGESANSICHT (Fokus/Tagesausblick, eigener Vollbild-Screen) ── */
+  .cal-cell:not(.other-month) { cursor: pointer; }
+
+  .day-view {
+    position: fixed; inset: 0;
+    background: var(--bg);
+    z-index: 400; /* unter dem Termin-Modal (500), über allem sonst */
+    display: none;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .day-view.open { display: flex; }
+  .day-view-header {
+    position: sticky; top: 0;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 14px 24px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    z-index: 1;
+  }
+  .day-view-back {
+    background: var(--bg); border: 1px solid var(--border); border-radius: 7px;
+    padding: 7px 12px; font-size: 13px; font-family: inherit; cursor: pointer; color: var(--text);
+    transition: background .15s;
+  }
+  .day-view-back:hover { background: var(--border); }
+  .day-view-date { font-size: 15px; font-weight: 700; letter-spacing: -.2px; text-align: center; }
+  .day-view-copy {
+    font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500;
+    padding: 6px 10px; border-radius: 7px; border: 1px solid var(--border);
+    background: var(--bg); color: var(--muted); cursor: pointer; white-space: nowrap;
+  }
+  .day-view-copy:hover { background: var(--surface); color: var(--text); }
+  .day-view-copy.copied { color: #1A8C70; border-color: #8DD4C2; }
+
+  .day-view-body { max-width: 640px; margin: 0 auto; padding: 20px 24px 40px; width: 100%; box-sizing: border-box; }
+
+  /* Live-Fokus-Status, nur wenn der angezeigte Tag "heute" ist */
+  .day-focus {
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px 16px; border: 1px solid var(--border); border-radius: var(--radius);
+    margin-bottom: 18px; font-size: 13.5px;
+  }
+  .day-focus-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .day-focus-status { font-weight: 700; }
+  .day-focus-detail { opacity: .85; }
+
+  .day-ferien-note { font-size: 12.5px; color: var(--muted); font-style: italic; margin-bottom: 14px; }
+  .day-empty { padding: 40px 0; text-align: center; color: var(--muted); font-size: 13.5px; }
+
+  .day-event {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 13px 14px; border: 1px solid var(--border); border-radius: var(--radius);
+    background: var(--surface); margin-bottom: 10px; cursor: pointer;
+    transition: border-color .15s;
+  }
+  .day-event:hover { border-color: #AAAAAA; }
+  .day-event-time {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted);
+    min-width: 42px; padding-top: 3px; flex-shrink: 0;
+  }
+  .day-event-main { flex: 1; min-width: 0; }
+  .day-event-badge {
+    display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 8px;
+    border-radius: 20px; border: 1px solid; letter-spacing: .3px; margin-bottom: 5px;
+  }
+  .day-event-title { font-size: 14px; font-weight: 600; line-height: 1.35; }
+  .day-event-room { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
   /* ── SCROLL NAV DOTS ── */
   .month-dots {
     display: flex;
@@ -518,6 +587,14 @@
       border-radius: 4px;
       background: rgba(0,0,0,.08);
     }
+
+    .day-view-header { padding: 10px 12px; }
+    .day-view-date {
+      font-size: 13px; flex: 1; min-width: 0;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .day-view-back, .day-view-copy { flex-shrink: 0; font-size: 12px; padding: 6px 9px; }
+    .day-view-body { padding: 14px 12px 30px; }
   }
 </style>
 </head>
@@ -583,6 +660,16 @@
       </div>
     </div>
   </div>
+</div>
+
+<!-- TAGESANSICHT (Fokus-Ansicht für heute / Tagesausblick für andere Tage) -->
+<div class="day-view" id="dayView">
+  <div class="day-view-header">
+    <button class="day-view-back" id="dayViewBack" type="button">&#8592; Zurück</button>
+    <div class="day-view-date" id="dayViewDate"></div>
+    <button class="day-view-copy" id="dayViewCopy" type="button">🔗 Link kopieren</button>
+  </div>
+  <div class="day-view-body" id="dayViewBody"></div>
 </div>
 
 <script>
@@ -834,9 +921,11 @@ function renderMonth(idx){
       const more = document.createElement('button');
       more.className='more-btn';
       more.textContent = `+${events.length-MAX_CHIPS} weitere`;
-      more.onclick=(e)=>{e.stopPropagation(); openDayModal(iso, events);}
+      more.onclick=(e)=>{e.stopPropagation(); openDayView(iso);}
       cell.appendChild(more);
     }
+
+    if(!otherMonth) cell.addEventListener('click', () => openDayView(iso));
 
     grid.appendChild(cell);
   }
@@ -869,13 +958,16 @@ document.getElementById('prevBtn').onclick=()=>goTo(currentMonthIdx-1);
 document.getElementById('nextBtn').onclick=()=>goTo(currentMonthIdx+1);
 document.getElementById('todayBtn').onclick=goToToday;
 document.addEventListener('keydown',e=>{
-  if(e.key==='ArrowLeft') goTo(currentMonthIdx-1);
-  if(e.key==='ArrowRight') goTo(currentMonthIdx+1);
   if(e.key==='Escape'){
-    closeModal();
+    if(overlay.classList.contains('open')){ closeModal(); return; }
+    if(dayView.classList.contains('open')){ closeDayView(); return; }
     searchResultsEl.style.display = 'none';
     searchInput.blur();
+    return;
   }
+  if(dayView.classList.contains('open')) return; // Monatsnavigation pausiert während die Tagesansicht offen ist
+  if(e.key==='ArrowLeft') goTo(currentMonthIdx-1);
+  if(e.key==='ArrowRight') goTo(currentMonthIdx+1);
 });
 
 // ─── MODAL ───────────────────────────────────────────────────────────────────
@@ -940,18 +1032,150 @@ function openModal(ev){
   overlay.classList.add('open');
 }
 
-function openDayModal(iso, events){
-  // For "more" – show first event, could extend to list all
-  // We'll show a mini list by opening first then cycling won't hurt UX
-  // For simplicity, open the first hidden event
-  openModal(events[3] || events[0]);
-}
-
 function closeModal(){
   overlay.classList.remove('open');
 }
 modalClose.onclick = closeModal;
 overlay.onclick = e=>{ if(e.target===overlay) closeModal(); };
+
+// ─── TAGESANSICHT (Fokus-Ansicht für heute / Tagesausblick für andere Tage) ──
+// Zeigt alle Termine eines Tages in einem eigenen Vollbild-Screen (nicht im
+// Modal). Für "heute" zusätzlich ein Live-Status mit Countdown zum laufenden
+// bzw. nächsten Termin. URL-Hash (#YYYY-MM-DD) macht die Ansicht teilbar und
+// per Browser-Zurück wieder verlassbar – siehe History-Handling unten.
+const dayView = document.getElementById('dayView');
+const dayViewBody = document.getElementById('dayViewBody');
+const dayViewDate = document.getElementById('dayViewDate');
+const dayViewBack = document.getElementById('dayViewBack');
+const dayViewCopy = document.getElementById('dayViewCopy');
+let currentDayIso = null;
+let dayFocusTimer = null;
+
+function isoFromHash(){
+  const h = location.hash.slice(1);
+  return /^\d{4}-\d{2}-\d{2}$/.test(h) ? h : null;
+}
+
+// Springt die Monatsansicht im Hintergrund auf den passenden Monat, damit
+// man nach dem Schließen der Tagesansicht am richtigen Ort landet
+function syncMonthToIso(iso){
+  const [y, m] = iso.split('-').map(Number);
+  const idx = MONTHS.findIndex(mo => mo.year===y && mo.month===(m-1));
+  if(idx !== -1 && idx !== currentMonthIdx) goTo(idx);
+}
+
+function formatCountdown(mins){
+  if(mins < 60) return `${mins} Min.`;
+  const h = Math.floor(mins/60), r = mins%60;
+  return r ? `${h} Std. ${r} Min.` : `${h} Std.`;
+}
+
+function updateDayFocus(events){
+  const el = document.getElementById('dayFocus');
+  if(!el) return;
+  const now = new Date();
+  const withDt = events.map(ev => ({
+    ev,
+    startDt: new Date(`${ev.date}T${ev.start}:00`),
+    endDt:   new Date(`${ev.date}T${ev.end}:00`)
+  }));
+  const running = withDt.find(x => now >= x.startDt && now < x.endDt);
+  const next = withDt.filter(x => x.startDt > now).sort((a,b)=>a.startDt-b.startDt)[0];
+
+  let statusHtml, m;
+  if(running){
+    m = MODS[running.ev.modul];
+    const minsLeft = Math.max(1, Math.round((running.endDt-now)/60000));
+    statusHtml = `<span class="day-focus-status">Läuft gerade</span> <span class="day-focus-detail">– endet in ${formatCountdown(minsLeft)} (${running.ev.title})</span>`;
+  } else if(next){
+    m = MODS[next.ev.modul];
+    const minsLeft = Math.max(1, Math.round((next.startDt-now)/60000));
+    statusHtml = `<span class="day-focus-status">Startet in ${formatCountdown(minsLeft)}</span> <span class="day-focus-detail">– ${next.ev.title}</span>`;
+  } else {
+    statusHtml = `<span class="day-focus-status">Keine weiteren Termine heute</span>`;
+  }
+
+  el.style.background = m ? m.bg : 'var(--surface)';
+  el.style.color = m ? m.tx : 'var(--text)';
+  el.style.borderColor = m ? m.bd : 'var(--border)';
+  el.innerHTML = `<span class="day-focus-dot" style="background:${m ? m.dot : 'var(--muted)'}"></span>${statusHtml}`;
+}
+
+// pushHistory=false wird beim Laden per Link/Zurück-Taste genutzt, um keinen
+// neuen (redundanten) History-Eintrag zu erzeugen
+function renderDayView(iso, {pushHistory=true} = {}){
+  const events = (byDate[iso] || []).slice().sort((a,b)=> a.start.localeCompare(b.start));
+  const [y, mo, d] = iso.split('-').map(Number);
+  const dow = new Date(y, mo-1, d).getDay();
+  dayViewDate.textContent = `${WEEKDAY_ABBR[dow]}, ${d}. ${MONTH_NAMES[mo-1]} ${y}`;
+
+  const today = new Date();
+  const todayISO = isoDate(today.getFullYear(), today.getMonth(), today.getDate());
+  const isToday = iso === todayISO;
+
+  let html = '';
+  if(FERIEN.has(iso)) html += `<div class="day-ferien-note">🎄 Weihnachtsferien</div>`;
+  if(isToday) html += `<div class="day-focus" id="dayFocus"></div>`;
+
+  if(!events.length){
+    html += `<div class="day-empty">Keine Veranstaltungen an diesem Tag.</div>`;
+  } else {
+    html += events.map(ev => {
+      const m = MODS[ev.modul];
+      return `
+        <div class="day-event">
+          <div class="day-event-time">${ev.start}</div>
+          <div class="day-event-main">
+            <span class="day-event-badge" style="background:${m.bg};color:${m.tx};border-color:${m.bd}">${ev.modul}</span>
+            <div class="day-event-title">${ev.title}</div>
+            <div class="day-event-room">📍 ${ev.raum || 'Raum wird noch bekannt gegeben'}</div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+  dayViewBody.innerHTML = html;
+  dayViewBody.querySelectorAll('.day-event').forEach((el,i) => { el.onclick = () => openModal(events[i]); });
+
+  dayView.classList.add('open');
+  currentDayIso = iso;
+  if(pushHistory) history.pushState({dayView:iso}, '', `#${iso}`);
+
+  clearInterval(dayFocusTimer);
+  dayFocusTimer = null;
+  if(isToday){
+    updateDayFocus(events);
+    dayFocusTimer = setInterval(() => updateDayFocus(events), 30000);
+  }
+}
+
+function openDayView(iso){ renderDayView(iso, {pushHistory:true}); }
+
+function closeDayView({pushHistory=true} = {}){
+  dayView.classList.remove('open');
+  clearInterval(dayFocusTimer);
+  dayFocusTimer = null;
+  currentDayIso = null;
+  if(pushHistory && location.hash) history.pushState(null, '', location.pathname + location.search);
+}
+
+dayViewBack.onclick = () => closeDayView();
+
+dayViewCopy.addEventListener('click', () => {
+  if(!currentDayIso) return;
+  const url = `${location.origin}${location.pathname}#${currentDayIso}`;
+  navigator.clipboard.writeText(url).then(() => {
+    dayViewCopy.textContent = '✓ Kopiert';
+    dayViewCopy.classList.add('copied');
+    setTimeout(() => { dayViewCopy.textContent = '🔗 Link kopieren'; dayViewCopy.classList.remove('copied'); }, 2000);
+  });
+});
+
+// Browser-Zurück/Vor bzw. direkter Aufruf eines geteilten Tages-Links
+window.addEventListener('popstate', () => {
+  const iso = isoFromHash();
+  if(iso){ syncMonthToIso(iso); renderDayView(iso, {pushHistory:false}); }
+  else closeDayView({pushHistory:false});
+});
 
 // ─── TOUCH SWIPE (Monatsnavigation auf Mobile/Touch-Geräten) ────────────────
 (function(){
@@ -1093,7 +1317,18 @@ copyFeedBtn.addEventListener('click', () => {
 });
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
-renderMonth(0);
+(function(){
+  const initialIso = isoFromHash();
+  if(initialIso){
+    const [y, m] = initialIso.split('-').map(Number);
+    const idx = MONTHS.findIndex(mo => mo.year===y && mo.month===(m-1));
+    renderMonth(idx !== -1 ? idx : 0);
+    if(idx !== -1) currentMonthIdx = idx;
+    renderDayView(initialIso, {pushHistory:false});
+  } else {
+    renderMonth(0);
+  }
+})();
 renderNextUp();
 </script>
 <style>
