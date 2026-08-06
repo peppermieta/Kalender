@@ -7,6 +7,27 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [2.4.0] - 2026-08-06
+
+### Added
+- **Prüfungs- und Abgabetermine als eigener Typ**: Termine können jetzt ein
+  optionales `type`-Feld (`"pruefung"` / `"abgabe"`) bekommen. Werden im
+  Monatsraster, der Tagesansicht und im Termin-Modal mit Icon (📝/📤) und
+  einem zusätzlichen Akzentrand (statt der Modulfarbe zu ersetzen, bleibt
+  die Modulzuordnung weiterhin erkennbar) hervorgehoben. Modal zeigt
+  zusätzlich ein eigenes Typ-Badge ("📝 Prüfungstermin" / "📤
+  Abgabetermin").
+- **Uhrzeit ist jetzt optional** (`start`/`end` dürfen `null` sein) – für
+  Abgabetermine ohne feste Uhrzeit. Werden als "Ganztägig" angezeigt und
+  sortieren an den Anfang des jeweiligen Tages (wie in gängigen
+  Kalender-Apps). Bei Abgaben wird die Raum-Zeile weggelassen, da meist
+  nicht zutreffend. Termine ohne Uhrzeit werden aus der
+  "Nächste Veranstaltung"-Berechnung und dem Live-Countdown der
+  Tagesansicht ausgeschlossen (ergibt dort keinen Sinn), erscheinen aber
+  ganz normal in der Terminliste.
+- Datenpflege weiterhin ausschließlich über den Quellcode (`EVENTS`-Array),
+  keine Eingabe-UI im Kalender selbst.
+
 ## [2.3.0] - 2026-08-05
 
 ### Added

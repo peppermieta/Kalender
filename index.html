@@ -313,6 +313,13 @@
   .chip-ZA  { background: var(--ZA-bg);  color: var(--ZA-tx);  border-color: var(--ZA-bd); }
   .chip-M02  { background: var(--M02-bg);  color: var(--M02-tx);  border-color: var(--M02-bd); }
 
+  /* ── PRÜFUNGS-/ABGABETERMINE: zusätzlicher Akzentrand, Modulfarbe bleibt
+     als Hintergrund erhalten (Termin bleibt dem Modul zuordenbar) ── */
+  .event-chip.event-type-pruefung { border-left: 3px solid #DC2626; }
+  .event-chip.event-type-abgabe   { border-left: 3px solid #EA580C; }
+  .day-event.event-type-pruefung  { border-left: 3px solid #DC2626; }
+  .day-event.event-type-abgabe    { border-left: 3px solid #EA580C; }
+
   /* ── MODAL ── */
   .modal-overlay {
     position: fixed; inset: 0;
@@ -348,6 +355,7 @@
     justify-content: space-between;
     gap: 12px;
   }
+  .modal-badges { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .modal-modul-badge {
     font-size: 11px;
     font-weight: 700;
@@ -362,6 +370,12 @@
   }
   .modal-modul-badge.linked { cursor: pointer; }
   .modal-modul-badge.linked:hover { opacity: .8; }
+  .modal-type-badge {
+    font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px;
+    white-space: nowrap; display: none;
+  }
+  .modal-type-badge.type-pruefung { display: inline-block; background: #FCE2E2; color: #A11B1B; }
+  .modal-type-badge.type-abgabe   { display: inline-block; background: #FDE6D2; color: #9A4A0C; }
   .modal-close {
     background: var(--bg);
     border: 1px solid var(--border);
@@ -646,7 +660,10 @@
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal" id="modal">
     <div class="modal-header">
-      <a class="modal-modul-badge" id="modalBadge" target="_blank" rel="noopener"></a>
+      <div class="modal-badges">
+        <a class="modal-modul-badge" id="modalBadge" target="_blank" rel="noopener"></a>
+        <span class="modal-type-badge" id="modalTypeBadge"></span>
+      </div>
       <button class="modal-close" id="modalClose">✕</button>
     </div>
     <div class="modal-title" id="modalTitle"></div>
@@ -775,12 +792,20 @@ const ROOMS = {
 
 // Raum je Termin setzen (LV-Nummer-Lookup; einzelne Termine können das mit
 // einem eigenen "raum:"-Feld direkt im EVENTS-Eintrag überschreiben)
+// Icon-Kennzeichnung für Termine, die vom normalen Vorlesungsbetrieb
+// abweichen (Prüfungen/Abgaben). ev.type ist optional; ohne type = normale
+// Veranstaltung wie bisher. ev.start/ev.end sind bei diesen beiden Typen
+// optional (z.B. eine Abgabefrist ohne genaue Uhrzeit) – Sortierung und
+// Live-Status-Berechnung sind entsprechend null-sicher.
+const TYPE_ICON = {pruefung: '📝', abgabe: '📤'};
+
 EVENTS.forEach(ev => {
   if (!ev.raum) ev.raum = ROOMS[ev.lvnr] || null;
 });
 
-// Sort by start time within same date
-EVENTS.sort((a,b)=>a.start.localeCompare(b.start));
+// Sort by start time within same date (Termine ohne Uhrzeit sortieren als
+// "ganztägig" an den Anfang des Tages, wie in gängigen Kalender-Apps)
+EVENTS.sort((a,b)=>(a.start||'').localeCompare(b.start||''));
 
 // Index by date
 const byDate = {};
@@ -910,10 +935,13 @@ function renderMonth(idx){
     // events kommt bereits sortiert aus byDate (siehe globales EVENTS.sort() oben)
     events.slice(0,MAX_CHIPS).forEach(ev=>{
       const chip = document.createElement('span');
-      chip.className = `event-chip chip-${ev.modul}`;
+      const typeCls = ev.type ? ` event-type-${ev.type}` : '';
+      chip.className = `event-chip chip-${ev.modul}${typeCls}`;
       const modLabel = ev.modul;
+      const typeIcon = ev.type ? `${TYPE_ICON[ev.type]} ` : '';
+      const timeLabel = ev.start ? ev.start : 'Ganztägig';
       const roomHtml = ev.raum ? ` <span class="chip-room">· 📍 ${ev.raum}</span>` : '';
-      chip.innerHTML = `<span class="chip-time">${ev.start}</span><span class="chip-mod">${modLabel}</span>${ev.title}${roomHtml}`;
+      chip.innerHTML = `<span class="chip-time">${timeLabel}</span><span class="chip-mod">${modLabel}</span>${typeIcon}${ev.title}${roomHtml}`;
       chip.onclick = (e)=>{ e.stopPropagation(); openModal(ev); };
       cell.appendChild(chip);
     });
@@ -1006,19 +1034,26 @@ function openModal(ev){
     badge.classList.add('linked');
   }
 
+  const typeBadge = document.getElementById('modalTypeBadge');
+  typeBadge.className = 'modal-type-badge';
+  if (ev.type === 'pruefung') { typeBadge.textContent = '📝 Prüfungstermin'; typeBadge.classList.add('type-pruefung'); }
+  else if (ev.type === 'abgabe') { typeBadge.textContent = '📤 Abgabetermin'; typeBadge.classList.add('type-abgabe'); }
+  else { typeBadge.textContent = ''; }
+
   document.getElementById('modalTitle').textContent = ev.title;
 
   const d = new Date(ev.date+'T12:00:00Z');
   const dateStr = `${WEEKDAY_ABBR[d.getUTCDay()]}, ${d.getUTCDate()}. ${MONTH_NAMES[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+  const uhrzeitStr = ev.start ? `${ev.start} – ${ev.end} Uhr` : 'Ganztägig';
 
   const rows = [
     ['Datum',    dateStr],
-    ['Uhrzeit',  `${ev.start} – ${ev.end} Uhr`],
-    ['Raum',     ev.raum || 'wird noch bekannt gegeben'],
-    ['Modul',    m.label],
-    ['LV-Nummer', ev.lvnr],
-    ['Parallelgruppe', `PG ${ev.pg}`],
+    ['Uhrzeit',  uhrzeitStr],
   ];
+  if (ev.type !== 'abgabe') rows.push(['Raum', ev.raum || 'wird noch bekannt gegeben']);
+  rows.push(['Modul', m.label]);
+  if (ev.lvnr) rows.push(['LV-Nummer', ev.lvnr]);
+  if (ev.pg) rows.push(['Parallelgruppe', `PG ${ev.pg}`]);
 
   document.getElementById('modalInfo').innerHTML = rows.map(([l,v])=>`
     <span class="info-label">${l}</span>
@@ -1074,7 +1109,7 @@ function updateDayFocus(events){
   const el = document.getElementById('dayFocus');
   if(!el) return;
   const now = new Date();
-  const withDt = events.map(ev => ({
+  const withDt = events.filter(ev => ev.start).map(ev => ({
     ev,
     startDt: new Date(`${ev.date}T${ev.start}:00`),
     endDt:   new Date(`${ev.date}T${ev.end}:00`)
@@ -1104,7 +1139,7 @@ function updateDayFocus(events){
 // pushHistory=false wird beim Laden per Link/Zurück-Taste genutzt, um keinen
 // neuen (redundanten) History-Eintrag zu erzeugen
 function renderDayView(iso, {pushHistory=true} = {}){
-  const events = (byDate[iso] || []).slice().sort((a,b)=> a.start.localeCompare(b.start));
+  const events = (byDate[iso] || []).slice().sort((a,b)=> (a.start||'').localeCompare(b.start||''));
   const [y, mo, d] = iso.split('-').map(Number);
   const dow = new Date(y, mo-1, d).getDay();
   dayViewDate.textContent = `${WEEKDAY_ABBR[dow]}, ${d}. ${MONTH_NAMES[mo-1]} ${y}`;
@@ -1122,13 +1157,17 @@ function renderDayView(iso, {pushHistory=true} = {}){
   } else {
     html += events.map(ev => {
       const m = MODS[ev.modul];
+      const typeCls = ev.type ? ` event-type-${ev.type}` : '';
+      const typeIcon = ev.type ? `${TYPE_ICON[ev.type]} ` : '';
+      const timeLabel = ev.start ? ev.start : 'Ganztägig';
+      const roomLine = ev.type === 'abgabe' ? '' : `<div class="day-event-room">📍 ${ev.raum || 'Raum wird noch bekannt gegeben'}</div>`;
       return `
-        <div class="day-event">
-          <div class="day-event-time">${ev.start}</div>
+        <div class="day-event${typeCls}">
+          <div class="day-event-time">${timeLabel}</div>
           <div class="day-event-main">
             <span class="day-event-badge" style="background:${m.bg};color:${m.tx};border-color:${m.bd}">${ev.modul}</span>
-            <div class="day-event-title">${ev.title}</div>
-            <div class="day-event-room">📍 ${ev.raum || 'Raum wird noch bekannt gegeben'}</div>
+            <div class="day-event-title">${typeIcon}${ev.title}</div>
+            ${roomLine}
           </div>
         </div>`;
     }).join('');
@@ -1203,6 +1242,7 @@ function renderNextUp(){
 
   const now = new Date();
   const upcoming = EVENTS
+    .filter(ev => ev.start)
     .map(ev => ({ ev, dt: new Date(`${ev.date}T${ev.start}:00`) }))
     .filter(x => x.dt.getTime() >= now.getTime())
     .sort((a, b) => a.dt - b.dt)[0];
