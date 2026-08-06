@@ -641,6 +641,7 @@
   <div class="subscribe-wrap">
     <a id="subscribeLink" class="subscribe-link" href="webcal://kalender.xn--peppermita-lnb.de/feed-7b77b19da1cb.ics">📅 Kalender abonnieren</a>
     <button id="copyFeedBtn" class="subscribe-copy" type="button">🔗 Link kopieren</button>
+    <button id="notesSyncOpenBtn" class="subscribe-copy" type="button">📋 Notizen übertragen</button>
   </div>
 </div>
 
@@ -675,6 +676,34 @@
         <textarea id="modalNote" class="note-textarea" placeholder="z. B. Buch mitbringen, Raum prüfen …" rows="2"></textarea>
         <span class="note-saved" id="noteSaved">Gespeichert ✓</span>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIZEN ÜBERTRAGEN (manueller Export/Import zwischen Geräten, da Notizen
+     bewusst nur lokal in localStorage liegen, kein automatischer Cloud-Sync) -->
+<div class="modal-overlay" id="notesSyncOverlay">
+  <div class="modal" id="notesSyncModal">
+    <div class="modal-header">
+      <div class="modal-badges"><span style="font-weight:700;font-size:14px;">📋 Notizen zwischen Geräten übertragen</span></div>
+      <button class="modal-close" id="notesSyncClose">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-divider"></div>
+      <p style="font-size:12.5px;color:var(--muted);line-height:1.6;margin:0 0 16px;">
+        Notizen liegen bewusst nur lokal auf diesem Gerät. Um sie auf ein anderes Gerät zu
+        bekommen: Text unten kopieren, auf dem anderen Gerät hier einfügen und importieren.
+        Der Import überschreibt nur Notizen zu denselben Terminen, alle anderen bleiben erhalten.
+      </p>
+
+      <label class="note-label" for="notesSyncExport">Export (<span id="notesSyncCount">0</span> Notizen auf diesem Gerät)</label>
+      <textarea id="notesSyncExport" class="note-textarea" rows="4" readonly onclick="this.select()"></textarea>
+      <button type="button" class="subscribe-copy" id="notesSyncCopyBtn" style="margin-top:8px;">🔗 Kopieren</button>
+
+      <label class="note-label" for="notesSyncImport" style="margin-top:20px;">Import (hier einfügen)</label>
+      <textarea id="notesSyncImport" class="note-textarea" rows="4" placeholder="Exportierten Text vom anderen Gerät hier einfügen…"></textarea>
+      <button type="button" class="subscribe-copy" id="notesSyncImportBtn" style="margin-top:8px;">📥 Importieren</button>
+      <span id="notesSyncImportResult" style="font-size:12px;color:var(--muted);margin-left:8px;"></span>
     </div>
   </div>
 </div>
@@ -988,6 +1017,7 @@ document.getElementById('todayBtn').onclick=goToToday;
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){
     if(overlay.classList.contains('open')){ closeModal(); return; }
+    if(notesSyncOverlay.classList.contains('open')){ closeNotesSync(); return; }
     if(dayView.classList.contains('open')){ closeDayView(); return; }
     searchResultsEl.style.display = 'none';
     searchInput.blur();
@@ -1004,7 +1034,12 @@ const modalClose = document.getElementById('modalClose');
 
 // ─── PRIVATE NOTIZEN (nur lokal auf diesem Gerät gespeichert, kein Sync) ────
 // Schlüssel je Termin: Datum + Uhrzeit + LV-Nummer (stabil über Neu-Rendern hinweg)
-function noteKeyFor(ev){ return `note:${ev.date}_${ev.start}_${ev.lvnr}`; }
+// Bei Terminen ohne lvnr/Uhrzeit (Prüfungen/Abgaben können beides null haben)
+// reicht date+start+lvnr allein nicht mehr zur eindeutigen Zuordnung – fällt
+// dann auf Modul+Titel zurück. Für alle bisherigen Termine (haben immer eine
+// echte lvnr) bleibt der Schlüssel unverändert, bestehende Notizen bleiben
+// also gültig.
+function noteKeyFor(ev){ return `note:${ev.date}_${ev.start || 'allday'}_${ev.lvnr || (ev.modul + '_' + ev.title)}`; }
 let currentModalEvent = null;
 const modalNoteEl = document.getElementById('modalNote');
 const noteSavedEl = document.getElementById('noteSaved');
@@ -1072,6 +1107,77 @@ function closeModal(){
 }
 modalClose.onclick = closeModal;
 overlay.onclick = e=>{ if(e.target===overlay) closeModal(); };
+
+// ─── NOTIZEN ÜBERTRAGEN (manueller Export/Import zwischen Geräten) ──────────
+// Notizen liegen bewusst nur lokal in localStorage (kein automatischer
+// Cloud-Sync) – dieses Panel erlaubt einen manuellen Textexport, den man auf
+// einem anderen Gerät wieder einfügt. Import ist additiv/überschreibend pro
+// Termin, nicht destruktiv für alle übrigen Notizen.
+const notesSyncOverlay = document.getElementById('notesSyncOverlay');
+const notesSyncExportEl = document.getElementById('notesSyncExport');
+const notesSyncCountEl = document.getElementById('notesSyncCount');
+const notesSyncImportEl = document.getElementById('notesSyncImport');
+const notesSyncImportResultEl = document.getElementById('notesSyncImportResult');
+
+function getAllNotes(){
+  const notes = {};
+  for (let i = 0; i < localStorage.length; i++){
+    const key = localStorage.key(i);
+    if (key && key.startsWith('note:')) notes[key] = localStorage.getItem(key);
+  }
+  return notes;
+}
+
+function refreshNotesSyncExport(){
+  const notes = getAllNotes();
+  const count = Object.keys(notes).length;
+  notesSyncCountEl.textContent = count;
+  notesSyncExportEl.value = count ? JSON.stringify(notes) : '';
+  notesSyncExportEl.placeholder = count ? '' : 'Noch keine Notizen auf diesem Gerät vorhanden.';
+}
+
+function openNotesSync(){
+  refreshNotesSyncExport();
+  notesSyncImportEl.value = '';
+  notesSyncImportResultEl.textContent = '';
+  notesSyncOverlay.classList.add('open');
+}
+function closeNotesSync(){ notesSyncOverlay.classList.remove('open'); }
+document.getElementById('notesSyncOpenBtn').onclick = openNotesSync;
+document.getElementById('notesSyncClose').onclick = closeNotesSync;
+notesSyncOverlay.onclick = e => { if (e.target === notesSyncOverlay) closeNotesSync(); };
+
+const notesSyncCopyBtn = document.getElementById('notesSyncCopyBtn');
+notesSyncCopyBtn.addEventListener('click', () => {
+  if (!notesSyncExportEl.value) return;
+  navigator.clipboard.writeText(notesSyncExportEl.value).then(() => {
+    notesSyncCopyBtn.textContent = '✓ Kopiert';
+    notesSyncCopyBtn.classList.add('copied');
+    setTimeout(() => { notesSyncCopyBtn.textContent = '🔗 Kopieren'; notesSyncCopyBtn.classList.remove('copied'); }, 2000);
+  });
+});
+
+document.getElementById('notesSyncImportBtn').addEventListener('click', () => {
+  const raw = notesSyncImportEl.value.trim();
+  if (!raw) { notesSyncImportResultEl.textContent = 'Kein Text zum Importieren eingefügt.'; return; }
+  let parsed;
+  try { parsed = JSON.parse(raw); }
+  catch(e) { notesSyncImportResultEl.textContent = '⚠️ Ungültiges Format – bitte den kompletten kopierten Text einfügen.'; return; }
+  if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+    notesSyncImportResultEl.textContent = '⚠️ Ungültiges Format.';
+    return;
+  }
+  let imported = 0;
+  Object.entries(parsed).forEach(([key, val]) => {
+    if (typeof key === 'string' && key.startsWith('note:') && typeof val === 'string') {
+      localStorage.setItem(key, val);
+      imported++;
+    }
+  });
+  notesSyncImportResultEl.textContent = imported ? `✓ ${imported} Notiz(en) importiert.` : 'Keine gültigen Notizen gefunden.';
+  notesSyncImportEl.value = '';
+  refreshNotesSyncExport();
+});
 
 // ─── TAGESANSICHT (Fokus-Ansicht für heute / Tagesausblick für andere Tage) ──
 // Zeigt alle Termine eines Tages in einem eigenen Vollbild-Screen (nicht im

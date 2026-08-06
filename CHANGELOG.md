@@ -7,6 +7,26 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [2.5.0] - 2026-08-06
+
+### Added
+- **Notizen zwischen Geräten übertragen**: neuer Button "📋 Notizen
+  übertragen" in der Toolbar öffnet ein Panel mit Export (alle privaten
+  Notizen als Text zum Kopieren) und Import (Text auf dem anderen Gerät
+  einfügen). Bewusst manuell statt automatischem Cloud-Sync – Notizen
+  bleiben dadurch weiterhin ausschließlich lokal gespeichert, verlassen das
+  Gerät nur, wenn aktiv kopiert/eingefügt wird. Import überschreibt nur
+  Notizen zu denselben Terminen, alle anderen bleiben erhalten.
+
+### Fixed
+- **Möglicher Notiz-Konflikt bei Prüfungs-/Abgabeterminen behoben**: Der
+  Notiz-Schlüssel wurde aus Datum+Uhrzeit+LV-Nummer gebildet – bei
+  Abgabeterminen (Uhrzeit und LV-Nummer können beide fehlen) hätten sich
+  zwei verschiedene Abgaben am selben Tag versehentlich dieselbe Notiz
+  geteilt. Fällt jetzt in diesem Fall auf Modul+Titel zurück. Bestehende
+  Notizen sind davon nicht betroffen, da alle bisherigen Termine eine echte
+  LV-Nummer haben.
+
 ## [2.4.0] - 2026-08-06
 
 ### Added
