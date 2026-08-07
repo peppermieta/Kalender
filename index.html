@@ -1449,6 +1449,7 @@ document.addEventListener('click', e => {
 // Fester Dateiname bewusst nicht ändern (s. scripts/generate-ics.js) – sonst
 // bricht jedes bestehende Abo in Google/Apple Kalender.
 const FEED_HTTPS_URL = 'https://kalender.xn--peppermita-lnb.de/feed-7b77b19da1cb.ics';
+const FEED_WEBCAL_URL = 'webcal://kalender.xn--peppermita-lnb.de/feed-7b77b19da1cb.ics';
 
 const copyFeedBtn = document.getElementById('copyFeedBtn');
 copyFeedBtn.addEventListener('click', () => {
@@ -1463,7 +1464,10 @@ const googleCalBtn = document.getElementById('googleCalBtn');
 googleCalBtn.addEventListener('click', () => {
   // Inoffizieller, aber seit Jahren stabiler Google-Trick: öffnet Google Kalender
   // direkt mit einer Abo-Bestätigung für die übergebene ICS-URL (cid-Parameter).
-  const addUrl = 'https://calendar.google.com/calendar/render?cid=' + encodeURIComponent(FEED_HTTPS_URL);
+  // WICHTIG: cid braucht das webcal://-Präfix, nicht https:// – mit https://
+  // versucht Google den Wert als interne Kalender-ID zu lesen und bricht mit
+  // "Überprüfen Sie die URL" ab (dokumentiertes Verhalten, kein Tippfehler).
+  const addUrl = 'https://calendar.google.com/calendar/render?cid=' + FEED_WEBCAL_URL;
   window.open(addUrl, '_blank', 'noopener');
 });
 
