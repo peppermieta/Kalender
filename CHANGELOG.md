@@ -7,6 +7,18 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [2.6.0] - 2026-08-07
+
+### Changed
+- **Kalender-Abo neu gelöst**: Der bisherige `webcal://`-Link ("Kalender
+  abonnieren") tat auf den meisten Geräten/Browsern nichts, da dafür ein
+  registrierter Protokoll-Handler nötig ist. Ersetzt durch den Button
+  "📅 Zu Google Kalender hinzufügen", der über den inoffiziellen
+  `calendar.google.com/calendar/render?cid=…`-Mechanismus direkt in Google
+  Kalender mit einer Abo-Bestätigung öffnet – ein Klick, kein Kopieren.
+  "🔗 Link kopieren" bleibt als Fallback für andere Kalender-Apps
+  (Apple Kalender, Outlook u. a.) bestehen.
+
 ## [2.5.0] - 2026-08-06
 
 ### Added

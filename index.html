@@ -165,11 +165,6 @@
   .search-empty { padding: 12px; font-size: 12.5px; color: var(--muted); text-align: center; }
 
   .subscribe-wrap { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-  .subscribe-link {
-    font-size: 12.5px; font-weight: 600; color: #5B3FC8; text-decoration: none;
-    white-space: nowrap;
-  }
-  .subscribe-link:hover { text-decoration: underline; }
   .subscribe-copy {
     font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500;
     padding: 6px 10px; border-radius: 7px; border: 1px solid var(--border);
@@ -639,7 +634,7 @@
     <div id="searchResults" class="search-results"></div>
   </div>
   <div class="subscribe-wrap">
-    <a id="subscribeLink" class="subscribe-link" href="webcal://kalender.xn--peppermita-lnb.de/feed-7b77b19da1cb.ics">📅 Kalender abonnieren</a>
+    <button id="googleCalBtn" class="subscribe-copy" type="button">📅 Zu Google Kalender hinzufügen</button>
     <button id="copyFeedBtn" class="subscribe-copy" type="button">🔗 Link kopieren</button>
     <button id="notesSyncOpenBtn" class="subscribe-copy" type="button">📋 Notizen übertragen</button>
   </div>
@@ -1451,15 +1446,25 @@ document.addEventListener('click', e => {
 // Escape-Behandlung für die Suche steckt im zentralen keydown-Listener oben (bei ArrowLeft/Right)
 
 // ─── KALENDER-ABO (ICS) ──────────────────────────────────────────────────────
+// Fester Dateiname bewusst nicht ändern (s. scripts/generate-ics.js) – sonst
+// bricht jedes bestehende Abo in Google/Apple Kalender.
+const FEED_HTTPS_URL = 'https://kalender.xn--peppermita-lnb.de/feed-7b77b19da1cb.ics';
+
 const copyFeedBtn = document.getElementById('copyFeedBtn');
-const subscribeLinkEl = document.getElementById('subscribeLink');
 copyFeedBtn.addEventListener('click', () => {
-  const httpsUrl = subscribeLinkEl.href.replace(/^webcal:/, 'https:');
-  navigator.clipboard.writeText(httpsUrl).then(() => {
+  navigator.clipboard.writeText(FEED_HTTPS_URL).then(() => {
     copyFeedBtn.textContent = '✓ Kopiert';
     copyFeedBtn.classList.add('copied');
     setTimeout(() => { copyFeedBtn.textContent = '🔗 Link kopieren'; copyFeedBtn.classList.remove('copied'); }, 2000);
   });
+});
+
+const googleCalBtn = document.getElementById('googleCalBtn');
+googleCalBtn.addEventListener('click', () => {
+  // Inoffizieller, aber seit Jahren stabiler Google-Trick: öffnet Google Kalender
+  // direkt mit einer Abo-Bestätigung für die übergebene ICS-URL (cid-Parameter).
+  const addUrl = 'https://calendar.google.com/calendar/render?cid=' + encodeURIComponent(FEED_HTTPS_URL);
+  window.open(addUrl, '_blank', 'noopener');
 });
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
