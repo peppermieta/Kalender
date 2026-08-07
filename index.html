@@ -63,6 +63,12 @@
   }
   .module-link { color: #5B3FC8; font-weight: 600; text-decoration: none; }
   .module-link:hover { text-decoration: underline; }
+  .semester-select {
+    font: inherit; font-size: 12px; font-weight: 600; color: var(--text);
+    background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
+    padding: 1px 5px; cursor: pointer; margin-right: 2px;
+  }
+  .semester-select:hover { border-color: #5B3FC8; }
   .nav-controls {
     display: flex;
     align-items: center;
@@ -622,8 +628,12 @@
 <!-- TOP BAR -->
 <header>
   <div class="header-left">
-    <h1>Vorlesungskalender WS 2026/27</h1>
-    <p>Bachelor Soziale Arbeit · 2. Fachsemester · <a href="https://module.xn--peppermita-lnb.de/" class="module-link" target="_blank">Modulverzeichnis →</a></p>
+    <h1>Vorlesungskalender</h1>
+    <p>
+      <select id="semesterSelect" class="semester-select" aria-label="Semester wählen"></select>
+      · Bachelor Soziale Arbeit · <span id="fachsemesterLabel"></span> ·
+      <a href="https://module.xn--peppermita-lnb.de/" class="module-link" target="_blank">Modulverzeichnis →</a>
+    </p>
   </div>
   <div class="nav-controls">
     <button class="nav-btn" id="prevBtn">&#8592;</button>
@@ -747,8 +757,52 @@ Object.entries(MODS).forEach(([key, m]) => {
   document.documentElement.style.setProperty(`--${key}-bd`, m.bd);
 });
 
-// ─── ALL EVENTS ─────────────────────────────────────────────────────────────
-const EVENTS = [
+// ─── SEMESTER-METADATEN ─────────────────────────────────────────────────────
+// Neues Semester ergänzen: hier einen Eintrag hinzufügen (start/end steuern
+// nur, welches Semester bei "heute" automatisch vorausgewählt wird – months
+// bestimmt bewusst separat, welche Monate im Kalender blätterbar sind, damit
+// vorlesungsfreie Randmonate nicht mit auftauchen). Danach unten bei
+// EVENTS_BY_SEMESTER die passenden Termine unter derselben id ergänzen.
+const SEMESTERS = [
+  {
+    id: "ws2026-27",
+    label: "WS 2026/27",
+    fachsemester: 2,
+    start: "2026-10-01",
+    end: "2027-03-31",
+    months: [
+      {year:2026,month:9},  // Oct (0-indexed)
+      {year:2026,month:10}, // Nov
+      {year:2026,month:11}, // Dec
+      {year:2027,month:0},  // Jan
+      {year:2027,month:1},  // Feb
+    ],
+    ferien: [
+      "2026-12-21","2026-12-22","2026-12-23","2026-12-24","2026-12-25","2026-12-26","2026-12-27",
+      "2026-12-28","2026-12-29","2026-12-30","2026-12-31",
+      "2027-01-01","2027-01-02","2027-01-03","2027-01-04","2027-01-05","2027-01-06","2027-01-07","2027-01-08","2027-01-09","2027-01-10"
+    ],
+  },
+  // Nächstes Semester (z.B. SoSe 2027) hier als weiterer Eintrag ergänzen,
+  // sobald Termine feststehen.
+];
+
+// Findet die Semester-id, die zum heutigen Datum passt; liegt "heute" in
+// keiner start–end-Spanne (z.B. Semesterlücke, oder nächstes Semester noch
+// nicht erfasst), wird das zeitlich nächste künftige Semester genommen, sonst
+// das letzte bekannte.
+function detectCurrentSemesterId(){
+  const t = new Date();
+  const todayISO = isoDate(t.getFullYear(), t.getMonth(), t.getDate());
+  const exact = SEMESTERS.find(s => todayISO >= s.start && todayISO <= s.end);
+  if(exact) return exact.id;
+  const upcoming = SEMESTERS.filter(s => s.start > todayISO).sort((a,b)=>a.start.localeCompare(b.start))[0];
+  return (upcoming || SEMESTERS[SEMESTERS.length-1]).id;
+}
+
+// ─── ALL EVENTS, GRUPPIERT PRO SEMESTER ─────────────────────────────────────
+const EVENTS_BY_SEMESTER = {
+  "ws2026-27": [
   // M6 – Kunst (Do, Einzeltermine)
   ...["2026-10-08","2026-10-15","2026-10-22","2026-10-29","2026-11-05","2026-11-12","2026-11-19","2026-11-26","2026-12-03","2026-12-10","2026-12-17","2027-01-21","2027-02-04"].map(d=>({
     date:d, start:"08:00", end:"10:15", modul:"M09",
@@ -818,7 +872,11 @@ const EVENTS = [
   // Zusatzangebot
   {date:"2026-11-23",start:"17:30",end:"19:00",modul:"ZA",lvnr:"–",pg:"1",title:"Aus der Ohnmacht ins Handeln kommen – Für eine Politisierung Sozialer Arbeit",lehrperson:"Andreas Foitzik"},
   {date:"2026-12-12",start:"10:00",end:"17:00",modul:"ZA",lvnr:"–",pg:"1",title:"Aus der Ohnmacht ins Handeln kommen – Für eine Politisierung Sozialer Arbeit",lehrperson:"Andreas Foitzik"},
-];
+  ],
+};
+// ─── ENDE DATENTEIL (SEMESTERS + EVENTS_BY_SEMESTER + MODS) ─────────────────
+// Marker-Kommentar für scripts/generate-ics.js, das den Datenteil oben per
+// Text-Match extrahiert – beim Umbenennen/Verschieben dort mitziehen.
 
 // ─── RÄUME / VERANSTALTUNGSORTE ─────────────────────────────────────────────
 // Platzhalter: sobald die Raumnummern feststehen, hier einfach pro LV-Nummer
@@ -829,7 +887,7 @@ const ROOMS = {
 };
 
 // Raum je Termin setzen (LV-Nummer-Lookup; einzelne Termine können das mit
-// einem eigenen "raum:"-Feld direkt im EVENTS-Eintrag überschreiben)
+// einem eigenen "raum:"-Feld direkt im EVENTS-Eintrag überschreiben).
 // Icon-Kennzeichnung für Termine, die vom normalen Vorlesungsbetrieb
 // abweichen (Prüfungen/Abgaben). ev.type ist optional; ohne type = normale
 // Veranstaltung wie bisher. ev.start/ev.end sind bei diesen beiden Typen
@@ -837,59 +895,106 @@ const ROOMS = {
 // Live-Status-Berechnung sind entsprechend null-sicher.
 const TYPE_ICON = {pruefung: '📝', abgabe: '📤'};
 
-EVENTS.forEach(ev => {
-  if (!ev.raum) ev.raum = ROOMS[ev.lvnr] || null;
+// Raum füllen + Semester-id an jedes Event anhängen (_semesterId) – einmalig
+// für ALLE Semester, nicht nur das gerade angezeigte. So funktionieren Suche
+// und "Nächste Veranstaltung" semesterübergreifend, und ein Klick auf einen
+// Treffer aus einem anderen Semester weiß, wohin er umschalten muss.
+SEMESTERS.forEach(sem => {
+  (EVENTS_BY_SEMESTER[sem.id] || []).forEach(ev => {
+    if (!ev.raum) ev.raum = ROOMS[ev.lvnr] || null;
+    ev._semesterId = sem.id;
+  });
 });
 
-// Sort by start time within same date (Termine ohne Uhrzeit sortieren als
-// "ganztägig" an den Anfang des Tages, wie in gängigen Kalender-Apps)
-EVENTS.sort((a,b)=>(a.start||'').localeCompare(b.start||''));
+function allEventsFlat(){
+  return SEMESTERS.flatMap(sem => EVENTS_BY_SEMESTER[sem.id] || []);
+}
 
-// Index by date
-const byDate = {};
-EVENTS.forEach(ev=>{
-  if(!byDate[ev.date]) byDate[ev.date]=[]; byDate[ev.date].push(ev);
-});
-
-// Ferien dates
-const FERIEN = new Set([
-  "2026-12-21","2026-12-22","2026-12-23","2026-12-24","2026-12-25","2026-12-26","2026-12-27",
-  "2026-12-28","2026-12-29","2026-12-30","2026-12-31",
-  "2027-01-01","2027-01-02","2027-01-03","2027-01-04","2027-01-05","2027-01-06","2027-01-07","2027-01-08","2027-01-09","2027-01-10"
-]);
-
-// Months: Oct 2026 → Feb 2027
-const MONTHS = [
-  {year:2026,month:9},  // Oct (0-indexed)
-  {year:2026,month:10}, // Nov
-  {year:2026,month:11}, // Dec
-  {year:2027,month:0},  // Jan
-  {year:2027,month:1},  // Feb
-];
 const MONTH_NAMES = ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
 const MONTH_NAMES_SHORT = MONTH_NAMES.map(m => m.slice(0,3));
 // Sonntag-first, passend zu Date.getDay() (0=So); für die Mo-first-Rastergrafik wird mit (i+1)%7 hineinindiziert
 const WEEKDAY_ABBR = ['So','Mo','Di','Mi','Do','Fr','Sa'];
 
+// ─── AKTIVES SEMESTER (wird durch loadSemester() befüllt) ───────────────────
+let currentSemesterId = null;
+let EVENTS = [];
+let MONTHS = [];
+let FERIEN = new Set();
+let byDate = {};
 let currentMonthIdx = 0;
 
 // ─── LEGEND ──────────────────────────────────────────────────────────────────
-const legend = document.getElementById('legend');
-Object.entries(MODS).forEach(([key,m])=>{
-  const el = document.createElement('div');
-  el.className = 'legend-item';
-  el.style.cssText = `background:${m.bg};color:${m.tx};border-color:${m.bd}`;
-  el.innerHTML = `<span class="legend-dot" style="background:${m.dot}"></span>${m.label}`;
-  legend.appendChild(el);
+// Zeigt nur Module, die im gerade aktiven Semester tatsächlich vorkommen
+// (wird pro Semesterwechsel neu aufgebaut, s. loadSemester())
+function renderLegend(){
+  const legend = document.getElementById('legend');
+  legend.innerHTML = '';
+  const used = new Set(EVENTS.map(ev => ev.modul));
+  Object.entries(MODS).forEach(([key,m])=>{
+    if(!used.has(key)) return;
+    const el = document.createElement('div');
+    el.className = 'legend-item';
+    el.style.cssText = `background:${m.bg};color:${m.tx};border-color:${m.bd}`;
+    el.innerHTML = `<span class="legend-dot" style="background:${m.dot}"></span>${m.label}`;
+    legend.appendChild(el);
+  });
+}
+
+// ─── SEMESTERAUSWAHL ─────────────────────────────────────────────────────────
+const semesterSelect = document.getElementById('semesterSelect');
+const fachsemesterLabel = document.getElementById('fachsemesterLabel');
+SEMESTERS.forEach(sem => {
+  const opt = document.createElement('option');
+  opt.value = sem.id; opt.textContent = sem.label;
+  semesterSelect.appendChild(opt);
 });
 
-// ─── MONTH DOTS ──────────────────────────────────────────────────────────────
 const dotsEl = document.getElementById('monthDots');
-MONTHS.forEach((_,i)=>{
-  const btn = document.createElement('button');
-  btn.className = 'month-dot' + (i===0?' active':'');
-  btn.onclick = ()=>goTo(i);
-  dotsEl.appendChild(btn);
+
+// Lädt ein Semester in alle globalen Render-Strukturen. resetMonth=true
+// springt dabei auf den heutigen Monat (falls er in diesem Semester liegt,
+// sonst auf den ersten); resetMonth=false lässt currentMonthIdx unverändert
+// (genutzt beim gezielten Springen zu einem Termin aus Suche/Tagesansicht-Link).
+function loadSemester(id, {resetMonth=true} = {}){
+  const sem = SEMESTERS.find(s => s.id === id);
+  if(!sem) return;
+  currentSemesterId = sem.id;
+
+  EVENTS = (EVENTS_BY_SEMESTER[sem.id] || []).slice()
+    .sort((a,b)=>(a.start||'').localeCompare(b.start||''));
+
+  byDate = {};
+  EVENTS.forEach(ev=>{
+    if(!byDate[ev.date]) byDate[ev.date]=[]; byDate[ev.date].push(ev);
+  });
+
+  MONTHS = sem.months;
+  FERIEN = new Set(sem.ferien);
+
+  dotsEl.innerHTML = '';
+  MONTHS.forEach((_,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'month-dot';
+    btn.onclick = ()=>goTo(i);
+    dotsEl.appendChild(btn);
+  });
+
+  if(resetMonth){
+    const today = new Date();
+    const idx = MONTHS.findIndex(mo => mo.year===today.getFullYear() && mo.month===today.getMonth());
+    currentMonthIdx = idx !== -1 ? idx : 0;
+  }
+
+  renderLegend();
+  renderMonth(currentMonthIdx);
+  renderNextUp();
+  fachsemesterLabel.textContent = `${sem.fachsemester}. Fachsemester`;
+  if(semesterSelect.value !== sem.id) semesterSelect.value = sem.id;
+}
+
+semesterSelect.addEventListener('change', () => {
+  if(dayView.classList.contains('open')) closeDayView();
+  loadSemester(semesterSelect.value, {resetMonth:true});
 });
 
 function updateDots(){
@@ -1324,10 +1429,22 @@ dayViewCopy.addEventListener('click', () => {
   });
 });
 
+// Findet, zu welchem Semester ein Datum gehört (falls vorhanden) – für
+// geteilte Tages-Links (#YYYY-MM-DD), die auf ein anderes als das gerade
+// angezeigte Semester zeigen können.
+function findSemesterForIso(iso){
+  return SEMESTERS.find(s => (EVENTS_BY_SEMESTER[s.id] || []).some(ev => ev.date === iso));
+}
+
 // Browser-Zurück/Vor bzw. direkter Aufruf eines geteilten Tages-Links
 window.addEventListener('popstate', () => {
   const iso = isoFromHash();
-  if(iso){ syncMonthToIso(iso); renderDayView(iso, {pushHistory:false}); }
+  if(iso){
+    const owner = findSemesterForIso(iso);
+    if(owner && owner.id !== currentSemesterId) loadSemester(owner.id, {resetMonth:false});
+    syncMonthToIso(iso);
+    renderDayView(iso, {pushHistory:false});
+  }
   else closeDayView({pushHistory:false});
 });
 
@@ -1356,7 +1473,7 @@ function renderNextUp(){
   if(!el) return;
 
   const now = new Date();
-  const upcoming = EVENTS
+  const upcoming = allEventsFlat()
     .filter(ev => ev.start)
     .map(ev => ({ ev, dt: new Date(`${ev.date}T${ev.start}:00`) }))
     .filter(x => x.dt.getTime() >= now.getTime())
@@ -1403,7 +1520,13 @@ function eventMatchesQuery(ev, query) {
   return haystack.some(f => f.toLowerCase().includes(q));
 }
 
+// Springt zu einem Termin – liegt er in einem anderen als dem gerade
+// angezeigten Semester (z.B. Treffer aus semesterübergreifender Suche),
+// wird zuerst automatisch dorthin umgeschaltet.
 function jumpToEvent(ev) {
+  if (ev._semesterId && ev._semesterId !== currentSemesterId) {
+    loadSemester(ev._semesterId, {resetMonth:false});
+  }
   const [y, m] = ev.date.split('-').map(Number);
   const idx = MONTHS.findIndex(mo => mo.year === y && mo.month === (m - 1));
   if (idx !== -1) goTo(idx);
@@ -1413,13 +1536,16 @@ function jumpToEvent(ev) {
 const searchInput = document.getElementById('searchInput');
 const searchResultsEl = document.getElementById('searchResults');
 
+// Suche läuft bewusst semesterübergreifend über allEventsFlat() statt nur
+// über das gerade angezeigte Semester – ein Klick auf einen Treffer aus
+// einem anderen Semester schaltet über jumpToEvent() automatisch dorthin um.
 function renderSearchResults(query) {
   if (!query.trim()) {
     searchResultsEl.style.display = 'none';
     searchResultsEl.innerHTML = '';
     return;
   }
-  const matches = EVENTS
+  const matches = allEventsFlat()
     .filter(ev => eventMatchesQuery(ev, query))
     .sort((a, b) => (a.date + a.start).localeCompare(b.date + b.start))
     .slice(0, 8);
@@ -1488,17 +1614,21 @@ googleCalBtn.addEventListener('click', () => {
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 (function(){
   const initialIso = isoFromHash();
+  // Zeigt geteilter Link auf ein Datum in einem bestimmten Semester, startet
+  // direkt dort; sonst wird das Semester anhand des heutigen Datums ermittelt.
+  const owner = initialIso ? findSemesterForIso(initialIso) : null;
+  const targetSemesterId = owner ? owner.id : detectCurrentSemesterId();
+
+  loadSemester(targetSemesterId, {resetMonth: !initialIso});
+
   if(initialIso){
     const [y, m] = initialIso.split('-').map(Number);
     const idx = MONTHS.findIndex(mo => mo.year===y && mo.month===(m-1));
-    renderMonth(idx !== -1 ? idx : 0);
-    if(idx !== -1) currentMonthIdx = idx;
+    currentMonthIdx = idx !== -1 ? idx : 0;
+    renderMonth(currentMonthIdx);
     renderDayView(initialIso, {pushHistory:false});
-  } else {
-    renderMonth(0);
   }
 })();
-renderNextUp();
 </script>
 <style>
   #pw-overlay {

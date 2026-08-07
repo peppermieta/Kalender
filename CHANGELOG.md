@@ -7,6 +7,47 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.0.0] - 2026-08-07
+
+### Added
+- **Mehrsemester-Fähigkeit**: `EVENTS` ist jetzt `EVENTS_BY_SEMESTER`, ein
+  Objekt mit einer Terminliste pro Semester, plus eine neue `SEMESTERS`-Liste
+  mit Anzeigename, Datumsspanne, angezeigten Monaten, Ferien und
+  Fachsemester-Zahl je Semester. Ein neues Semester (z. B. SoSe 2027)
+  ergänzen heißt künftig: Eintrag in `SEMESTERS` + Termine in
+  `EVENTS_BY_SEMESTER` hinzufügen – der Rest (Anzeige, Suche, Abo)
+  funktioniert automatisch mit.
+- **Semesterauswahl im Header**: neues Dropdown in der Kopfzeile (`sticky`,
+  bleibt beim Scrollen sichtbar) ersetzt die bisherige feste Semesterangabe
+  im Titel. Beim Laden wird automatisch das zum heutigen Datum passende
+  Semester vorausgewählt (mit Fallback aufs nächstgelegene, falls "heute" in
+  keine Spanne fällt); manuelles Umschalten – auch auf noch nicht laufende
+  Semester – ist jederzeit möglich. Bei jedem Neuladen der Seite springt die
+  Auswahl wieder auf das aktuelle Semester zurück.
+- Titel generisch "Vorlesungskalender" (ohne Semesterangabe), Fachsemester-Zahl
+  und Legende (nur tatsächlich im aktiven Semester vorkommende Module)
+  aktualisieren sich automatisch beim Semesterwechsel.
+- **Suche und "Nächste Veranstaltung" laufen semesterübergreifend**: ein
+  Treffer aus einem anderen als dem gerade angezeigten Semester schaltet
+  beim Anklicken automatisch dorthin um. Geteilte Tages-Links (`#YYYY-MM-DD`)
+  erkennen ebenfalls automatisch das richtige Semester.
+
+### Changed
+- **ICS-Kalender-Feed enthält jetzt alle Semester** statt nur eines – ein
+  einmal eingerichtetes Abo in Google/Apple Kalender deckt damit auch künftige
+  Semester automatisch mit ab, ohne erneutes Einrichten. Kalendername im Feed
+  entsprechend generisch.
+- `manifest.webmanifest`-Name ebenfalls generisch (ohne Semesterangabe).
+
+### Fixed
+- **`scripts/generate-ics.js` lief nicht mehr**: referenzierte durch den
+  CSS-Variablen-Setup-Code aus `index.html` versehentlich `document`, das in
+  Node nicht existiert – Skript brach beim Ausführen ab. Per Stub behoben.
+- **ICS-Export für Termine ohne feste Uhrzeit** (Abgaben) nachgerüstet: hätte
+  bisher beim Erzeugen abgestürzt (`ev.start.replace` auf `null`); erzeugt
+  jetzt korrekt einen Ganztages-Eintrag (`DTSTART;VALUE=DATE`). Bisher nicht
+  aufgefallen, da noch keine Abgabetermine ohne Uhrzeit eingetragen waren.
+
 ## [2.7.0] - 2026-08-07
 
 ### Changed

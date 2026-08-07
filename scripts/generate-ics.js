@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
- * Generiert die abonnierbare ICS-Kalenderdatei aus den EVENTS-Daten in index.html.
+ * Generiert die abonnierbare ICS-Kalenderdatei aus den EVENTS_BY_SEMESTER-Daten
+ * in index.html – enthält bewusst die Termine ALLER Semester (s. u.).
  *
  * WICHTIG: Der Dateiname (FEED_FILENAME) ist absichtlich ein zufälliger, nicht
  * erratbarer Token statt "kalender.ics" – die ICS-Datei liegt technisch bedingt
@@ -19,18 +20,30 @@ const path = require('path');
 
 const FEED_FILENAME = 'feed-7b77b19da1cb.ics'; // NICHT ändern, sonst bricht jedes bestehende Abo!
 const DOMAIN = 'kalender.xn--peppermita-lnb.de';
-const CALNAME = 'Vorlesungskalender WS 2026/27';
+const CALNAME = 'Vorlesungskalender';
 
 const root = path.join(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const script = html.match(/<script>([\s\S]*?)<\/script>/)[1];
 
-// Nur den Datenteil ausführen (EVENTS + MODS), nicht das komplette Render-Skript
-const marker = '// Sort by start time within same date';
+// Nur den Datenteil ausführen (SEMESTERS + EVENTS_BY_SEMESTER + MODS), nicht
+// das komplette Render-Skript. Der Marker-Kommentar steht direkt im
+// Datenteil in index.html – beim Verschieben dort mitziehen.
+// document-Stub: der Datenteil enthält (für die Live-Seite) einen Aufruf von
+// document.documentElement.style.setProperty(...), um MODS-Farben als
+// CSS-Variablen verfügbar zu machen. In Node gibt es kein DOM – der Stub
+// macht diesen Aufruf hier einfach zum No-op.
+const marker = '// ─── ENDE DATENTEIL (SEMESTERS + EVENTS_BY_SEMESTER + MODS) ───';
 const dataPart = script.substring(0, script.indexOf(marker));
-const EVENTS = new Function(dataPart + '; return EVENTS;')();
-const modsMarker = script.indexOf('};', script.indexOf('const MODS')) + 2;
-const MODS = new Function(script.substring(0, modsMarker) + '; return MODS;')();
+const documentStub = 'const document = { documentElement: { style: { setProperty(){} } } };\n';
+const { SEMESTERS, EVENTS_BY_SEMESTER, MODS } = new Function(
+  documentStub + dataPart + '; return {SEMESTERS, EVENTS_BY_SEMESTER, MODS};'
+)();
+
+// Feed enthält bewusst ALLE Semester (nicht nur das gerade aktuelle) – ein
+// einmal eingerichtetes Kalender-Abo soll auch künftige/vergangene Semester
+// mit abdecken, ohne dass sich jemand neu abonnieren muss.
+const EVENTS = SEMESTERS.flatMap(sem => EVENTS_BY_SEMESTER[sem.id] || []);
 
 function esc(str) {
   return String(str ?? '')
@@ -80,7 +93,7 @@ const VTIMEZONE = [
 const lines = [
   'BEGIN:VCALENDAR',
   'VERSION:2.0',
-  'PRODID:-//Vorlesungskalender WS 2026-27//DE',
+  'PRODID:-//Vorlesungskalender//DE',
   'CALSCALE:GREGORIAN',
   'METHOD:PUBLISH',
   `X-WR-CALNAME:${esc(CALNAME)}`,
@@ -92,9 +105,7 @@ const lines = [
 
 for (const ev of EVENTS) {
   const mod = MODS[ev.modul];
-  const uid = crypto.createHash('md5').update(`${ev.date}${ev.start}${ev.lvnr}`).digest('hex');
-  const dtStart = ev.date.replace(/-/g, '') + 'T' + ev.start.replace(':', '') + '00';
-  const dtEnd = ev.date.replace(/-/g, '') + 'T' + ev.end.replace(':', '') + '00';
+  const uid = crypto.createHash('md5').update(`${ev.date}${ev.start || ''}${ev.lvnr}`).digest('hex');
 
   const descParts = [
     `Modul: ${mod.label}`,
@@ -103,17 +114,31 @@ for (const ev of EVENTS) {
     `Parallelgruppe: PG ${ev.pg}`,
   ];
 
-  lines.push(
-    'BEGIN:VEVENT',
-    `UID:${uid}@${DOMAIN}`,
-    `DTSTAMP:${dtstamp}`,
-    `DTSTART;TZID=Europe/Berlin:${dtStart}`,
-    `DTEND;TZID=Europe/Berlin:${dtEnd}`,
+  const eventLines = ['BEGIN:VEVENT', `UID:${uid}@${DOMAIN}`, `DTSTAMP:${dtstamp}`];
+
+  if (ev.start && ev.end) {
+    // Normaler Termin mit fester Uhrzeit
+    const dtStart = ev.date.replace(/-/g, '') + 'T' + ev.start.replace(':', '') + '00';
+    const dtEnd = ev.date.replace(/-/g, '') + 'T' + ev.end.replace(':', '') + '00';
+    eventLines.push(`DTSTART;TZID=Europe/Berlin:${dtStart}`, `DTEND;TZID=Europe/Berlin:${dtEnd}`);
+  } else {
+    // Ganztägiger Termin (z.B. Abgabefrist ohne feste Uhrzeit): DATE statt
+    // DATE-TIME, DTEND auf den Folgetag (RFC5545-Konvention für Ganztages-Events)
+    const d = ev.date.replace(/-/g, '');
+    const nextDay = new Date(ev.date + 'T00:00:00Z');
+    nextDay.setUTCDate(nextDay.getUTCDate() + 1);
+    const dNext = nextDay.toISOString().slice(0,10).replace(/-/g, '');
+    eventLines.push(`DTSTART;VALUE=DATE:${d}`, `DTEND;VALUE=DATE:${dNext}`);
+  }
+
+  eventLines.push(
     fold(`SUMMARY:${esc(ev.title)}`),
     fold(`LOCATION:${esc(ev.raum || 'wird noch bekannt gegeben')}`),
     fold(`DESCRIPTION:${esc(descParts.join('\n'))}`),
     'END:VEVENT'
   );
+
+  lines.push(...eventLines);
 }
 
 lines.push('END:VCALENDAR');

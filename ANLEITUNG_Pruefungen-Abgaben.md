@@ -19,15 +19,17 @@
 
 ## 1. Wo die Daten stehen
 
-Datei: **`index.html`**, im Bereich `<script>`, Konstante **`EVENTS`**
-(aktuell ab Zeile 713). Das ist eine Liste (Array) – jeder Termin im Kalender
-ist darin ein einzelner Eintrag (Objekt) in geschweiften Klammern `{ ... }`.
+Datei: **`index.html`**, im Bereich `<script>`, Konstante **`EVENTS_BY_SEMESTER`**
+(aktuell ab Zeile 804). Das ist ein Objekt mit einer Terminliste pro Semester
+(Schlüssel z. B. `"ws2026-27"`) – innerhalb der passenden Semester-Liste ist
+jeder Termin ein einzelner Eintrag (Objekt) in geschweiften Klammern `{ ... }`.
 
-Ganz am Ende dieser Liste, kurz vor der schließenden Klammer `];`, stehen
-bereits vorhandene Termine nach Modul bzw. Anlass gruppiert, jeweils mit
-einer kurzen Kommentarzeile (`// M3 – Übungen …`, `// Zusatzangebot`) darüber.
-Neue Prüfungs-/Abgabetermine kommen als neue Gruppe an dieser Stelle dazu,
-z. B. unter einer eigenen Überschrift `// Prüfungen & Abgaben`.
+Ganz am Ende der Liste des aktuellen Semesters, kurz vor deren schließender
+Klammer `],`, stehen bereits vorhandene Termine nach Modul bzw. Anlass
+gruppiert, jeweils mit einer kurzen Kommentarzeile (`// M3 – Übungen …`,
+`// Zusatzangebot`) darüber. Neue Prüfungs-/Abgabetermine kommen als neue
+Gruppe an dieser Stelle dazu, z. B. unter einer eigenen Überschrift
+`// Prüfungen & Abgaben`.
 
 Die Reihenfolge innerhalb der Liste spielt keine Rolle – der Kalender
 sortiert alle Termine beim Laden automatisch nach Datum und Uhrzeit.
@@ -78,7 +80,8 @@ Modulverzeichnis korrekt funktionieren.
 
 1. Neuen Termin (Felder wie oben) im Chat mitteilen: Datum, Prüfung oder
    Abgabe, Uhrzeit (falls vorhanden), Modul, Titel, Raum (falls bekannt).
-2. Der Eintrag wird in `EVENTS` ergänzt, lokal getestet und dann committet
+2. Der Eintrag wird in `EVENTS_BY_SEMESTER` (beim passenden Semester) ergänzt,
+   lokal getestet und dann committet
    und gepusht (inkl. Erhöhung der `CACHE_VERSION` im Service Worker, damit
    die Änderung auch offline-gecachte Geräte erreicht).
 3. Kein eigenes Eingabeformular im Kalender – die Pflege bleibt bewusst beim
