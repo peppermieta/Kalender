@@ -7,6 +7,16 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [2.6.1] - 2026-08-07
+
+### Fixed
+- **Google-Calendar-Button fehlgeschlagen**: "Hinzufügen zum Kalender nicht
+  möglich. Überprüfen Sie die URL" beim Klick auf "Zu Google Kalender
+  hinzufügen". Der `cid`-Parameter von Googles Render-Endpunkt erwartet eine
+  `webcal://`-URL statt `https://` – mit `https://` interpretiert Google den
+  Wert offenbar als interne Kalender-ID. "Link kopieren" bleibt unverändert
+  bei `https://`.
+
 ## [2.6.0] - 2026-08-07
 
 ### Changed
