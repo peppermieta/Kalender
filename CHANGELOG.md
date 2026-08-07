@@ -7,6 +7,16 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [2.7.0] - 2026-08-07
+
+### Changed
+- **"📋 Notizen übertragen" aus der Toolbar in eine neue Fußzeile verschoben**:
+  Der Button stand als dritter Eintrag in der Toolbar zusammen mit den
+  Abo-Buttons und wurde auf schmalen Bildschirmen abgeschnitten. Jetzt
+  zentriert unterhalb des Kalendergitters – behebt nebenbei das
+  Mobile-Layout-Problem, da die Toolbar nur noch zwei Buttons enthält.
+  Funktion selbst unverändert.
+
 ## [2.6.1] - 2026-08-07
 
 ### Fixed

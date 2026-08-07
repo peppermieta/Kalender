@@ -199,6 +199,15 @@
   /* ── CALENDAR GRID ── */
   .calendar-wrap { padding: 20px 24px; max-width: 1400px; margin: 0 auto; }
 
+  /* ── FOOTER ── */
+  .page-footer {
+    display: flex;
+    justify-content: center;
+    padding: 8px 24px 28px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
   .weekday-header {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -544,6 +553,7 @@
     .toolbar { padding: 10px 12px; gap: 10px; }
     .search-wrap { max-width: none; flex: 1 1 100%; }
     .subscribe-wrap { flex: 1 1 100%; justify-content: space-between; }
+    .page-footer { padding: 4px 12px 24px; }
 
     /* Wochentagsleiste ausblenden – Wochentag steht jetzt direkt am Datum */
     .weekday-header { display: none; }
@@ -636,7 +646,6 @@
   <div class="subscribe-wrap">
     <button id="googleCalBtn" class="subscribe-copy" type="button">📅 Zu Google Kalender hinzufügen</button>
     <button id="copyFeedBtn" class="subscribe-copy" type="button">🔗 Link kopieren</button>
-    <button id="notesSyncOpenBtn" class="subscribe-copy" type="button">📋 Notizen übertragen</button>
   </div>
 </div>
 
@@ -651,6 +660,11 @@
   <div class="cal-grid" id="calGrid"></div>
   <div class="month-dots" id="monthDots"></div>
 </div>
+
+<!-- FOOTER -->
+<footer class="page-footer">
+  <button id="notesSyncOpenBtn" class="subscribe-copy" type="button">📋 Notizen übertragen</button>
+</footer>
 
 <!-- MODAL -->
 <div class="modal-overlay" id="modalOverlay">
