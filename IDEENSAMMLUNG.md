@@ -31,6 +31,10 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   konsistent setzt), wird bei jedem Öffnen des Menüs neu geprüft.
   Service Worker behandelt den Feed dafür jetzt wie HTML als
   network-first statt cache-first.
+- **Kalenderwochen-Anzeige (KW)** – die ISO-Kalenderwoche zusätzlich
+  anzeigen, z. B. neben dem Monatstitel im Header oder im Datum der
+  Tagesansicht – praktisch, weil Fristen und Vorlesungspläne oft in
+  Kalenderwochen kommuniziert werden.
 
 ## ⚙ Mittel — machbar, etwas Umbau nötig
 
@@ -64,6 +68,13 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   öffnet ein kleines Inline-Formular (Titel, optional Uhrzeit) für genau
   diesen Tag – bewusst getrennt vom Verwalten-Menü, da es sich um eine
   datumsgebundene statt App-weite Aktion handelt.
+- **Laufende Semester-Fortschrittsanzeige** – zeigt während des
+  Semesters die eigene Position im Verlauf, z. B. "Woche 6 von 16" oder
+  ein kleiner Fortschrittsbalken. Anders als der bereits geplante
+  Semester-Rückblick (der erscheint erst am Ende) wäre das eine laufende
+  Orientierung während des Semesters – ließe sich aus den
+  `SEMESTERS`-Metadaten (Start-/Enddatum) berechnen, kein neuer
+  Datenbedarf.
 - **Kalender ↔ Modulverzeichnis verknüpfen** – von einem Kalendertermin
   direkt zum zugehörigen Modul im Modulverzeichnis springen.
   **✅ Umgesetzt** (v2.2.0) – Modul-Badge im Termin-Detail verlinkt
