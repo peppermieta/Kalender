@@ -9,15 +9,15 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   Buttons und Navigation ausgeblendet, nur eine saubere Monatsübersicht
   auf Papier.
   **✅ Umgesetzt** (v3.1.0)
-- **QR-Code für den Kalender-Abo-Link** – ein QR-Code neben "🔗 Link
-  kopieren" im Abo-Bereich, der direkt auf die `webcal://`-URL zeigt:
+- **QR-Code für den Kalender-Abo-Link** – ein QR-Code neben "🔗 Abo-Link
+  kopieren" im Verwalten-Menü, der direkt auf die `webcal://`-URL zeigt:
   Code mit dem Handy scannen, Feed ist ohne Linkversand/Abtippen
   eingebunden. Praktisch beim Einrichten eines neuen Geräts.
 - **Suchfilter nach Termin-Typ** – die bestehende Live-Suche um einen
   Filter/Umschalter "nur Prüfungen/Abgaben" ergänzen, damit gezielt
   danach gesucht werden kann, statt sie zwischen den normalen Terminen
   suchen zu müssen.
-- **Feed-Aktualität anzeigen** – ein kleiner Hinweis im Abo-Bereich
+- **Feed-Aktualität anzeigen** – ein kleiner Hinweis im Verwalten-Menü
   ("Feed zuletzt aktualisiert am …"), damit erkennbar ist, ob der
   abonnierte Kalender-Feed auf dem neuesten Stand ist.
 
@@ -51,7 +51,12 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   im Quellcode. Für die Geräteübertragung wird der bestehende
   Export/Import-Mechanismus ("📋 Notizen übertragen") erweitert statt
   eines zweiten, separaten Sync-Wegs – die eigenen Termine würden mit im
-  selben JSON-Blob wie die Notizen wandern.
+  selben JSON-Blob wie die Notizen wandern. Verortet in der
+  Tagesansicht statt im Verwalten-Menü: ein zusätzlicher Listeneintrag
+  "+ Eigenen Termin hinzufügen" ganz unten in der Terminliste des Tages
+  öffnet ein kleines Inline-Formular (Titel, optional Uhrzeit) für genau
+  diesen Tag – bewusst getrennt vom Verwalten-Menü, da es sich um eine
+  datumsgebundene statt App-weite Aktion handelt.
 - **Kalender ↔ Modulverzeichnis verknüpfen** – von einem Kalendertermin
   direkt zum zugehörigen Modul im Modulverzeichnis springen.
   **✅ Umgesetzt** (v2.2.0) – Modul-Badge im Termin-Detail verlinkt
@@ -75,14 +80,15 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   Projekten zusammengeführt werden müssen (bisher keine gemeinsame
   Datenbrücke zwischen den beiden statischen Seiten).
 - **UI-Neuordnung: Buttons & Funktionen konsolidieren** – Bedienelemente
-  sind über Header, Toolbar, Footer, Tagesansicht und Notiz-Sync-Overlay
+  waren über Header, Toolbar, Footer, Tagesansicht und Notiz-Sync-Overlay
   verteilt, gewachsen Feature für Feature ohne übergreifendes Konzept.
-  Beispiel für die entstandene Unschärfe: zwei Buttons mit identischem
-  Label "🔗 Link kopieren" an unterschiedlichen Stellen mit
-  unterschiedlicher Funktion (Kalender-Abo-Link vs. Tages-Link). Statt
-  weiter organisch zu wachsen: einmal grundsätzlich durchdenken, wie
-  Funktionen sinnvoll gruppiert werden – z. B. nach Nutzungshäufigkeit,
-  oder in einem einheitlichen Menü statt verteilter Einzel-Buttons.
+  **✅ Umgesetzt** (v3.3.0) – neuer "⚙️ Verwalten"-Button links vor der
+  Monatsnavigation im Header öffnet ein zentrales Menü (gleiches
+  Overlay-Muster wie Notiz-Sync/Termin-Details) mit drei Gruppen:
+  Abonnieren (Google Kalender, Abo-Link), Drucken, Notizen. Toolbar
+  enthält jetzt nur noch die Suche, der Footer wurde entfernt. Die beiden
+  gleichnamigen "Link kopieren"-Buttons sind zusätzlich eindeutig
+  benannt ("Abo-Link kopieren" im Menü, "Kopieren" in der Tagesansicht).
 
 ## 💭 Abstrakt — Vision, aber trotzdem nützlich
 

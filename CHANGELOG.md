@@ -7,6 +7,32 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.3.0] - 2026-08-08
+
+### Added
+- **"⚙️ Verwalten"-Menü im Header**: neuer Button links vor der
+  Monatsnavigation öffnet ein zentrales Menü (gleiches Overlay-Muster
+  wie Notiz-Sync und Termin-Details) mit drei Gruppen – Abonnieren
+  (Google Kalender, Abo-Link), Drucken, Notizen. Ersetzt die bisher über
+  Toolbar und Footer verstreuten Buttons.
+
+### Changed
+- Toolbar enthält jetzt nur noch die Suche; der bisherige Footer
+  ("🖨️ Drucken", "📋 Notizen übertragen") entfällt vollständig, beide
+  Funktionen sind ins neue Verwalten-Menü gewandert.
+- Beide bisher gleichlautenden "🔗 Link kopieren"-Buttons eindeutig
+  benannt: "🔗 Abo-Link kopieren" im Verwalten-Menü, "🔗 Kopieren" in der
+  Tagesansicht (Kontext macht dort weitere Präzisierung unnötig).
+- "📋 Notizen übertragen" schließt beim Klick automatisch das
+  Verwalten-Menü, statt beide Overlays gleichzeitig offen zu lassen.
+
+### Fixed
+- Nav-Zeile im Header lief auf schmalen Screens (~390px) über den
+  sichtbaren Bereich hinaus und drängte den "Heute"-Button aus dem
+  Sichtfeld (Regression durch den neuen Verwalten-Button). Behoben,
+  indem der Verwalten-Button auf Mobile eine erzwungene eigene Zeile
+  bekommt, während ←/Monat/→/Heute wie bisher als Gruppe zusammenbleiben.
+
 ## [3.2.0] - 2026-08-08
 
 ### Added
