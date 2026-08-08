@@ -7,6 +7,17 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.1.2] - 2026-08-08
+
+### Changed
+- **Icon-Korrektur zu v3.1.1**: Die Kalendergrafik (Aufhänger, Kopfleiste,
+  sechs Datumsfelder) war dort komplett entfernt worden – zu radikal, denn
+  eigentlich störten nur die zwei getrennten Schatten (einer um den
+  äußeren Kreis, einer separat um die Kalendergrafik), die es wie zwei
+  voneinander abgegrenzte Elemente wirken ließen. Jetzt: Kalendergrafik
+  ist zurück, aber ganz ohne Schatten – sitzt flach auf dem einen Kreis,
+  wie ursprünglich gewünscht.
+
 ## [3.1.1] - 2026-08-08
 
 ### Changed
