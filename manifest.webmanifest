@@ -1,6 +1,6 @@
 {
   "name": "Vorlesungskalender",
-  "short_name": "Vorl.-Kalender",
+  "short_name": "Kalender",
   "description": "Privater Vorlesungskalender für das Studium (Bachelor Soziale Arbeit)",
   "start_url": "./index.html",
   "scope": "./",

@@ -7,6 +7,24 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.1.1] - 2026-08-08
+
+### Changed
+- **App-Name beim Installieren gekürzt auf "Kalender"** statt der bisherigen
+  Abkürzung "Vorl.-Kalender" (`short_name` im Manifest) – die kam zum
+  Einsatz, wenn auf dem Homescreen/App-Drawer nicht genug Platz für den
+  vollen Namen "Vorlesungskalender" war.
+- **App-Icon vereinfacht**: Die bisherige Kalendergrafik (Aufhänger,
+  Kopfleiste, sechs Datumsfelder) mit eigenem Schatten *innerhalb* des
+  äußeren Kreises wirkte durch die zwei getrennten Schatten wie zwei
+  voneinander abgegrenzte Elemente. Jetzt ein einzelner, schlichter Kreis
+  in Pink Orchid – wie schon beim Modulverzeichnis-Favicon. Betrifft alle
+  Icon-Dateien (Favicons, App-Icons, Apple-Touch-Icon); die
+  maskable/Apple-Variante ist bewusst randlos gefüllt statt selbst einen
+  Kreis vorzugeben, damit das Betriebssystem beim Zuschneiden (Kreis,
+  Squircle, abgerundetes Quadrat …) keine sichtbaren Ecken/Ränder übrig
+  lässt.
+
 ## [3.1.0] - 2026-08-08
 
 ### Added
