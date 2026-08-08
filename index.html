@@ -216,7 +216,7 @@
 
   .weekday-header {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(7, minmax(0, 1fr));
     gap: 4px;
     margin-bottom: 4px;
   }
@@ -232,7 +232,7 @@
 
   .cal-grid {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(7, minmax(0, 1fr));
     gap: 4px;
   }
 
@@ -281,6 +281,7 @@
     font-weight: 700;
   }
 
+  .cal-events { display: contents; } /* rein strukturell, kein eigenes Layout */
   .event-chip {
     display: block;
     font-size: 10.5px;
@@ -296,6 +297,11 @@
     transition: filter .12s, transform .1s;
     line-height: 1.3;
   }
+  /* Alle Termine werden immer ins DOM gerendert (siehe JS) – auf dem
+     Bildschirm aber ab dem 4. rein optisch ausgeblendet, damit "+N weitere"
+     stimmt. Grund für den Umweg statt einfach nicht zu rendern: beim
+     Drucken (@media print) müssen alle wieder sichtbar sein. */
+  .cal-events .event-chip:nth-child(n+4) { display: none; }
   .event-chip:hover { filter: brightness(.93); transform: translateY(-1px); }
   .event-chip .chip-time { opacity: .75; font-size: 9.5px; margin-right: 3px; font-family: 'JetBrains Mono', monospace; }
   .event-chip .chip-mod { display: none; } /* nur auf Mobile sichtbar, siehe Media Query unten */
@@ -602,6 +608,9 @@
       line-height: 1.4;
       padding: 7px 9px;
     }
+    /* Mobile zeigt bis zu 6 statt 3 (MAX_CHIPS in JS) – Grenze entsprechend verschieben */
+    .cal-events .event-chip:nth-child(n+4) { display: block; }
+    .cal-events .event-chip:nth-child(n+7) { display: none; }
     .event-chip .chip-time { font-size: 11px; }
     .event-chip .chip-mod {
       display: inline-block;
@@ -620,6 +629,86 @@
     }
     .day-view-back, .day-view-copy { flex-shrink: 0; font-size: 12px; padding: 6px 9px; }
     .day-view-body { padding: 14px 12px 30px; }
+  }
+
+  /* ── DRUCK ──────────────────────────────────────────────────────────────────
+     Nur eine saubere Monatsübersicht auf Papier: sämtliche Bedienelemente,
+     Overlays und rein digitalen Hinweise (Countdown, Suche, Abo, Notizen)
+     werden ausgeblendet. Übrig bleiben Titel, aktueller Monat, Farblegende
+     und das Kalenderraster selbst – inklusive der echten Modulfarben (dafür
+     print-color-adjust, da Browser Hintergrundfarben beim Drucken sonst
+     standardmäßig weglassen).
+     Das Passwort-Overlay wird zwar schon per JS nach dem Login entfernt,
+     hier aber zusätzlich per CSS abgesichert, falls doch mal gedruckt wird,
+     bevor das JS dazu kommt. */
+  @media print {
+    @page { margin: 14mm; }
+
+    #pw-overlay,
+    .toolbar,
+    .next-up,
+    .month-dots,
+    .page-footer,
+    .modal-overlay,
+    .day-view,
+    .nav-btn,
+    header p {
+      display: none !important;
+    }
+
+    * {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    body { background: #fff; }
+
+    header {
+      position: static;
+      border-bottom: 2px solid var(--text);
+      padding: 0 0 10px;
+      margin-bottom: 14px;
+      box-shadow: none;
+    }
+    .header-left h1 { font-size: 20px; }
+    .nav-controls { justify-content: flex-start; gap: 0; }
+    .month-label { font-size: 20px; font-weight: 800; }
+
+    .legend {
+      padding: 0 0 12px;
+      border-bottom: none;
+      margin-bottom: 10px;
+    }
+
+    .calendar-wrap { padding: 0; max-width: none; }
+    .cal-cell {
+      min-height: 60px;
+      overflow: visible;
+      break-inside: avoid;
+      box-shadow: none;
+      padding: 4px 4px 3px;
+    }
+    .cal-grid { gap: 2px !important; }
+    .weekday-header { gap: 2px !important; margin-bottom: 2px !important; }
+    .day-num { margin-bottom: 2px !important; font-size: 11px !important; }
+    .event-chip {
+      break-inside: avoid;
+      white-space: normal;
+      overflow: visible;
+      text-overflow: clip;
+      overflow-wrap: break-word;
+      hyphens: auto;
+      font-size: 8.1px !important;
+      line-height: 1.28 !important;
+      padding: 1.5px 3px !important;
+      margin-bottom: 1px !important;
+      display: block !important; /* alle Termine zeigen, unabhängig von der Bildschirm-Begrenzung (n+4/n+7) */
+    }
+    .event-chip .chip-time { font-size: 7.3px !important; margin-right: 2px !important; }
+    .legend { gap: 4px !important; }
+    .legend-item { padding: 2px 8px !important; font-size: 10px !important; }
+    .more-btn { display: none !important; } /* auf Papier nicht klickbar, daher überflüssig – Termine sind ja jetzt alle sichtbar */
+    .cal-cell:hover { border-color: var(--border); }
   }
 </style>
 </head>
@@ -1076,7 +1165,15 @@ function renderMonth(idx){
 
     // Event chips (auf Mobile mehr Platz, da Termine dort umbrechen statt abgeschnitten zu werden)
     // events kommt bereits sortiert aus byDate (siehe globales EVENTS.sort() oben)
-    events.slice(0,MAX_CHIPS).forEach(ev=>{
+    // WICHTIG: Es werden IMMER alle Termine ins DOM gerendert (kein .slice()) –
+    // die Begrenzung auf MAX_CHIPS passiert rein optisch per CSS (nth-child,
+    // siehe .cal-events-Regeln oben). Grund: beim Drucken gibt es kein
+    // Antippen/Klicken für "+N weitere" mehr, dort müssen alle Termine
+    // sichtbar sein (siehe @media print), sonst würden sie auf dem Ausdruck
+    // schlicht fehlen.
+    const eventsWrap = document.createElement('div');
+    eventsWrap.className = 'cal-events';
+    events.forEach(ev=>{
       const chip = document.createElement('span');
       const typeCls = ev.type ? ` event-type-${ev.type}` : '';
       chip.className = `event-chip chip-${ev.modul}${typeCls}`;
@@ -1086,8 +1183,9 @@ function renderMonth(idx){
       const roomHtml = ev.raum ? ` <span class="chip-room">· 📍 ${ev.raum}</span>` : '';
       chip.innerHTML = `<span class="chip-time">${timeLabel}</span><span class="chip-mod">${modLabel}</span>${typeIcon}${ev.title}${roomHtml}`;
       chip.onclick = (e)=>{ e.stopPropagation(); openModal(ev); };
-      cell.appendChild(chip);
+      eventsWrap.appendChild(chip);
     });
+    cell.appendChild(eventsWrap);
     if(events.length > MAX_CHIPS){
       const more = document.createElement('button');
       more.className='more-btn';

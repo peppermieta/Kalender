@@ -7,6 +7,29 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.1.0] - 2026-08-08
+
+### Added
+- **Druck-Stylesheet**: Beim Ausdrucken (`Strg`/`Cmd`+`P`) zeigt die Seite jetzt
+  eine saubere Monatsübersicht auf Papier – Passwort-Overlay, Suche,
+  Abo-Buttons, Countdown-Leiste, Navigation und der Notizen-Button werden
+  automatisch ausgeblendet. Übrig bleiben Titel, aktueller Monat,
+  Farblegende und das Kalenderraster mit den echten Modulfarben.
+
+### Fixed
+- **Fehlende Termine ab dem 4. Termin pro Tag beim Drucken**: Auf dem
+  Bildschirm werden ab dem 4. Termin (Desktop) bzw. 7. (Mobile) nur noch
+  ein "+N weitere"-Button gezeigt – die zusätzlichen Termine wurden bisher
+  nie ins DOM gerendert. Auf Papier gibt es aber kein Antippen, sie wären
+  also einfach verschwunden. Jetzt werden immer alle Termine gerendert,
+  die Begrenzung passiert rein optisch per CSS (nur auf dem Bildschirm)
+  – beim Drucken sind automatisch alle sichtbar.
+- **Kalenderraster lief beim Drucken über den Seitenrand hinaus** (Sonntag-
+  Spalte abgeschnitten): bekanntes CSS-Grid-Verhalten – `1fr`-Spalten
+  schrumpfen nicht unter die Mindestbreite ihres Inhalts (hier: lange
+  deutsche Wörter wie "Systemtheorie"). Behoben mit
+  `minmax(0, 1fr)` statt `1fr` bei Wochentags- und Kalenderraster.
+
 ## [3.0.0] - 2026-08-07
 
 ### Added
