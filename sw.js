@@ -7,7 +7,7 @@
 //
 // WICHTIG: CACHE_VERSION bei jedem inhaltlichen Update erhöhen (z.B. an die
 // CHANGELOG-Version angleichen), sonst bleiben alte, veraltete Caches liegen.
-const CACHE_VERSION = 'v3.3.0';
+const CACHE_VERSION = 'v3.4.0';
 const CACHE_NAME = `kalender-cache-${CACHE_VERSION}`;
 
 const APP_SHELL = [
@@ -44,8 +44,12 @@ self.addEventListener('fetch', event => {
   if (req.method !== 'GET') return;
 
   const isHTML = req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html');
+  // Der ICS-Feed muss für die Feed-Aktualitäts-Anzeige im Verwalten-Menü
+  // immer frisch vom Netz kommen, sonst zeigt der Cache-first-Ansatz unten
+  // fälschlich immer den alten Stand als "aktuell" an.
+  const isFeed = req.url.endsWith('.ics');
 
-  if (isHTML) {
+  if (isHTML || isFeed) {
     // Network-first: immer versuchen, frisch zu laden; Cache nur als Offline-Fallback
     event.respondWith(
       fetch(req)

@@ -10,26 +10,30 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   auf Papier.
   **✅ Umgesetzt** (v3.1.0)
 - **QR-Code für den Kalender-Abo-Link** – ein QR-Code neben "🔗 Abo-Link
-  kopieren" im Verwalten-Menü, der direkt auf die `webcal://`-URL zeigt:
-  Code mit dem Handy scannen, Feed ist ohne Linkversand/Abtippen
-  eingebunden. Praktisch beim Einrichten eines neuen Geräts.
+  kopieren" im Verwalten-Menü.
+  **✅ Umgesetzt** (v3.4.0) – Toggle-Button "📱 QR-Code anzeigen" blendet
+  den Code direkt darunter ein. Kodiert dieselbe HTTPS-Feed-URL wie der
+  Kopieren-Button, rein lokal generiert (eingebettete Bibliothek statt
+  Drittanbieter-Dienst, da der Dateiname der einzige Schutz des Feeds
+  ist, s. `scripts/generate-ics.js`).
 - **Suchfilter nach Termin-Typ** – die bestehende Live-Suche um einen
   Filter/Umschalter "nur Prüfungen/Abgaben" ergänzen, damit gezielt
   danach gesucht werden kann, statt sie zwischen den normalen Terminen
   suchen zu müssen.
 - **Feed-Aktualität anzeigen** – ein kleiner Hinweis im Verwalten-Menü
-  ("Feed zuletzt aktualisiert am …"), damit erkennbar ist, ob der
-  abonnierte Kalender-Feed auf dem neuesten Stand ist.
+  ("Feed zuletzt aktualisiert am …").
+  **✅ Umgesetzt** (v3.4.0) – liest eine eigene
+  `X-KALENDER-GENERATED-AT`-Property aus der ausgelieferten ICS-Datei
+  aus (zuverlässiger als HTTP-Caching-Header, die GitHub Pages nicht
+  konsistent setzt), wird bei jedem Öffnen des Menüs neu geprüft.
+  Service Worker behandelt den Feed dafür jetzt wie HTML als
+  network-first statt cache-first.
 
 ## ⚙ Mittel — machbar, etwas Umbau nötig
 
 - **Dark Mode** – umschaltbares dunkles Farbschema, wie im
   Modulverzeichnis bereits umgesetzt; eigene abgestimmte Dunkel-Varianten
   für die Modulfarben statt reiner Invertierung.
-- **Barrierefreiheits-Check (Phase 3)** – vollständige
-  Tastaturbedienbarkeit der Tageszellen, ARIA-Labels/aria-live für
-  Screenreader, Kontrastprüfung. Schon länger als offener Punkt
-  vorgemerkt.
 - **Push-Benachrichtigungen über ntfy.sh (Phase 2)** – kurz vor einem
   Termin eine Push-Benachrichtigung aufs Handy, über einen kostenlosen
   Dienst und einen GitHub-Actions-Workflow, ohne eigenen Server. Konzept

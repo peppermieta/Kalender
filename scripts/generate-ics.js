@@ -24,7 +24,13 @@ const CALNAME = 'Vorlesungskalender';
 
 const root = path.join(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
-const script = html.match(/<script>([\s\S]*?)<\/script>/)[1];
+// Nicht mehr "das erste <script>-Tag" nehmen (seit v3.4.0 steht davor die
+// eingebettete QR-Bibliothek) – stattdessen gezielt den Block mit dem
+// Datenteil-Marker herausfischen, robust gegen weitere künftig
+// hinzukommende Script-Blöcke.
+const scriptBlocks = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m => m[1]);
+const script = scriptBlocks.find(s => s.includes('ENDE DATENTEIL'));
+if (!script) throw new Error('Datenteil-Script (mit SEMESTERS/EVENTS_BY_SEMESTER/MODS) nicht gefunden!');
 
 // Nur den Datenteil ausführen (SEMESTERS + EVENTS_BY_SEMESTER + MODS), nicht
 // das komplette Render-Skript. Der Marker-Kommentar steht direkt im
@@ -100,6 +106,10 @@ const lines = [
   'X-WR-TIMEZONE:Europe/Berlin',
   'REFRESH-INTERVAL;VALUE=DURATION:P1D',
   'X-PUBLISHED-TTL:P1D',
+  // Eigene, nicht-standardisierte Property (RFC5545 erlaubt X-Präfixe für
+  // private Erweiterungen, kompatible Kalender-Apps ignorieren sie einfach).
+  // Wird von der Feed-Aktualitäts-Anzeige im Verwalten-Menü ausgelesen.
+  `X-KALENDER-GENERATED-AT:${dtstamp}`,
   VTIMEZONE,
 ];
 

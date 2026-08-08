@@ -7,6 +7,31 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.4.0] - 2026-08-08
+
+### Added
+- **QR-Code für den Kalender-Abo-Link** im Verwalten-Menü: Toggle-Button
+  "📱 QR-Code anzeigen" blendet einen SVG-QR-Code für die HTTPS-Feed-URL
+  ein. Bewusst komplett lokal generiert (QR-Bibliothek
+  "qrcode-generator" von Kazuhiko Arase, MIT-Lizenz, eingebettet statt
+  von einem Drittanbieter-Dienst geladen) – der Dateiname des Feeds ist
+  der einzige Schutz vor unbefugtem Zugriff (s. `scripts/generate-ics.js`)
+  und darf daher nie an einen externen Dienst geschickt werden.
+- **Feed-Aktualität anzeigen** im Verwalten-Menü: zeigt "Feed zuletzt
+  aktualisiert am …", ausgelesen aus einer neuen
+  `X-KALENDER-GENERATED-AT`-Property im Kopf der ICS-Datei (von
+  `scripts/generate-ics.js` bei jeder Generierung neu gesetzt). Wird bei
+  jedem Öffnen des Verwalten-Menüs neu geprüft, mit Fallback-Text bei
+  fehlendem Netz.
+
+### Changed
+- `scripts/generate-ics.js` schreibt jetzt die genannte
+  `X-KALENDER-GENERATED-AT`-Property in jede generierte ICS-Datei.
+- Service Worker behandelt den ICS-Feed jetzt wie HTML als
+  network-first statt cache-first – sonst hätte die
+  Feed-Aktualitäts-Anzeige immer nur den gecachten (alten) Stand
+  gesehen und wäre nutzlos gewesen.
+
 ## [3.3.0] - 2026-08-08
 
 ### Added
