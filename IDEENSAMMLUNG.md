@@ -17,9 +17,12 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   Drittanbieter-Dienst, da der Dateiname der einzige Schutz des Feeds
   ist, s. `scripts/generate-ics.js`).
 - **Suchfilter nach Termin-Typ** – die bestehende Live-Suche um einen
-  Filter/Umschalter "nur Prüfungen/Abgaben" ergänzen, damit gezielt
-  danach gesucht werden kann, statt sie zwischen den normalen Terminen
-  suchen zu müssen.
+  Filter/Umschalter "nur Prüfungen/Abgaben" ergänzen.
+  **✅ Umgesetzt** (v3.5.0) – Umschalter neben der Suche funktioniert auch
+  eigenständig ganz ohne Texteingabe (zeigt dann alle Prüfungen/Abgaben
+  semesterübergreifend), kombinierbar mit einem Suchbegriff. Aktuell
+  ohne sichtbare Treffer, da noch keine echten Prüfungs-/Abgabetermine
+  im Kalender eingetragen sind (Funktion selbst ist fertig und getestet).
 - **Feed-Aktualität anzeigen** – ein kleiner Hinweis im Verwalten-Menü
   ("Feed zuletzt aktualisiert am …").
   **✅ Umgesetzt** (v3.4.0) – liest eine eigene
@@ -93,6 +96,10 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   enthält jetzt nur noch die Suche, der Footer wurde entfernt. Die beiden
   gleichnamigen "Link kopieren"-Buttons sind zusätzlich eindeutig
   benannt ("Abo-Link kopieren" im Menü, "Kopieren" in der Tagesansicht).
+  **Nachtrag (v3.5.0):** Button zeigt auf Mobile nur noch das Icon "⋮"
+  statt "⚙️ Verwalten" (zu wuchtig, nahm eine eigene Zeile ein) – jetzt
+  wieder in einer Zeile mit ←/Monat/→/Heute, Desktop bleibt bei
+  Icon+Text.
 
 ## 💭 Abstrakt — Vision, aber trotzdem nützlich
 

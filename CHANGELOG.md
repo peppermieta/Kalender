@@ -7,6 +7,37 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.5.0] - 2026-08-08
+
+### Added
+- **Suchfilter nach Termin-Typ**: Umschalter "📝📤 Nur Prüfungen/Abgaben"
+  neben der Suche. Funktioniert auch eigenständig ganz ohne Texteingabe
+  (zeigt dann alle Prüfungen/Abgaben semesterübergreifend) und
+  kombinierbar mit einem Suchbegriff. Aktuell ohne sichtbare Treffer, da
+  noch keine echten Prüfungs-/Abgabetermine im Kalender eingetragen
+  sind – Funktion selbst ist fertig und mit einem simulierten Termin
+  getestet.
+
+### Changed
+- **"⋮" statt "⚙️ Verwalten" auf Mobile**: Der Verwalten-Button zeigt auf
+  schmalen Screens nur noch das Icon (wirkte als voller Text zu wuchtig
+  auf eigener Zeile), Desktop bleibt unverändert bei Icon+Text.
+  `.month-label` hatte dabei eine feste `min-width:180px`, die unnötig
+  Platz blockierte und selbst mit dem schmalen Icon-Button einen
+  Zeilenumbruch erzwungen hätte – auf Mobile entfernt. Header passt jetzt
+  wieder in eine Zeile (⋮/←/Monat/→/Heute), über alle Monate des
+  Semesters getestet.
+
+### Fixed
+- Suchergebnis-Dropdown überlappte auf Mobile den (umgebrochenen)
+  Filter-Button und blockierte dessen Klicks. Toolbar ist auf Mobile
+  jetzt eine Spalte mit dem Filter-Button oberhalb der Suche statt
+  darunter, damit sich beide nie mehr überlappen können.
+- Der globale "Klick außerhalb schließt Dropdown"-Handler kannte den
+  neuen Filter-Button nicht (liegt außerhalb von `.search-wrap`) und
+  schloss das Such-Dropdown sofort wieder, direkt nachdem der
+  Filter-Klick es geöffnet hatte.
+
 ## [3.4.0] - 2026-08-08
 
 ### Added

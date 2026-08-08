@@ -87,6 +87,7 @@
     font-weight: 500;
   }
   .nav-btn:hover { background: var(--border); }
+  .manage-btn-icon { display: none; }
   .today-btn {
     margin-left: 4px;
     font-size: 12.5px;
@@ -169,6 +170,19 @@
   }
   .search-result-title { color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .search-empty { padding: 12px; font-size: 12.5px; color: var(--muted); text-align: center; }
+
+  .search-filter-btn {
+    flex-shrink: 0; white-space: nowrap;
+    font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500;
+    padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--bg); color: var(--muted); cursor: pointer;
+    transition: background .15s, border-color .15s, color .15s;
+  }
+  .search-filter-btn:hover { background: var(--surface); color: var(--text); }
+  /* Gleiche Farben wie das bestehende Prüfungstermin-Badge im Termin-Detail
+     (.modal-type-badge.type-pruefung), damit der aktive Zustand sich
+     erkennbar auf dieselbe Terminart bezieht. */
+  .search-filter-btn.active { background: #FCE2E2; border-color: #DC2626; color: #A11B1B; }
 
   .subscribe-wrap { display: flex; align-items: center; gap: 10px; flex-shrink: 0; flex-wrap: wrap; }
   .subscribe-copy {
@@ -557,10 +571,14 @@
     header { padding: 12px; }
     .next-up { padding: 10px 12px; font-size: 12.5px; }
     .next-up-label { display: none; } /* auf Mobile reicht Uhrzeit + Titel, spart Platz */
-    .toolbar { padding: 10px 12px; gap: 10px; }
-    .search-wrap { max-width: none; flex: 1 1 100%; }
-    .nav-controls { flex-wrap: wrap; justify-content: flex-end; row-gap: 8px; }
-    #manageMenuBtn { flex: 1 0 100%; }
+    .toolbar { padding: 10px 12px; gap: 10px; flex-direction: column; align-items: stretch; }
+    .search-wrap { max-width: none; flex: 1 1 100%; order: 2; }
+    .search-filter-btn { order: 1; width: 100%; }
+    .nav-controls { flex-wrap: wrap; justify-content: flex-end; row-gap: 8px; gap: 6px; }
+    .month-label { min-width: 0; font-size: 15px; }
+    .manage-btn-label { display: none; }
+    .manage-btn-icon { display: inline-block; font-size: 20px; line-height: 1; }
+    #manageMenuBtn { padding: 5px 13px; }
 
     /* Wochentagsleiste ausblenden – Wochentag steht jetzt direkt am Datum */
     .weekday-header { display: none; }
@@ -719,7 +737,10 @@
     </p>
   </div>
   <div class="nav-controls">
-    <button class="nav-btn" id="manageMenuBtn" type="button">⚙️ Verwalten</button>
+    <button class="nav-btn" id="manageMenuBtn" type="button" aria-label="Verwalten">
+      <span class="manage-btn-label">⚙️ Verwalten</span>
+      <span class="manage-btn-icon" aria-hidden="true">⋮</span>
+    </button>
     <button class="nav-btn" id="prevBtn">&#8592;</button>
     <span class="month-label" id="monthLabel"></span>
     <button class="nav-btn" id="nextBtn">&#8594;</button>
@@ -737,6 +758,7 @@
     <input id="searchInput" type="text" placeholder="Veranstaltung suchen…" autocomplete="off" />
     <div id="searchResults" class="search-results"></div>
   </div>
+  <button id="searchTypeFilterBtn" class="search-filter-btn" type="button" aria-pressed="false">📝📤 Nur Prüfungen/Abgaben</button>
 </div>
 
 <!-- LEGEND -->
@@ -3983,18 +4005,25 @@ function jumpToEvent(ev) {
 
 const searchInput = document.getElementById('searchInput');
 const searchResultsEl = document.getElementById('searchResults');
+const searchTypeFilterBtn = document.getElementById('searchTypeFilterBtn');
+let searchTypeFilterActive = false;
 
 // Suche läuft bewusst semesterübergreifend über allEventsFlat() statt nur
 // über das gerade angezeigte Semester – ein Klick auf einen Treffer aus
 // einem anderen Semester schaltet über jumpToEvent() automatisch dorthin um.
 function renderSearchResults(query) {
-  if (!query.trim()) {
+  const q = query.trim();
+  if (!q && !searchTypeFilterActive) {
     searchResultsEl.style.display = 'none';
     searchResultsEl.innerHTML = '';
     return;
   }
-  const matches = allEventsFlat()
-    .filter(ev => eventMatchesQuery(ev, query))
+  // Typ-Filter funktioniert bewusst auch ganz ohne Suchbegriff, damit er sich
+  // als eigenständige "Alle Prüfungen/Abgaben zeigen"-Funktion nutzen lässt,
+  // nicht nur als Verfeinerung einer Texteingabe.
+  let pool = allEventsFlat();
+  if (searchTypeFilterActive) pool = pool.filter(ev => ev.type === 'pruefung' || ev.type === 'abgabe');
+  const matches = (q ? pool.filter(ev => eventMatchesQuery(ev, q)) : pool)
     .sort((a, b) => (a.date + a.start).localeCompare(b.date + b.start))
     .slice(0, 8);
 
@@ -4008,10 +4037,11 @@ function renderSearchResults(query) {
     const m = MODS[ev.modul];
     const d = new Date(ev.date + 'T12:00:00Z');
     const dateLabel = `${d.getUTCDate()}. ${MONTH_NAMES_SHORT[d.getUTCMonth()]}`;
+    const typeIcon = TYPE_ICON[ev.type] ? `${TYPE_ICON[ev.type]} ` : '';
     return `<div class="search-result" data-i="${i}">
       <span class="search-result-dot" style="background:${m.dot}"></span>
       <span class="search-result-date">${dateLabel}, ${ev.start}</span>
-      <span class="search-result-title">${ev.title}</span>
+      <span class="search-result-title">${typeIcon}${ev.title}</span>
     </div>`;
   }).join('');
   searchResultsEl.style.display = 'block';
@@ -4026,10 +4056,18 @@ function renderSearchResults(query) {
   });
 }
 
+searchTypeFilterBtn.addEventListener('click', () => {
+  searchTypeFilterActive = !searchTypeFilterActive;
+  searchTypeFilterBtn.classList.toggle('active', searchTypeFilterActive);
+  searchTypeFilterBtn.setAttribute('aria-pressed', String(searchTypeFilterActive));
+  renderSearchResults(searchInput.value);
+  if (searchTypeFilterActive) searchInput.focus();
+});
+
 searchInput.addEventListener('input', () => renderSearchResults(searchInput.value));
-searchInput.addEventListener('focus', () => { if (searchInput.value.trim()) renderSearchResults(searchInput.value); });
+searchInput.addEventListener('focus', () => { if (searchInput.value.trim() || searchTypeFilterActive) renderSearchResults(searchInput.value); });
 document.addEventListener('click', e => {
-  if (!e.target.closest('.search-wrap')) searchResultsEl.style.display = 'none';
+  if (!e.target.closest('.search-wrap') && !e.target.closest('#searchTypeFilterBtn')) searchResultsEl.style.display = 'none';
 });
 // Escape-Behandlung für die Suche steckt im zentralen keydown-Listener oben (bei ArrowLeft/Right)
 
