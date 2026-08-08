@@ -7,6 +7,19 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.5.1] - 2026-08-08
+
+### Changed
+- **Filter-Button "Nur Prüfungen/Abgaben" auf reines Icon umgestellt**:
+  statt Text jetzt ein selbst gezeichnetes SVG-Trichter-Icon (klassische
+  Filter-Form), auf allen Bildschirmgrößen – vorher nur auf Mobile
+  geplant, auf Wunsch überall vereinheitlicht. Bezeichnung bleibt als
+  natives Tooltip (`title`-Attribut) beim Hovern erhalten.
+  Toolbar-Layout auf Mobile dadurch vereinfacht: der kompakte
+  34×34px-Button passt jetzt direkt neben die Suche statt darunter
+  umzubrechen – das Spalten-Layout von v3.5.0 (Workaround gegen das
+  Dropdown-Überlappungsproblem) war damit nicht mehr nötig.
+
 ## [3.5.0] - 2026-08-08
 
 ### Added

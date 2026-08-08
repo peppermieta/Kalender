@@ -23,6 +23,10 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   semesterübergreifend), kombinierbar mit einem Suchbegriff. Aktuell
   ohne sichtbare Treffer, da noch keine echten Prüfungs-/Abgabetermine
   im Kalender eingetragen sind (Funktion selbst ist fertig und getestet).
+  **Nachtrag (v3.5.1):** Button zeigt statt Text nur noch ein
+  selbst gezeichnetes Trichter-Icon (kompakter, passt auf allen
+  Größen direkt neben die Suche statt darunter umzubrechen), Bezeichnung
+  weiterhin als Tooltip beim Hovern verfügbar.
 - **Feed-Aktualität anzeigen** – ein kleiner Hinweis im Verwalten-Menü
   ("Feed zuletzt aktualisiert am …").
   **✅ Umgesetzt** (v3.4.0) – liest eine eigene

@@ -172,9 +172,10 @@
   .search-empty { padding: 12px; font-size: 12.5px; color: var(--muted); text-align: center; }
 
   .search-filter-btn {
-    flex-shrink: 0; white-space: nowrap;
-    font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500;
-    padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border);
+    flex-shrink: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px; padding: 0;
+    border-radius: 8px; border: 1px solid var(--border);
     background: var(--bg); color: var(--muted); cursor: pointer;
     transition: background .15s, border-color .15s, color .15s;
   }
@@ -571,9 +572,8 @@
     header { padding: 12px; }
     .next-up { padding: 10px 12px; font-size: 12.5px; }
     .next-up-label { display: none; } /* auf Mobile reicht Uhrzeit + Titel, spart Platz */
-    .toolbar { padding: 10px 12px; gap: 10px; flex-direction: column; align-items: stretch; }
-    .search-wrap { max-width: none; flex: 1 1 100%; order: 2; }
-    .search-filter-btn { order: 1; width: 100%; }
+    .toolbar { padding: 10px 12px; gap: 8px; }
+    .search-wrap { max-width: none; flex: 1 1 auto; }
     .nav-controls { flex-wrap: wrap; justify-content: flex-end; row-gap: 8px; gap: 6px; }
     .month-label { min-width: 0; font-size: 15px; }
     .manage-btn-label { display: none; }
@@ -758,7 +758,11 @@
     <input id="searchInput" type="text" placeholder="Veranstaltung suchen…" autocomplete="off" />
     <div id="searchResults" class="search-results"></div>
   </div>
-  <button id="searchTypeFilterBtn" class="search-filter-btn" type="button" aria-pressed="false">📝📤 Nur Prüfungen/Abgaben</button>
+  <button id="searchTypeFilterBtn" class="search-filter-btn" type="button" aria-pressed="false" aria-label="Nur Prüfungen/Abgaben" title="Nur Prüfungen/Abgaben">
+    <svg viewBox="0 0 24 24" width="16" height="16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M4 5 L20 5 L14 13 L14 19 L10 19 L10 13 Z" fill="currentColor"/>
+    </svg>
+  </button>
 </div>
 
 <!-- LEGEND -->
