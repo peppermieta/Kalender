@@ -209,6 +209,8 @@
   .page-footer {
     display: flex;
     justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
     padding: 8px 24px 28px;
     max-width: 1400px;
     margin: 0 auto;
@@ -762,6 +764,7 @@
 
 <!-- FOOTER -->
 <footer class="page-footer">
+  <button id="printBtn" class="subscribe-copy" type="button">🖨️ Drucken</button>
   <button id="notesSyncOpenBtn" class="subscribe-copy" type="button">📋 Notizen übertragen</button>
 </footer>
 
@@ -1357,6 +1360,11 @@ function openNotesSync(){
 function closeNotesSync(){ notesSyncOverlay.classList.remove('open'); }
 document.getElementById('notesSyncOpenBtn').onclick = openNotesSync;
 document.getElementById('notesSyncClose').onclick = closeNotesSync;
+
+// Druck-Button: window.print() funktioniert auch ganz ohne Browser-Oberfläche
+// (z.B. installierte PWA im Standalone-Modus, wo Adressleiste/Menü fehlen und
+// es damit auch kein Strg/Cmd+P oder Drucken-Menüpunkt gibt).
+document.getElementById('printBtn').addEventListener('click', () => window.print());
 notesSyncOverlay.onclick = e => { if (e.target === notesSyncOverlay) closeNotesSync(); };
 
 const notesSyncCopyBtn = document.getElementById('notesSyncCopyBtn');

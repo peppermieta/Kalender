@@ -7,6 +7,16 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.2.0] - 2026-08-08
+
+### Added
+- **Eigener "🖨️ Drucken"-Button** im Footer, neben "Notizen übertragen".
+  Grund: als installierte App (Standalone-Modus) fehlen Adressleiste und
+  Browser-Menü – damit gibt es dort weder Strg/Cmd+P noch einen
+  Drucken-Menüpunkt. Der Button ruft `window.print()` direkt auf, das
+  funktioniert unabhängig von vorhandener Browser-Oberfläche und nutzt
+  das bereits bestehende Druck-Stylesheet (v3.1.0).
+
 ## [3.1.2] - 2026-08-08
 
 ### Changed

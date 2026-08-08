@@ -15,7 +15,7 @@ Privater, passwortgeschützter Vorlesungskalender für das Studium (Bachelor Soz
 - **Installierbare App (PWA)** – auf Android als App installierbar (eigenes Icon, kein Browser-Rahmen), funktioniert dank Service Worker auch ohne Internetverbindung
 - **Suche** – Freitextsuche nach Veranstaltung oder Modulname direkt im Header; Klick auf ein Ergebnis springt zum passenden Monat und öffnet die Detailansicht
 - **Kalender-Abo (ICS)** – Termine lassen sich per Klick zu Google Kalender hinzufügen oder als Link für andere Kalender-Apps kopieren, inkl. automatischer Aktualisierung bei Änderungen und über alle Semester hinweg (siehe Abschnitt "Kalender-Abo" unten)
-- **Druckansicht** – eigenes Stylesheet für den Ausdruck (Strg/Cmd+P): saubere Monatsübersicht mit Farblegende, ohne Bedienelemente/Overlays; zeigt auf Papier immer alle Termine eines Tages, auch wenn auf dem Bildschirm wegen Platzmangel nur "+N weitere" steht
+- **Druckansicht** – eigenes Stylesheet für den Ausdruck (Strg/Cmd+P oder eigener "Drucken"-Button im Footer, nützlich als installierte App ohne Browser-Menü): saubere Monatsübersicht mit Farblegende, ohne Bedienelemente/Overlays; zeigt auf Papier immer alle Termine eines Tages, auch wenn auf dem Bildschirm wegen Platzmangel nur "+N weitere" steht
 - **Modulverzeichnis** – seit Version 2.1.0 ein eigenständiges, öffentlich mit anderen Studierenden geteiltes Projekt: [module.xn--peppermita-lnb.de](https://module.xn--peppermita-lnb.de/) (eigenes Repo: [peppermieta/Modulverzeichnis](https://github.com/peppermieta/Modulverzeichnis)), verlinkt aus dem Kalender-Header. Alle 28 Module, Semesterauswahl, Farben nach Studienbereich, Modulverantwortliche, Workload-Aufteilung, Verwendbarkeit in anderen Studiengängen. Frei zugänglich, ohne Passwortschutz.
 - **Passwortschutz** – rein clientseitig (SHA-256-Hash im Quellcode), reicht aus, um die Seite vor Suchmaschinen/Zufallsbesucher:innen zu verbergen, ist aber **kein** echter Sicherheitsmechanismus
 - **Anonymisiert** – keine Angaben zu Name, Matrikelnummer oder Hochschule im Code
@@ -73,7 +73,7 @@ Danach startet der Kalender wie eine normale App (eigenes Icon, kein Browser-Rah
 
 ## Versionshistorie
 
-Alle Änderungen werden in [CHANGELOG.md](CHANGELOG.md) dokumentiert (aktuelle Version: **3.1.2**).
+Alle Änderungen werden in [CHANGELOG.md](CHANGELOG.md) dokumentiert (aktuelle Version: **3.2.0**).
 
 ## Farbpalette
 
