@@ -9,12 +9,17 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   Buttons und Navigation ausgeblendet, nur eine saubere Monatsübersicht
   auf Papier.
   **✅ Umgesetzt** (v3.1.0)
-- **Wochenansicht / 7-Tage-Agenda** – zusätzliche Ansicht neben Monat und
-  Tag: eine kompakte Liste der nächsten 7 Tage, praktisch für den
-  schnellen Überblick unterwegs.
-- **Anpassbare Akzentfarbe** – eine der fünf Textmarker-Farben statt fest
-  Lila als persönliche Akzentfarbe wählbar, rein kosmetisch, lokal
-  gespeichert.
+- **QR-Code für den Kalender-Abo-Link** – ein QR-Code neben "🔗 Link
+  kopieren" im Abo-Bereich, der direkt auf die `webcal://`-URL zeigt:
+  Code mit dem Handy scannen, Feed ist ohne Linkversand/Abtippen
+  eingebunden. Praktisch beim Einrichten eines neuen Geräts.
+- **Suchfilter nach Termin-Typ** – die bestehende Live-Suche um einen
+  Filter/Umschalter "nur Prüfungen/Abgaben" ergänzen, damit gezielt
+  danach gesucht werden kann, statt sie zwischen den normalen Terminen
+  suchen zu müssen.
+- **Feed-Aktualität anzeigen** – ein kleiner Hinweis im Abo-Bereich
+  ("Feed zuletzt aktualisiert am …"), damit erkennbar ist, ob der
+  abonnierte Kalender-Feed auf dem neuesten Stand ist.
 
 ## ⚙ Mittel — machbar, etwas Umbau nötig
 
@@ -29,18 +34,32 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   Termin eine Push-Benachrichtigung aufs Handy, über einen kostenlosen
   Dienst und einen GitHub-Actions-Workflow, ohne eigenen Server. Konzept
   bereits besprochen, nur noch nicht gebaut.
-- **Eigene "Nächste Prüfung"-Anzeige** – ähnlich der bestehenden
-  Next-Up-Leiste, aber gezielt nur für Prüfungs-/Abgabetermine, damit die
-  zwischen normalen Terminen nicht untergehen.
+- **Next-Up-Leiste um Prüfungen/Abgaben erweitern** – Damit Prüfungs- und
+  Abgabetermine zwischen den normalen Terminen nicht untergehen, zeigt
+  die bestehende Next-Up-Leiste künftig zusätzlich zum nächsten Termin
+  allgemein eine zweite Zeile mit der nächsten anstehenden Prüfung/
+  Abgabe – unabhängig davon, wie weit sie in der Zukunft liegt. Nur wenn
+  der ohnehin nächste Termin selbst schon eine Prüfung/Abgabe ist,
+  entfällt die zweite Zeile (keine Dopplung). Technisch: `EVENTS`
+  semesterübergreifend (wie beim bestehenden Next-Up schon der Fall)
+  nach `type: "pruefung"/"abgabe"` filtern, chronologisch nächsten
+  Eintrag suchen, mit Icon (📝/📤) als zweite Zeile ergänzen.
+- **Eigene Freitext-Termine (rein lokal)** – ein "+"-Button ermöglicht
+  das Anlegen persönlicher Ad-hoc-Termine (Gruppentreffen,
+  Bibliothekstermin o. Ä.) direkt im Browser, gespeichert in
+  `localStorage` analog zu den bestehenden privaten Notizen, ohne Pflege
+  im Quellcode. Für die Geräteübertragung wird der bestehende
+  Export/Import-Mechanismus ("📋 Notizen übertragen") erweitert statt
+  eines zweiten, separaten Sync-Wegs – die eigenen Termine würden mit im
+  selben JSON-Blob wie die Notizen wandern.
 - **Kalender ↔ Modulverzeichnis verknüpfen** – von einem Kalendertermin
-  direkt zum zugehörigen Modul im Modulverzeichnis springen; der
-  Modulcode steht an jedem Termin ja schon.
-- **Archiv-Konzept für alte Semester** – mit wachsender Semesterzahl
-  (Mehrsemester-Technik seit v3.0.0 vorhanden) stellt sich die Frage, wie
-  alte, abgeschlossene Semester langfristig gehandhabt werden: alles
-  weiter in einer Datei mit Semester-Umschalter, oder eingefrorene
-  Einzelseiten pro Semester. Optionen bereits besprochen, Empfehlung für
-  Ersteres gegeben, Entscheidung aber noch offen.
+  direkt zum zugehörigen Modul im Modulverzeichnis springen.
+  **✅ Umgesetzt** (v2.2.0) – Modul-Badge im Termin-Detail verlinkt
+  direkt zur passenden Detailkarte im Modulverzeichnis.
+- **Archiv-Konzept für alte Semester** – Frage, wie alte, abgeschlossene
+  Semester langfristig gehandhabt werden.
+  **✅ Umgesetzt** (v3.0.0) – alles in einer Datei mit Semester-Umschalter
+  statt eingefrorener Einzelseiten pro Semester.
 
 ## 🏗 Größer — größere technische Themen
 
@@ -49,22 +68,32 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   Geräten synchron bleiben. Bewusst als Fernziel zurückgestellt.
   **📄 Technisches Konzept ausgearbeitet** – siehe
   [`Notiz-Sync-Konzept.md`](./Notiz-Sync-Konzept.md)
-- **Automatisierte HISinOne-Synchronisation** – Termine direkt aus dem
-  Hochschulsystem übernehmen statt manueller Pflege. Technisch und
-  rechtlich der anspruchsvollste Punkt dieser Liste.
 - **Prospektive Belastungs-Heatmap** – eine farbcodierte Semesterkurve
   aus SWS, CP-Workload und Prüfungsterminen, kombiniert aus Kalender- und
-  Modulverzeichnis-Daten.
+  Modulverzeichnis-Daten. Als konkretes Vorhaben eingestuft, nicht nur
+  Vision – technisch anspruchsvollster Punkt, da Daten aus beiden
+  Projekten zusammengeführt werden müssen (bisher keine gemeinsame
+  Datenbrücke zwischen den beiden statischen Seiten).
+- **UI-Neuordnung: Buttons & Funktionen konsolidieren** – Bedienelemente
+  sind über Header, Toolbar, Footer, Tagesansicht und Notiz-Sync-Overlay
+  verteilt, gewachsen Feature für Feature ohne übergreifendes Konzept.
+  Beispiel für die entstandene Unschärfe: zwei Buttons mit identischem
+  Label "🔗 Link kopieren" an unterschiedlichen Stellen mit
+  unterschiedlicher Funktion (Kalender-Abo-Link vs. Tages-Link). Statt
+  weiter organisch zu wachsen: einmal grundsätzlich durchdenken, wie
+  Funktionen sinnvoll gruppiert werden – z. B. nach Nutzungshäufigkeit,
+  oder in einem einheitlichen Menü statt verteilter Einzel-Buttons.
 
 ## 💭 Abstrakt — Vision, aber trotzdem nützlich
 
 - **Workload-Transparenz** – eine einfache Statistik ("X Kontaktstunden
   diese Woche"), um die eigene Auslastung über das Semester hinweg im
-  Blick zu behalten.
+  Blick zu behalten. Würde durch die "Prospektive Belastungs-Heatmap"
+  mit abgedeckt, bleibt aber als eigenständiger, kleinerer Punkt stehen.
 - **Semester-Rückblick** – eine kleine, automatisch erzeugte
   Zusammenfassung am Semesterende ("X Termine, Y Prüfungen absolviert")
-  als kleiner persönlicher Abschluss.
-- **Intelligente Konflikt-Erkennung** – warnt automatisch, falls beim
-  Eintragen neuer Termine zeitliche Überschneidungen entstehen – eine
-  automatisierte Version dessen, was bei der ursprünglichen
-  Stundenplanung einmal manuell geprüft wurde.
+  als kleiner persönlicher Abschluss. Ließe sich komplett aus den
+  ohnehin schon vorhandenen Daten in `EVENTS_BY_SEMESTER` berechnen
+  (Anzahl Termine, Prüfungen, Abgaben je Semester) – kein neuer
+  Datenbedarf. Denkbar z. B. als kleine Karte, die erscheint, sobald man
+  im Dropdown auf ein bereits vergangenes Semester wechselt.
