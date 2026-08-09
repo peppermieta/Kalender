@@ -193,6 +193,11 @@
      (.modal-type-badge.type-pruefung), damit der aktive Zustand sich
      erkennbar auf dieselbe Terminart bezieht. */
   .search-filter-btn.active { background: #FCE2E2; border-color: #DC2626; color: #A11B1B; }
+  .toolbar-kw {
+    flex-shrink: 0;
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    color: var(--muted); letter-spacing: .2px;
+  }
 
   .subscribe-wrap { display: flex; align-items: center; gap: 10px; flex-shrink: 0; flex-wrap: wrap; }
   .subscribe-copy {
@@ -521,7 +526,7 @@
   .day-view-back {
     background: var(--bg); border: 1px solid var(--border); border-radius: 7px;
     padding: 7px 12px; font-size: 13px; font-family: inherit; cursor: pointer; color: var(--text);
-    transition: background .15s;
+    transition: background .15s; display: inline-flex; align-items: center; gap: 6px;
   }
   .day-view-back:hover { background: var(--border); }
   .day-view-date { font-size: 15px; font-weight: 700; letter-spacing: -.2px; text-align: center; }
@@ -529,6 +534,7 @@
     font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500;
     padding: 6px 10px; border-radius: 7px; border: 1px solid var(--border);
     background: var(--bg); color: var(--muted); cursor: pointer; white-space: nowrap;
+    display: inline-flex; align-items: center; gap: 6px;
   }
   .day-view-copy:hover { background: var(--surface); color: var(--text); }
   .day-view-copy.copied { color: #1A8C70; border-color: #8DD4C2; }
@@ -689,6 +695,7 @@
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .day-view-back, .day-view-copy { flex-shrink: 0; font-size: 12px; padding: 6px 9px; }
+    .day-view-back-label, .day-view-copy-label { display: none; } /* nur Icon, s. day-view-date Platzproblem unten */
     .day-view-body { padding: 14px 12px 30px; }
   }
 
@@ -815,6 +822,7 @@
       <path d="M4 5 L20 5 L14 13 L14 19 L10 19 L10 13 Z" fill="currentColor"/>
     </svg>
   </button>
+  <span class="toolbar-kw" id="toolbarKw" title="Aktuelle Kalenderwoche"></span>
 </div>
 
 <!-- LEGEND -->
@@ -923,9 +931,15 @@
 <!-- TAGESANSICHT (Fokus-Ansicht für heute / Tagesausblick für andere Tage) -->
 <div class="day-view" id="dayView">
   <div class="day-view-header">
-    <button class="day-view-back" id="dayViewBack" type="button">&#8592; Zurück</button>
+    <button class="day-view-back" id="dayViewBack" type="button">
+      <span class="day-view-back-icon" aria-hidden="true">&#8592;</span>
+      <span class="day-view-back-label">Zurück</span>
+    </button>
     <div class="day-view-date" id="dayViewDate"></div>
-    <button class="day-view-copy" id="dayViewCopy" type="button">🔗 Kopieren</button>
+    <button class="day-view-copy" id="dayViewCopy" type="button">
+      <span class="day-view-copy-icon" aria-hidden="true">🔗</span>
+      <span class="day-view-copy-label">Kopieren</span>
+    </button>
   </div>
   <div class="day-view-body" id="dayViewBody"></div>
 </div>
@@ -3570,6 +3584,17 @@ function updateDots(){
 // ─── RENDER CALENDAR ─────────────────────────────────────────────────────────
 function isoDate(y,m,d){ return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`; }
 
+// Standard-ISO-8601-Algorithmus: auf den Donnerstag derselben Woche
+// verschieben (der bestimmt laut ISO 8601, zu welchem Jahr/welcher Woche
+// ein Datum zählt), dann die Wochenzahl relativ zum Jahresanfang bilden.
+function getISOWeek(date){
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = d.getUTCDay() || 7; // Sonntag=0 -> als 7 zählen
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+}
+
 function renderMonth(idx){
   const {year, month} = MONTHS[idx];
   document.getElementById('monthLabel').textContent =
@@ -3983,7 +4008,7 @@ function renderDayView(iso, {pushHistory=true} = {}){
   const events = (byDate[iso] || []).slice().sort((a,b)=> (a.start||'').localeCompare(b.start||''));
   const [y, mo, d] = iso.split('-').map(Number);
   const dow = new Date(y, mo-1, d).getDay();
-  dayViewDate.textContent = `${WEEKDAY_ABBR[dow]}, ${d}. ${MONTH_NAMES[mo-1]} ${y}`;
+  dayViewDate.textContent = `${WEEKDAY_ABBR[dow]}, ${d}. ${MONTH_NAMES[mo-1]} ${y} · KW ${getISOWeek(new Date(y, mo-1, d))}`;
 
   const today = new Date();
   const todayISO = isoDate(today.getFullYear(), today.getMonth(), today.getDate());
@@ -4101,9 +4126,12 @@ dayViewCopy.addEventListener('click', () => {
   if(!currentDayIso) return;
   const url = `${location.origin}${location.pathname}#${currentDayIso}`;
   navigator.clipboard.writeText(url).then(() => {
-    dayViewCopy.textContent = '✓ Kopiert';
+    dayViewCopy.innerHTML = '<span class="day-view-copy-icon" aria-hidden="true">✓</span><span class="day-view-copy-label">Kopiert</span>';
     dayViewCopy.classList.add('copied');
-    setTimeout(() => { dayViewCopy.textContent = '🔗 Kopieren'; dayViewCopy.classList.remove('copied'); }, 2000);
+    setTimeout(() => {
+      dayViewCopy.innerHTML = '<span class="day-view-copy-icon" aria-hidden="true">🔗</span><span class="day-view-copy-label">Kopieren</span>';
+      dayViewCopy.classList.remove('copied');
+    }, 2000);
   });
 });
 
@@ -4259,6 +4287,12 @@ const searchInput = document.getElementById('searchInput');
 const searchResultsEl = document.getElementById('searchResults');
 const searchTypeFilterBtn = document.getElementById('searchTypeFilterBtn');
 let searchTypeFilterActive = false;
+
+// Reine Orientierungsinfo, einmalig beim Laden gesetzt (wie Next-Up/
+// Feed-Aktualität nicht fortlaufend aktualisiert) – zeigt immer die
+// tatsächlich aktuelle Kalenderwoche, unabhängig vom gerade
+// durchblätterten Monat.
+document.getElementById('toolbarKw').textContent = `KW ${getISOWeek(new Date())}`;
 
 // Suche läuft bewusst semesterübergreifend über allEventsFlat() statt nur
 // über das gerade angezeigte Semester – ein Klick auf einen Treffer aus

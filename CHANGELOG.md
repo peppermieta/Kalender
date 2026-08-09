@@ -7,6 +7,23 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.7.0] - 2026-08-09
+
+### Added
+- **Kalenderwochen-Anzeige (KW)** an zwei Stellen: in der Tagesansicht
+  die KW des angezeigten Tages ("Do, 1. Oktober 2026 · KW 40"), und in
+  der Toolbar die tatsächlich aktuelle KW als dezente, nicht
+  interaktive Anzeige neben dem Filter-Icon (JetBrains Mono, gedämpfte
+  Farbe – rein informativ, kein Button). Standard-ISO-8601-Algorithmus
+  (`getISOWeek()`), gegen Jahreswechsel-Randfälle geprüft (29.12.2025 →
+  KW 1/2026, 1.1.2027 → noch KW 53/2026).
+
+### Changed
+- Zurück-/Kopieren-Buttons in der Tagesansicht zeigen auf Mobile nur
+  noch die Icons statt Icon+Text (analog zum Verwalten-Button aus
+  v3.5.0) – sonst hätte für die neu ergänzte KW im Datum kein Platz
+  mehr gereicht (Datum wäre abgeschnitten worden).
+
 ## [3.6.0] - 2026-08-09
 
 ### Added

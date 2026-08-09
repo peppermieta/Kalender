@@ -36,9 +36,15 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   Service Worker behandelt den Feed dafür jetzt wie HTML als
   network-first statt cache-first.
 - **Kalenderwochen-Anzeige (KW)** – die ISO-Kalenderwoche zusätzlich
-  anzeigen, z. B. neben dem Monatstitel im Header oder im Datum der
-  Tagesansicht – praktisch, weil Fristen und Vorlesungspläne oft in
-  Kalenderwochen kommuniziert werden.
+  anzeigen.
+  **✅ Umgesetzt** (v3.7.0) – an zwei Stellen: die KW des jeweils
+  angezeigten Tages im Datum der Tagesansicht ("Do, 1. Oktober 2026 ·
+  KW 40"), und die tatsächlich aktuelle KW als dezente, nicht
+  interaktive Anzeige neben dem Filter-Icon in der Toolbar. Standard-
+  ISO-8601-Algorithmus (`getISOWeek()`), gegen mehrere Randfälle
+  geprüft (Jahreswechsel-Wochen). Nebenbei: Zurück-/Kopieren-Buttons in
+  der Tagesansicht zeigen auf Mobile jetzt nur noch die Icons (wie beim
+  Verwalten-Button), sonst hätte für die KW kein Platz mehr gereicht.
 
 ## ⚙ Mittel — machbar, etwas Umbau nötig
 
