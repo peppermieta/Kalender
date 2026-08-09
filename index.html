@@ -585,12 +585,14 @@
     padding: 14px; border: 1px solid var(--border); border-radius: var(--radius);
     background: var(--surface); display: flex; flex-direction: column; gap: 10px;
   }
-  .day-add-form input[type="text"], .day-add-form input[type="time"] {
+  .day-add-form input[type="text"], .day-add-form input[type="time"], .day-add-form select {
     font-family: 'Inter', sans-serif; font-size: 13.5px; padding: 9px 12px;
     border: 1px solid var(--border); border-radius: 7px; background: var(--bg);
     color: var(--text); width: 100%;
   }
-  .day-add-form input[type="time"] { max-width: 140px; }
+  .day-add-time-row { display: flex; gap: 8px; }
+  .day-add-time-row input[type="time"] { max-width: 140px; }
+  .day-add-time-row select { max-width: 110px; cursor: pointer; }
   .day-add-form-hint { font-size: 11.5px; color: var(--muted); margin-top: -4px; }
   .day-add-form-actions { display: flex; gap: 8px; }
   .day-add-form-actions button {
@@ -4046,7 +4048,19 @@ function renderDayView(iso, {pushHistory=true} = {}){
     <div class="day-add-row" id="dayAddRow">+ Eigenen Termin hinzufügen</div>
     <div class="day-add-form" id="dayAddForm" style="display:none;">
       <input type="text" id="dayAddTitle" placeholder="Titel, z. B. Gruppentreffen Bibliothek" maxlength="120" autocomplete="off" />
-      <input type="time" id="dayAddTime" />
+      <div class="day-add-time-row">
+        <input type="time" id="dayAddTime" />
+        <select id="dayAddDuration" style="display:none;">
+          <option value="15">15 Min.</option>
+          <option value="30">30 Min.</option>
+          <option value="45">45 Min.</option>
+          <option value="60" selected>1 Std.</option>
+          <option value="90">1,5 Std.</option>
+          <option value="120">2 Std.</option>
+          <option value="180">3 Std.</option>
+          <option value="240">4 Std.</option>
+        </select>
+      </div>
       <div class="day-add-form-hint">Uhrzeit optional – ohne Angabe erscheint der Termin als ganztägig.</div>
       <div class="day-add-form-actions">
         <button type="button" id="dayAddSave">Speichern</button>
@@ -4060,6 +4074,8 @@ function renderDayView(iso, {pushHistory=true} = {}){
   const addRow = document.getElementById('dayAddRow');
   const addForm = document.getElementById('dayAddForm');
   const addTitle = document.getElementById('dayAddTitle');
+  const addTime = document.getElementById('dayAddTime');
+  const addDuration = document.getElementById('dayAddDuration');
   addRow.onclick = () => {
     addRow.style.display = 'none';
     addForm.style.display = 'flex';
@@ -4069,6 +4085,11 @@ function renderDayView(iso, {pushHistory=true} = {}){
     addForm.style.display = 'none';
     addRow.style.display = 'flex';
   };
+  // Dauer-Auswahl ergibt ohne Uhrzeit keinen Sinn (ganztägig kennt keine
+  // Dauer) – blendet sich daher erst ein, sobald eine Uhrzeit gesetzt ist.
+  addTime.addEventListener('input', () => {
+    addDuration.style.display = addTime.value ? 'block' : 'none';
+  });
   document.getElementById('dayAddSave').onclick = () => savePersonalEvent(iso);
   addTitle.addEventListener('keydown', e => { if (e.key === 'Enter') savePersonalEvent(iso); });
 
@@ -4084,26 +4105,28 @@ function renderDayView(iso, {pushHistory=true} = {}){
   }
 }
 
-// Rechnet eine Uhrzeit "HH:MM" eine Stunde weiter (mit Überlauf über
-// Mitternacht) – eigene Termine bekommen so, wenn eine Startzeit angegeben
-// wurde, automatisch eine Standarddauer von 1h statt einer leeren
-// End-Uhrzeit, die an mehreren Stellen der App Probleme machen würde
-// (z.B. "14:00 – Uhr" ohne Endzeit im Termin-Detail).
-function addOneHour(hhmm){
+// Rechnet eine Uhrzeit "HH:MM" um die angegebene Minutenzahl weiter (mit
+// Überlauf über Mitternacht) – eigene Termine bekommen so, wenn eine
+// Startzeit angegeben wurde, immer eine passende End-Uhrzeit statt einer
+// leeren, die an mehreren Stellen der App Probleme machen würde (z.B.
+// "14:00 – Uhr" ohne Endzeit im Termin-Detail).
+function addMinutes(hhmm, minutes){
   const [h, mnt] = hhmm.split(':').map(Number);
-  const total = (h * 60 + mnt + 60) % (24 * 60);
+  const total = (h * 60 + mnt + minutes) % (24 * 60);
   return `${String(Math.floor(total / 60)).padStart(2,'0')}:${String(total % 60).padStart(2,'0')}`;
 }
 
 function savePersonalEvent(iso){
   const titleEl = document.getElementById('dayAddTitle');
   const timeEl = document.getElementById('dayAddTime');
+  const durationEl = document.getElementById('dayAddDuration');
   const title = titleEl.value.trim();
   if (!title) { titleEl.focus(); return; }
   const start = timeEl.value || null;
+  const duration = start ? parseInt(durationEl.value, 10) : null;
   const id = (crypto.randomUUID ? crypto.randomUUID() : `p${Date.now()}${Math.random().toString(16).slice(2)}`);
   localStorage.setItem(`personalEvent:${id}`, JSON.stringify({
-    date: iso, start, end: start ? addOneHour(start) : null, title,
+    date: iso, start, end: start ? addMinutes(start, duration) : null, title,
   }));
   loadPersonalEventsIntoSemesters();
   loadSemester(currentSemesterId, {resetMonth:false});

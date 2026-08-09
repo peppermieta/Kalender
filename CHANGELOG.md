@@ -7,6 +7,19 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.7.1] - 2026-08-09
+
+### Added
+- **Dauer-Auswahl für eigene Termine**: bei gesetzter Uhrzeit erscheint
+  neben dem Zeitfeld ein Dropdown (15 Min. bis 4 Std., Voreinstellung
+  1 Std. wie bisher). Ohne Uhrzeit bleibt der Termin ganztägig,
+  Dropdown entsprechend versteckt.
+
+### Changed
+- `addOneHour()` zu allgemeiner `addMinutes(hhmm, minuten)` gemacht,
+  damit beliebige Dauern statt nur der festen Stunde berechnet werden
+  können (Mitternachts-Überlauf weiterhin korrekt behandelt).
+
 ## [3.7.0] - 2026-08-09
 
 ### Added

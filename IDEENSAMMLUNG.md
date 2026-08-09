@@ -80,6 +80,9 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   Titel wurden bisher ungeschützt in die Seite eingesetzt (unproblematisch
   bei festen Titeln im Quellcode) – mit Nutzereingaben jetzt an allen
   Stellen sauber escaped.
+  **Nachtrag (v3.7.1):** Dauer bei Terminen mit Uhrzeit wählbar
+  (15 Min. bis 4 Std., Voreinstellung 1 Std.) statt fest auf 1 Std.
+  – Auswahl blendet sich erst ein, sobald eine Uhrzeit gesetzt ist.
 - **Laufende Semester-Fortschrittsanzeige** – zeigt während des
   Semesters die eigene Position im Verlauf, z. B. "Woche 6 von 16" oder
   ein kleiner Fortschrittsbalken. Anders als der bereits geplante
