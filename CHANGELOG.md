@@ -7,6 +7,28 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.8.1] - 2026-08-09
+
+### Fixed
+- **Kritische Layout-Regression aus v3.8.0 behoben**: eine verwaiste,
+  überzählige schließende Klammer `}` direkt nach dem neuen
+  `:root[data-theme="dark"]`-Block hat den globalen CSS-Reset
+  (`*, *::before, *::after { box-sizing: border-box; margin: 0;
+  padding: 0; }`) in manchen Browsern nicht mehr zuverlässig ankommen
+  lassen – dadurch griffen Browser-Standardstile für Buttons wieder
+  (u.a. die runden Monats-Punkte wurden dadurch länglich statt rund,
+  Header/Toolbar wirkten "abgeschnitten"/verzerrt). In Chromium
+  (lokaler Test) unauffällig, da robuste CSS-Fehlerbehandlung – auf
+  dem tatsächlichen Gerät sichtbar geworden. Klammer entfernt,
+  Klammer-Balance im gesamten Stylesheet verifiziert (vorher war das
+  nur für JavaScript geprüft worden, nicht für CSS).
+- **Dark Mode aktivierte sich fälschlich automatisch** bei System-
+  Präferenz "Dunkel", obwohl er laut Ideensammlung bewusst nur eine
+  zusätzliche, manuell zuschaltbare Funktion sein soll, kein Standard.
+  Bootstrap-Skript im `<head>` prüft jetzt ausschließlich die explizit
+  gespeicherte Präferenz (`localStorage`), ignoriert
+  `prefers-color-scheme` vollständig.
+
 ## [3.8.0] - 2026-08-09
 
 ### Added

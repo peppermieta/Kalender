@@ -14,13 +14,14 @@
 <script>
   // Synchron vor dem ersten Rendern ausgeführt, damit beim Laden nicht
   // kurz der helle Modus aufblitzt, bevor das Haupt-Skript unten übernimmt.
+  // WICHTIG: Dark Mode ist bewusst NIE der Standard, auch nicht bei
+  // System-Präferenz Dunkel – nur aktiv, wenn explizit im Verwalten-Menü
+  // angeschaltet (gespeichert in localStorage).
   (function(){
     try {
-      var stored = localStorage.getItem('darkMode');
-      var dark = stored === null
-        ? window.matchMedia('(prefers-color-scheme: dark)').matches
-        : stored === 'true';
-      if (dark) document.documentElement.setAttribute('data-theme', 'dark');
+      if (localStorage.getItem('darkMode') === 'true') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
     } catch(e) {}
   })();
 </script>
@@ -67,7 +68,6 @@
     --danger-bg: #3A1518; --danger-tx: #F0A8AC; --danger-bd: #E8555A;
     --warn-bg:   #33220F; --warn-tx:   #E8AD70; --warn-bd:   #F0954A;
     --success-tx: #6FD9B8; --success-bd: #2C5C4C;
-  }
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
