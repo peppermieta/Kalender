@@ -50,28 +50,30 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   Dienst und einen GitHub-Actions-Workflow, ohne eigenen Server. Konzept
   bereits besprochen, nur noch nicht gebaut.
 - **Next-Up-Leiste um Prüfungen/Abgaben erweitern** – Damit Prüfungs- und
-  Abgabetermine zwischen den normalen Terminen nicht untergehen, zeigt
-  die bestehende Next-Up-Leiste künftig zusätzlich zum nächsten Termin
-  allgemein eine zweite Zeile mit der nächsten anstehenden Prüfung/
-  Abgabe – unabhängig davon, wie weit sie in der Zukunft liegt. Nur wenn
-  der ohnehin nächste Termin selbst schon eine Prüfung/Abgabe ist,
-  entfällt die zweite Zeile (keine Dopplung). Technisch: `EVENTS`
-  semesterübergreifend (wie beim bestehenden Next-Up schon der Fall)
-  nach `type: "pruefung"/"abgabe"` filtern, chronologisch nächsten
-  Eintrag suchen, mit Icon (📝/📤) als zweite Zeile ergänzen.
+  Abgabetermine zwischen den normalen Terminen nicht untergehen.
+  **✅ Umgesetzt** (v3.6.0) – zweite Zeile mit der nächsten Prüfung/Abgabe,
+  entfällt bei Dopplung mit der Hauptzeile. Wichtiger Fund unterwegs: die
+  bestehende Next-Up-Logik filtert nur Termine mit Uhrzeit – Abgaben sind
+  aber meist ganztägig. Die zweite Zeile nutzt daher eine eigene,
+  ganztägig-sichere Datumslogik statt der ursprünglichen.
 - **Eigene Freitext-Termine (rein lokal)** – ein "+"-Button ermöglicht
-  das Anlegen persönlicher Ad-hoc-Termine (Gruppentreffen,
-  Bibliothekstermin o. Ä.) direkt im Browser, gespeichert in
-  `localStorage` analog zu den bestehenden privaten Notizen, ohne Pflege
-  im Quellcode. Für die Geräteübertragung wird der bestehende
-  Export/Import-Mechanismus ("📋 Notizen übertragen") erweitert statt
-  eines zweiten, separaten Sync-Wegs – die eigenen Termine würden mit im
-  selben JSON-Blob wie die Notizen wandern. Verortet in der
-  Tagesansicht statt im Verwalten-Menü: ein zusätzlicher Listeneintrag
-  "+ Eigenen Termin hinzufügen" ganz unten in der Terminliste des Tages
-  öffnet ein kleines Inline-Formular (Titel, optional Uhrzeit) für genau
-  diesen Tag – bewusst getrennt vom Verwalten-Menü, da es sich um eine
-  datumsgebundene statt App-weite Aktion handelt.
+  das Anlegen persönlicher Ad-hoc-Termine direkt im Browser.
+  **✅ Umgesetzt** (v3.6.0) – "+ Eigenen Termin hinzufügen" unten in der
+  Terminliste der Tagesansicht öffnet ein Inline-Formular (Titel,
+  optionale Uhrzeit), gespeichert in `localStorage`
+  (`personalEvent:<uuid>`). Landen im selben Datentopf wie echte
+  Termine und werden dadurch überall wie normale Veranstaltungen
+  behandelt – Next-Up (auch die Hauptzeile, bei Uhrzeit), Suche,
+  Monatsraster, Legende. Eigene Farbe (Bubblegum Pink, MODS-Eintrag
+  "EIGEN") zur klaren Abgrenzung. Übertragung über den bestehenden
+  Export/Import-Mechanismus ("📋 Notizen übertragen", gleicher
+  JSON-Blob wie Notizen). Bewusst **nicht** im Ausdruck und **nicht**
+  im Google-Kalender-Feed (der wird serverseitig aus den fest im Repo
+  hinterlegten Daten gebaut, sieht `localStorage` nie). Termin-Detail
+  zeigt einen Löschen-Button statt des Modul-Links. Nebenbei: Termin-
+  Titel wurden bisher ungeschützt in die Seite eingesetzt (unproblematisch
+  bei festen Titeln im Quellcode) – mit Nutzereingaben jetzt an allen
+  Stellen sauber escaped.
 - **Laufende Semester-Fortschrittsanzeige** – zeigt während des
   Semesters die eigene Position im Verlauf, z. B. "Woche 6 von 16" oder
   ein kleiner Fortschrittsbalken. Anders als der bereits geplante

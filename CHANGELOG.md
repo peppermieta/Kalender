@@ -7,6 +7,44 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.6.0] - 2026-08-09
+
+### Added
+- **Eigene Freitext-Termine (rein lokal)**: "+ Eigenen Termin
+  hinzufügen" unten in der Tagesansicht öffnet ein Inline-Formular
+  (Titel, optionale Uhrzeit). Gespeichert in `localStorage`
+  (`personalEvent:<uuid>`), landen im selben Datentopf wie echte
+  Termine (`EVENTS_BY_SEMESTER`, Semester-Zuordnung über
+  Datumsabgleich mit `SEMESTERS`-Start/Ende) und werden dadurch
+  automatisch überall wie normale Veranstaltungen behandelt: Next-Up
+  (auch die Hauptzeile, mit Uhrzeit), Suche, Monatsraster, Legende.
+  Neuer MODS-Eintrag "EIGEN" (Bubblegum Pink) zur klaren farblichen
+  Abgrenzung. Termin-Detail zeigt ein "Eigener Termin"-Badge statt
+  Modul-Link, keine Raum-/Modul-Zeile, dafür einen Löschen-Button.
+  Bewusst nicht im Ausdruck (eigene CSS-Regel) und nicht im
+  Google-Kalender-Feed (serverseitig aus Repo-Daten gebaut, sieht
+  `localStorage` nie).
+- **Next-Up-Leiste um Prüfungen/Abgaben erweitert**: zweite Zeile mit
+  der nächsten anstehenden Prüfung/Abgabe, semesterübergreifend,
+  entfällt bei Dopplung mit der Hauptzeile. Eigene, ganztägig-sichere
+  Datumslogik (`findNextPruefungAbgabe()`), weil die bestehende
+  Next-Up-Filterung nur Termine mit Uhrzeit erfasst – Abgaben sind
+  aber meist ganztägig und wären sonst nie erschienen.
+
+### Changed
+- Filter-Button "Nur Prüfungen/Abgaben" sitzt auf Desktop jetzt direkt
+  neben der Suche statt am rechten Rand der Toolbar
+  (`justify-content: flex-start` statt `space-between`).
+- Termin-Titel werden jetzt an allen sieben Render-Stellen (Monatsraster,
+  Day-Focus, Tagesansicht, beide Next-Up-Zeilen, Suche) escaped
+  (`escapeHtml()`), statt roh in `innerHTML` eingesetzt zu werden –
+  unproblematisch bei den bisher fest im Quellcode stehenden Titeln,
+  aber notwendig, seit eigene Termine Titel direkt vom Nutzer
+  entgegennehmen.
+- Notiz-Sync-Panel exportiert/importiert jetzt auch eigene Termine
+  (`personalEvent:`-Präfix zusätzlich zu `note:`), gleicher JSON-Blob,
+  Texte entsprechend angepasst ("Notizen und eigene Termine").
+
 ## [3.5.1] - 2026-08-08
 
 ### Changed

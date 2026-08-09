@@ -7,7 +7,7 @@ X-WR-CALNAME:Vorlesungskalender
 X-WR-TIMEZONE:Europe/Berlin
 REFRESH-INTERVAL;VALUE=DURATION:P1D
 X-PUBLISHED-TTL:P1D
-X-KALENDER-GENERATED-AT:20260808T184639Z
+X-KALENDER-GENERATED-AT:20260809T064432Z
 BEGIN:VTIMEZONE
 TZID:Europe/Berlin
 BEGIN:DAYLIGHT
@@ -27,7 +27,7 @@ END:STANDARD
 END:VTIMEZONE
 BEGIN:VEVENT
 UID:8de7d5613ab49205f4e1afee65b53bfc@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261008T080000
 DTEND;TZID=Europe/Berlin:20261008T101500
 SUMMARY:Workshop/Methodikseminar Kunst
@@ -37,7 +37,7 @@ DESCRIPTION:Modul: M09 – Ästhetik\, Kultur\, Medien\nLehrperson: Sara Focke
 END:VEVENT
 BEGIN:VEVENT
 UID:d8c8122194e2b0d54993206a3b6b175a@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261015T080000
 DTEND;TZID=Europe/Berlin:20261015T101500
 SUMMARY:Workshop/Methodikseminar Kunst
@@ -47,7 +47,7 @@ DESCRIPTION:Modul: M09 – Ästhetik\, Kultur\, Medien\nLehrperson: Sara Focke
 END:VEVENT
 BEGIN:VEVENT
 UID:eb979becebcbd28520dd02842d5d2c33@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261022T080000
 DTEND;TZID=Europe/Berlin:20261022T101500
 SUMMARY:Workshop/Methodikseminar Kunst
@@ -57,7 +57,7 @@ DESCRIPTION:Modul: M09 – Ästhetik\, Kultur\, Medien\nLehrperson: Sara Focke
 END:VEVENT
 BEGIN:VEVENT
 UID:6fd72d271506e12ba943ff25f36a51b6@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261029T080000
 DTEND;TZID=Europe/Berlin:20261029T101500
 SUMMARY:Workshop/Methodikseminar Kunst
@@ -67,7 +67,7 @@ DESCRIPTION:Modul: M09 – Ästhetik\, Kultur\, Medien\nLehrperson: Sara Focke
 END:VEVENT
 BEGIN:VEVENT
 UID:cc4ba16d0688b83c1b28f9812364a453@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261105T080000
 DTEND;TZID=Europe/Berlin:20261105T101500
 SUMMARY:Workshop/Methodikseminar Kunst
@@ -77,7 +77,7 @@ DESCRIPTION:Modul: M09 – Ästhetik\, Kultur\, Medien\nLehrperson: Sara Focke
 END:VEVENT
 BEGIN:VEVENT
 UID:1202d9f5f35e5e277c2f0b88e9e66db3@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261112T080000
 DTEND;TZID=Europe/Berlin:20261112T101500
 SUMMARY:Workshop/Methodikseminar Kunst
@@ -87,7 +87,7 @@ DESCRIPTION:Modul: M09 – Ästhetik\, Kultur\, Medien\nLehrperson: Sara Focke
 END:VEVENT
 BEGIN:VEVENT
 UID:ad9fc493ec5193db7fa9ba6a6afbc9e8@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261119T080000
 DTEND;TZID=Europe/Berlin:20261119T101500
 SUMMARY:Workshop/Methodikseminar Kunst
@@ -97,7 +97,7 @@ DESCRIPTION:Modul: M09 – Ästhetik\, Kultur\, Medien\nLehrperson: Sara Focke
 END:VEVENT
 BEGIN:VEVENT
 UID:58459638a2eb98514a882b28b9b65253@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261126T080000
 DTEND;TZID=Europe/Berlin:20261126T101500
 SUMMARY:Workshop/Methodikseminar Kunst
@@ -107,7 +107,7 @@ DESCRIPTION:Modul: M09 – Ästhetik\, Kultur\, Medien\nLehrperson: Sara Focke
 END:VEVENT
 BEGIN:VEVENT
 UID:47203bb878fd01845a0d0a7d5510fa79@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261203T080000
 DTEND;TZID=Europe/Berlin:20261203T101500
 SUMMARY:Workshop/Methodikseminar Kunst
@@ -117,7 +117,7 @@ DESCRIPTION:Modul: M09 – Ästhetik\, Kultur\, Medien\nLehrperson: Sara Focke
 END:VEVENT
 BEGIN:VEVENT
 UID:2bbc1980b7706e5936df51c65b08f2b4@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261210T080000
 DTEND;TZID=Europe/Berlin:20261210T101500
 SUMMARY:Workshop/Methodikseminar Kunst
@@ -127,7 +127,7 @@ DESCRIPTION:Modul: M09 – Ästhetik\, Kultur\, Medien\nLehrperson: Sara Focke
 END:VEVENT
 BEGIN:VEVENT
 UID:f845ec389c19cc220e5b6fe15af5a7b6@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261217T080000
 DTEND;TZID=Europe/Berlin:20261217T101500
 SUMMARY:Workshop/Methodikseminar Kunst
@@ -137,7 +137,7 @@ DESCRIPTION:Modul: M09 – Ästhetik\, Kultur\, Medien\nLehrperson: Sara Focke
 END:VEVENT
 BEGIN:VEVENT
 UID:89dd05099a0c54b23d5af9a2da2e848f@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20270121T080000
 DTEND;TZID=Europe/Berlin:20270121T101500
 SUMMARY:Workshop/Methodikseminar Kunst
@@ -147,7 +147,7 @@ DESCRIPTION:Modul: M09 – Ästhetik\, Kultur\, Medien\nLehrperson: Sara Focke
 END:VEVENT
 BEGIN:VEVENT
 UID:6ac17a24392e4f201943a501bdeedd6f@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20270204T080000
 DTEND;TZID=Europe/Berlin:20270204T101500
 SUMMARY:Workshop/Methodikseminar Kunst
@@ -157,7 +157,7 @@ DESCRIPTION:Modul: M09 – Ästhetik\, Kultur\, Medien\nLehrperson: Sara Focke
 END:VEVENT
 BEGIN:VEVENT
 UID:e903a814c0ba5eea2f6946a25a83bed3@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261005T113000
 DTEND;TZID=Europe/Berlin:20261005T130000
 SUMMARY:Entwicklungs- und Sozialisationstheorien
@@ -168,7 +168,7 @@ DESCRIPTION:Modul: M07 – Entwicklung & Sozialisation\nLehrperson: Prof. Dr.
 END:VEVENT
 BEGIN:VEVENT
 UID:b282e81f298d3f7172f52559bebfb4ff@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261012T113000
 DTEND;TZID=Europe/Berlin:20261012T130000
 SUMMARY:Entwicklungs- und Sozialisationstheorien
@@ -179,7 +179,7 @@ DESCRIPTION:Modul: M07 – Entwicklung & Sozialisation\nLehrperson: Prof. Dr.
 END:VEVENT
 BEGIN:VEVENT
 UID:1f5fa8b3927e96ceefbecf2b23d3c869@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261019T113000
 DTEND;TZID=Europe/Berlin:20261019T130000
 SUMMARY:Entwicklungs- und Sozialisationstheorien
@@ -190,7 +190,7 @@ DESCRIPTION:Modul: M07 – Entwicklung & Sozialisation\nLehrperson: Prof. Dr.
 END:VEVENT
 BEGIN:VEVENT
 UID:f1b1427440b72bb61ef4a83e694cd20f@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261026T113000
 DTEND;TZID=Europe/Berlin:20261026T130000
 SUMMARY:Entwicklungs- und Sozialisationstheorien
@@ -201,7 +201,7 @@ DESCRIPTION:Modul: M07 – Entwicklung & Sozialisation\nLehrperson: Prof. Dr.
 END:VEVENT
 BEGIN:VEVENT
 UID:b415e2afc42e965a1efcf50c97d000aa@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261102T113000
 DTEND;TZID=Europe/Berlin:20261102T130000
 SUMMARY:Entwicklungs- und Sozialisationstheorien
@@ -212,7 +212,7 @@ DESCRIPTION:Modul: M07 – Entwicklung & Sozialisation\nLehrperson: Prof. Dr.
 END:VEVENT
 BEGIN:VEVENT
 UID:27e89a97f715762e559953f4c8e1c15f@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261109T113000
 DTEND;TZID=Europe/Berlin:20261109T130000
 SUMMARY:Entwicklungs- und Sozialisationstheorien
@@ -223,7 +223,7 @@ DESCRIPTION:Modul: M07 – Entwicklung & Sozialisation\nLehrperson: Prof. Dr.
 END:VEVENT
 BEGIN:VEVENT
 UID:6c7f72c72482a2ab4a4550ad8f6eb6ca@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261116T113000
 DTEND;TZID=Europe/Berlin:20261116T130000
 SUMMARY:Entwicklungs- und Sozialisationstheorien
@@ -234,7 +234,7 @@ DESCRIPTION:Modul: M07 – Entwicklung & Sozialisation\nLehrperson: Prof. Dr.
 END:VEVENT
 BEGIN:VEVENT
 UID:8cf403318c4403f1a10e8ea3548993d2@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261123T113000
 DTEND;TZID=Europe/Berlin:20261123T130000
 SUMMARY:Entwicklungs- und Sozialisationstheorien
@@ -245,7 +245,7 @@ DESCRIPTION:Modul: M07 – Entwicklung & Sozialisation\nLehrperson: Prof. Dr.
 END:VEVENT
 BEGIN:VEVENT
 UID:b020bac4170c824e26c079af4b0234f6@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261130T113000
 DTEND;TZID=Europe/Berlin:20261130T130000
 SUMMARY:Entwicklungs- und Sozialisationstheorien
@@ -256,7 +256,7 @@ DESCRIPTION:Modul: M07 – Entwicklung & Sozialisation\nLehrperson: Prof. Dr.
 END:VEVENT
 BEGIN:VEVENT
 UID:db10beb62c8190d45d4f56fc9864d953@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261207T113000
 DTEND;TZID=Europe/Berlin:20261207T130000
 SUMMARY:Entwicklungs- und Sozialisationstheorien
@@ -267,7 +267,7 @@ DESCRIPTION:Modul: M07 – Entwicklung & Sozialisation\nLehrperson: Prof. Dr.
 END:VEVENT
 BEGIN:VEVENT
 UID:2a6b261bdc2c586f95b95b86f74947f6@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261214T113000
 DTEND;TZID=Europe/Berlin:20261214T130000
 SUMMARY:Entwicklungs- und Sozialisationstheorien
@@ -278,7 +278,7 @@ DESCRIPTION:Modul: M07 – Entwicklung & Sozialisation\nLehrperson: Prof. Dr.
 END:VEVENT
 BEGIN:VEVENT
 UID:04179643c618e797b847480c5ab282cd@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20270111T113000
 DTEND;TZID=Europe/Berlin:20270111T130000
 SUMMARY:Entwicklungs- und Sozialisationstheorien
@@ -289,7 +289,7 @@ DESCRIPTION:Modul: M07 – Entwicklung & Sozialisation\nLehrperson: Prof. Dr.
 END:VEVENT
 BEGIN:VEVENT
 UID:7243a500e83a70a6c5156f10f59a19e1@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20270118T113000
 DTEND;TZID=Europe/Berlin:20270118T130000
 SUMMARY:Entwicklungs- und Sozialisationstheorien
@@ -300,7 +300,7 @@ DESCRIPTION:Modul: M07 – Entwicklung & Sozialisation\nLehrperson: Prof. Dr.
 END:VEVENT
 BEGIN:VEVENT
 UID:14e6c3944d8887bd5f83fe9d0055c499@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20270125T113000
 DTEND;TZID=Europe/Berlin:20270125T130000
 SUMMARY:Entwicklungs- und Sozialisationstheorien
@@ -311,7 +311,7 @@ DESCRIPTION:Modul: M07 – Entwicklung & Sozialisation\nLehrperson: Prof. Dr.
 END:VEVENT
 BEGIN:VEVENT
 UID:1d1c233aa6bc1516c92c9f01d4c60676@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20270201T113000
 DTEND;TZID=Europe/Berlin:20270201T130000
 SUMMARY:Entwicklungs- und Sozialisationstheorien
@@ -322,7 +322,7 @@ DESCRIPTION:Modul: M07 – Entwicklung & Sozialisation\nLehrperson: Prof. Dr.
 END:VEVENT
 BEGIN:VEVENT
 UID:4b253b5ae48d2891bedce94ee46e685d@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261106T140000
 DTEND;TZID=Europe/Berlin:20261106T180000
 SUMMARY:Schulsozialarbeit\, Familienhilfe und Flüchtlingshilfe unter entwic
@@ -334,7 +334,7 @@ DESCRIPTION:Modul: M07 – Entwicklung & Sozialisation\nLehrperson: M.A. Jean
 END:VEVENT
 BEGIN:VEVENT
 UID:c7fc496286027d752061e4a3b881e1e4@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261107T090000
 DTEND;TZID=Europe/Berlin:20261107T170000
 SUMMARY:Schulsozialarbeit\, Familienhilfe und Flüchtlingshilfe unter entwic
@@ -346,7 +346,7 @@ DESCRIPTION:Modul: M07 – Entwicklung & Sozialisation\nLehrperson: M.A. Jean
 END:VEVENT
 BEGIN:VEVENT
 UID:63abae2943234de89dc456aab169bf48@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261127T140000
 DTEND;TZID=Europe/Berlin:20261127T180000
 SUMMARY:Schulsozialarbeit\, Familienhilfe und Flüchtlingshilfe unter entwic
@@ -358,7 +358,7 @@ DESCRIPTION:Modul: M07 – Entwicklung & Sozialisation\nLehrperson: M.A. Jean
 END:VEVENT
 BEGIN:VEVENT
 UID:1710f412b6eb1ac03e0ec9170e89c17c@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261128T090000
 DTEND;TZID=Europe/Berlin:20261128T170000
 SUMMARY:Schulsozialarbeit\, Familienhilfe und Flüchtlingshilfe unter entwic
@@ -370,7 +370,7 @@ DESCRIPTION:Modul: M07 – Entwicklung & Sozialisation\nLehrperson: M.A. Jean
 END:VEVENT
 BEGIN:VEVENT
 UID:09f7bd0754910ea6bcbe1a9d7824ed77@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261006T080000
 DTEND;TZID=Europe/Berlin:20261006T093000
 SUMMARY:Inklusion – Exklusion im Kontext der Systemtheorie\, Inklusionspäda
@@ -382,7 +382,7 @@ DESCRIPTION:Modul: M06 – Inklusion und Exklusion\nLehrperson: Prof. Dr.in P
 END:VEVENT
 BEGIN:VEVENT
 UID:f6670b71cc61d6360298094079f763cc@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261013T080000
 DTEND;TZID=Europe/Berlin:20261013T093000
 SUMMARY:Inklusion – Exklusion im Kontext der Systemtheorie\, Inklusionspäda
@@ -394,7 +394,7 @@ DESCRIPTION:Modul: M06 – Inklusion und Exklusion\nLehrperson: Prof. Dr.in P
 END:VEVENT
 BEGIN:VEVENT
 UID:35757ca7909ced46b7da1eada9fa57fc@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261020T080000
 DTEND;TZID=Europe/Berlin:20261020T093000
 SUMMARY:Inklusion – Exklusion im Kontext der Systemtheorie\, Inklusionspäda
@@ -406,7 +406,7 @@ DESCRIPTION:Modul: M06 – Inklusion und Exklusion\nLehrperson: Prof. Dr.in P
 END:VEVENT
 BEGIN:VEVENT
 UID:96980a514322f116a9711c856841cc0e@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261027T080000
 DTEND;TZID=Europe/Berlin:20261027T093000
 SUMMARY:Inklusion – Exklusion im Kontext der Systemtheorie\, Inklusionspäda
@@ -418,7 +418,7 @@ DESCRIPTION:Modul: M06 – Inklusion und Exklusion\nLehrperson: Prof. Dr.in P
 END:VEVENT
 BEGIN:VEVENT
 UID:8375d430f79cd8075f04ee86af000f3c@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261103T080000
 DTEND;TZID=Europe/Berlin:20261103T093000
 SUMMARY:Inklusion – Exklusion im Kontext der Systemtheorie\, Inklusionspäda
@@ -430,7 +430,7 @@ DESCRIPTION:Modul: M06 – Inklusion und Exklusion\nLehrperson: Prof. Dr.in P
 END:VEVENT
 BEGIN:VEVENT
 UID:ce9e707b0a4344647b980c8f18d470f7@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261110T080000
 DTEND;TZID=Europe/Berlin:20261110T093000
 SUMMARY:Inklusion – Exklusion im Kontext der Systemtheorie\, Inklusionspäda
@@ -442,7 +442,7 @@ DESCRIPTION:Modul: M06 – Inklusion und Exklusion\nLehrperson: Prof. Dr.in P
 END:VEVENT
 BEGIN:VEVENT
 UID:7f13a21e662bbfe6c5b6c7e7e52a51a1@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261117T080000
 DTEND;TZID=Europe/Berlin:20261117T093000
 SUMMARY:Inklusion – Exklusion im Kontext der Systemtheorie\, Inklusionspäda
@@ -454,7 +454,7 @@ DESCRIPTION:Modul: M06 – Inklusion und Exklusion\nLehrperson: Prof. Dr.in P
 END:VEVENT
 BEGIN:VEVENT
 UID:9963fd976ec91e6f5ee3d2b22394a3b6@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261124T080000
 DTEND;TZID=Europe/Berlin:20261124T093000
 SUMMARY:Inklusion – Exklusion im Kontext der Systemtheorie\, Inklusionspäda
@@ -466,7 +466,7 @@ DESCRIPTION:Modul: M06 – Inklusion und Exklusion\nLehrperson: Prof. Dr.in P
 END:VEVENT
 BEGIN:VEVENT
 UID:659bd338876cbcb1f32af75f89e80ce8@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261201T080000
 DTEND;TZID=Europe/Berlin:20261201T093000
 SUMMARY:Inklusion – Exklusion im Kontext der Systemtheorie\, Inklusionspäda
@@ -478,7 +478,7 @@ DESCRIPTION:Modul: M06 – Inklusion und Exklusion\nLehrperson: Prof. Dr.in P
 END:VEVENT
 BEGIN:VEVENT
 UID:1f2d56c0faab09230a39f2dc5b195e7e@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261208T080000
 DTEND;TZID=Europe/Berlin:20261208T093000
 SUMMARY:Inklusion – Exklusion im Kontext der Systemtheorie\, Inklusionspäda
@@ -490,7 +490,7 @@ DESCRIPTION:Modul: M06 – Inklusion und Exklusion\nLehrperson: Prof. Dr.in P
 END:VEVENT
 BEGIN:VEVENT
 UID:86acdfc722cf524310936ea0efaf5554@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261215T080000
 DTEND;TZID=Europe/Berlin:20261215T093000
 SUMMARY:Inklusion – Exklusion im Kontext der Systemtheorie\, Inklusionspäda
@@ -502,7 +502,7 @@ DESCRIPTION:Modul: M06 – Inklusion und Exklusion\nLehrperson: Prof. Dr.in P
 END:VEVENT
 BEGIN:VEVENT
 UID:2924f44138b4d36dbce65f40bef81833@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20270112T080000
 DTEND;TZID=Europe/Berlin:20270112T093000
 SUMMARY:Inklusion – Exklusion im Kontext der Systemtheorie\, Inklusionspäda
@@ -514,7 +514,7 @@ DESCRIPTION:Modul: M06 – Inklusion und Exklusion\nLehrperson: Prof. Dr.in P
 END:VEVENT
 BEGIN:VEVENT
 UID:d477242268a18286a5770789f17b46b1@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20270119T080000
 DTEND;TZID=Europe/Berlin:20270119T093000
 SUMMARY:Inklusion – Exklusion im Kontext der Systemtheorie\, Inklusionspäda
@@ -526,7 +526,7 @@ DESCRIPTION:Modul: M06 – Inklusion und Exklusion\nLehrperson: Prof. Dr.in P
 END:VEVENT
 BEGIN:VEVENT
 UID:5c8ca5cbead598a5a2fd6aa8298b8be6@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20270126T080000
 DTEND;TZID=Europe/Berlin:20270126T093000
 SUMMARY:Inklusion – Exklusion im Kontext der Systemtheorie\, Inklusionspäda
@@ -538,7 +538,7 @@ DESCRIPTION:Modul: M06 – Inklusion und Exklusion\nLehrperson: Prof. Dr.in P
 END:VEVENT
 BEGIN:VEVENT
 UID:5bb781b144022395005295d3165664f1@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20270202T080000
 DTEND;TZID=Europe/Berlin:20270202T093000
 SUMMARY:Inklusion – Exklusion im Kontext der Systemtheorie\, Inklusionspäda
@@ -550,7 +550,7 @@ DESCRIPTION:Modul: M06 – Inklusion und Exklusion\nLehrperson: Prof. Dr.in P
 END:VEVENT
 BEGIN:VEVENT
 UID:bfe81209cc83c836abf3652a0493a820@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261023T140000
 DTEND;TZID=Europe/Berlin:20261023T173000
 SUMMARY:Selbstbestimmung\, Anerkennung und Zugehörigkeit
@@ -561,7 +561,7 @@ DESCRIPTION:Modul: M06 – Inklusion und Exklusion\nLehrperson: Prof. Dr.in P
 END:VEVENT
 BEGIN:VEVENT
 UID:24be69d8210adad1505ac4b5c064f3d9@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261024T090000
 DTEND;TZID=Europe/Berlin:20261024T173000
 SUMMARY:Selbstbestimmung\, Anerkennung und Zugehörigkeit
@@ -572,7 +572,7 @@ DESCRIPTION:Modul: M06 – Inklusion und Exklusion\nLehrperson: Prof. Dr.in P
 END:VEVENT
 BEGIN:VEVENT
 UID:5ff030b02242b2bf1b3040a5db207627@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261204T140000
 DTEND;TZID=Europe/Berlin:20261204T173000
 SUMMARY:Selbstbestimmung\, Anerkennung und Zugehörigkeit
@@ -583,7 +583,7 @@ DESCRIPTION:Modul: M06 – Inklusion und Exklusion\nLehrperson: Prof. Dr.in P
 END:VEVENT
 BEGIN:VEVENT
 UID:b06ba54a1c3f1d94edd02e1d75720538@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261205T090000
 DTEND;TZID=Europe/Berlin:20261205T173000
 SUMMARY:Selbstbestimmung\, Anerkennung und Zugehörigkeit
@@ -594,7 +594,7 @@ DESCRIPTION:Modul: M06 – Inklusion und Exklusion\nLehrperson: Prof. Dr.in P
 END:VEVENT
 BEGIN:VEVENT
 UID:4383cf5d89065bbde31f5f5878673b5b@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261006T094500
 DTEND;TZID=Europe/Berlin:20261006T111500
 SUMMARY:Grundlagen des Kinder- und Jugendhilfe- sowie Familienrechts
@@ -605,7 +605,7 @@ DESCRIPTION:Modul: M08 – Rechtliche Grundlagen\nLehrperson: Prof. Dr.in Ann
 END:VEVENT
 BEGIN:VEVENT
 UID:9916bfe3fe9ce2b4180c72c36231e95a@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261013T094500
 DTEND;TZID=Europe/Berlin:20261013T111500
 SUMMARY:Grundlagen des Kinder- und Jugendhilfe- sowie Familienrechts
@@ -616,7 +616,7 @@ DESCRIPTION:Modul: M08 – Rechtliche Grundlagen\nLehrperson: Prof. Dr.in Ann
 END:VEVENT
 BEGIN:VEVENT
 UID:8a0ee63da0237570bc9e9dc56c714cab@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261020T094500
 DTEND;TZID=Europe/Berlin:20261020T111500
 SUMMARY:Grundlagen des Kinder- und Jugendhilfe- sowie Familienrechts
@@ -627,7 +627,7 @@ DESCRIPTION:Modul: M08 – Rechtliche Grundlagen\nLehrperson: Prof. Dr.in Ann
 END:VEVENT
 BEGIN:VEVENT
 UID:507c866a79f12e12570d72ecc64bbcbb@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261027T094500
 DTEND;TZID=Europe/Berlin:20261027T111500
 SUMMARY:Grundlagen des Kinder- und Jugendhilfe- sowie Familienrechts
@@ -638,7 +638,7 @@ DESCRIPTION:Modul: M08 – Rechtliche Grundlagen\nLehrperson: Prof. Dr.in Ann
 END:VEVENT
 BEGIN:VEVENT
 UID:9f26ef94bcd83ff5c68d48dfff7d71ae@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261103T094500
 DTEND;TZID=Europe/Berlin:20261103T111500
 SUMMARY:Grundlagen des Kinder- und Jugendhilfe- sowie Familienrechts
@@ -649,7 +649,7 @@ DESCRIPTION:Modul: M08 – Rechtliche Grundlagen\nLehrperson: Prof. Dr.in Ann
 END:VEVENT
 BEGIN:VEVENT
 UID:490b867f922f7c39f6b99fc1bc61e156@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261110T094500
 DTEND;TZID=Europe/Berlin:20261110T111500
 SUMMARY:Grundlagen des Kinder- und Jugendhilfe- sowie Familienrechts
@@ -660,7 +660,7 @@ DESCRIPTION:Modul: M08 – Rechtliche Grundlagen\nLehrperson: Prof. Dr.in Ann
 END:VEVENT
 BEGIN:VEVENT
 UID:3d7904b94c60d947023359f865efe8d5@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261117T094500
 DTEND;TZID=Europe/Berlin:20261117T111500
 SUMMARY:Grundlagen des Kinder- und Jugendhilfe- sowie Familienrechts
@@ -671,7 +671,7 @@ DESCRIPTION:Modul: M08 – Rechtliche Grundlagen\nLehrperson: Prof. Dr.in Ann
 END:VEVENT
 BEGIN:VEVENT
 UID:0e296652374c5e40b6819df1ba298123@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261124T094500
 DTEND;TZID=Europe/Berlin:20261124T111500
 SUMMARY:Grundlagen des Kinder- und Jugendhilfe- sowie Familienrechts
@@ -682,7 +682,7 @@ DESCRIPTION:Modul: M08 – Rechtliche Grundlagen\nLehrperson: Prof. Dr.in Ann
 END:VEVENT
 BEGIN:VEVENT
 UID:0650fdac36b431035200412cc28af95e@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261201T094500
 DTEND;TZID=Europe/Berlin:20261201T111500
 SUMMARY:Grundlagen des Kinder- und Jugendhilfe- sowie Familienrechts
@@ -693,7 +693,7 @@ DESCRIPTION:Modul: M08 – Rechtliche Grundlagen\nLehrperson: Prof. Dr.in Ann
 END:VEVENT
 BEGIN:VEVENT
 UID:f1ff0c6375dbc7035b5e02e6c70a8a02@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261208T094500
 DTEND;TZID=Europe/Berlin:20261208T111500
 SUMMARY:Grundlagen des Kinder- und Jugendhilfe- sowie Familienrechts
@@ -704,7 +704,7 @@ DESCRIPTION:Modul: M08 – Rechtliche Grundlagen\nLehrperson: Prof. Dr.in Ann
 END:VEVENT
 BEGIN:VEVENT
 UID:11ec651e8fc3b06afde8811816dd6f74@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261215T094500
 DTEND;TZID=Europe/Berlin:20261215T111500
 SUMMARY:Grundlagen des Kinder- und Jugendhilfe- sowie Familienrechts
@@ -715,7 +715,7 @@ DESCRIPTION:Modul: M08 – Rechtliche Grundlagen\nLehrperson: Prof. Dr.in Ann
 END:VEVENT
 BEGIN:VEVENT
 UID:d11050deb9b6efd5393db0d2a1f8e10d@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20270112T094500
 DTEND;TZID=Europe/Berlin:20270112T111500
 SUMMARY:Grundlagen des Kinder- und Jugendhilfe- sowie Familienrechts
@@ -726,7 +726,7 @@ DESCRIPTION:Modul: M08 – Rechtliche Grundlagen\nLehrperson: Prof. Dr.in Ann
 END:VEVENT
 BEGIN:VEVENT
 UID:3effa3f4a45d37b5fb79c631c99373c8@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20270119T094500
 DTEND;TZID=Europe/Berlin:20270119T111500
 SUMMARY:Grundlagen des Kinder- und Jugendhilfe- sowie Familienrechts
@@ -737,7 +737,7 @@ DESCRIPTION:Modul: M08 – Rechtliche Grundlagen\nLehrperson: Prof. Dr.in Ann
 END:VEVENT
 BEGIN:VEVENT
 UID:1bc3e1b51bddd2e87495ea7055e6bff8@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20270126T094500
 DTEND;TZID=Europe/Berlin:20270126T111500
 SUMMARY:Grundlagen des Kinder- und Jugendhilfe- sowie Familienrechts
@@ -748,7 +748,7 @@ DESCRIPTION:Modul: M08 – Rechtliche Grundlagen\nLehrperson: Prof. Dr.in Ann
 END:VEVENT
 BEGIN:VEVENT
 UID:147a56f50eb6df2f6955dd55b1c282ab@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20270202T094500
 DTEND;TZID=Europe/Berlin:20270202T111500
 SUMMARY:Grundlagen des Kinder- und Jugendhilfe- sowie Familienrechts
@@ -759,7 +759,7 @@ DESCRIPTION:Modul: M08 – Rechtliche Grundlagen\nLehrperson: Prof. Dr.in Ann
 END:VEVENT
 BEGIN:VEVENT
 UID:2e64fa08007249d30eaecac2b1af95c1@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261007T080000
 DTEND;TZID=Europe/Berlin:20261007T093000
 SUMMARY:Sozialverwaltungsrecht
@@ -769,7 +769,7 @@ DESCRIPTION:Modul: M08 – Rechtliche Grundlagen\nLehrperson: Prof. Dr. Marc
 END:VEVENT
 BEGIN:VEVENT
 UID:7f1b209bf92977f40409e90ca2b366f4@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261014T080000
 DTEND;TZID=Europe/Berlin:20261014T093000
 SUMMARY:Sozialverwaltungsrecht
@@ -779,7 +779,7 @@ DESCRIPTION:Modul: M08 – Rechtliche Grundlagen\nLehrperson: Prof. Dr. Marc
 END:VEVENT
 BEGIN:VEVENT
 UID:570c5c050ef8b186fecd2a1ddbe2142e@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261021T080000
 DTEND;TZID=Europe/Berlin:20261021T093000
 SUMMARY:Sozialverwaltungsrecht
@@ -789,7 +789,7 @@ DESCRIPTION:Modul: M08 – Rechtliche Grundlagen\nLehrperson: Prof. Dr. Marc
 END:VEVENT
 BEGIN:VEVENT
 UID:b6f2aec0cd09e1bbb9bf5230a0deee11@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261028T080000
 DTEND;TZID=Europe/Berlin:20261028T093000
 SUMMARY:Sozialverwaltungsrecht
@@ -799,7 +799,7 @@ DESCRIPTION:Modul: M08 – Rechtliche Grundlagen\nLehrperson: Prof. Dr. Marc
 END:VEVENT
 BEGIN:VEVENT
 UID:563385e3c4fc8612e5513fa581f92610@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261104T080000
 DTEND;TZID=Europe/Berlin:20261104T093000
 SUMMARY:Sozialverwaltungsrecht
@@ -809,7 +809,7 @@ DESCRIPTION:Modul: M08 – Rechtliche Grundlagen\nLehrperson: Prof. Dr. Marc
 END:VEVENT
 BEGIN:VEVENT
 UID:f153ab286c74ea8341e14250d2333b11@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261111T080000
 DTEND;TZID=Europe/Berlin:20261111T093000
 SUMMARY:Sozialverwaltungsrecht
@@ -819,7 +819,7 @@ DESCRIPTION:Modul: M08 – Rechtliche Grundlagen\nLehrperson: Prof. Dr. Marc
 END:VEVENT
 BEGIN:VEVENT
 UID:cb29aceef4f7a7308f4ffd010b4bafd2@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261118T080000
 DTEND;TZID=Europe/Berlin:20261118T093000
 SUMMARY:Sozialverwaltungsrecht
@@ -829,7 +829,7 @@ DESCRIPTION:Modul: M08 – Rechtliche Grundlagen\nLehrperson: Prof. Dr. Marc
 END:VEVENT
 BEGIN:VEVENT
 UID:7ad80c4cb133d20c27d3cee7ebb95b6d@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261125T080000
 DTEND;TZID=Europe/Berlin:20261125T093000
 SUMMARY:Sozialverwaltungsrecht
@@ -839,7 +839,7 @@ DESCRIPTION:Modul: M08 – Rechtliche Grundlagen\nLehrperson: Prof. Dr. Marc
 END:VEVENT
 BEGIN:VEVENT
 UID:bdc8733b38f6f280582b6c2bd58f1c80@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261007T094500
 DTEND;TZID=Europe/Berlin:20261007T111500
 SUMMARY:Rechtliche Grundlagen und Einführung in das Grundsicherungsrecht
@@ -850,7 +850,7 @@ DESCRIPTION:Modul: M08 – Rechtliche Grundlagen\nLehrperson: Prof. Dr.in Tam
 END:VEVENT
 BEGIN:VEVENT
 UID:bbe3b2e426371fb6855d58e63b4428df@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261014T094500
 DTEND;TZID=Europe/Berlin:20261014T111500
 SUMMARY:Rechtliche Grundlagen und Einführung in das Grundsicherungsrecht
@@ -861,7 +861,7 @@ DESCRIPTION:Modul: M08 – Rechtliche Grundlagen\nLehrperson: Prof. Dr.in Tam
 END:VEVENT
 BEGIN:VEVENT
 UID:10e3c4b02782c51b3d65d32a4ffb6a91@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261021T094500
 DTEND;TZID=Europe/Berlin:20261021T111500
 SUMMARY:Rechtliche Grundlagen und Einführung in das Grundsicherungsrecht
@@ -872,7 +872,7 @@ DESCRIPTION:Modul: M08 – Rechtliche Grundlagen\nLehrperson: Prof. Dr.in Tam
 END:VEVENT
 BEGIN:VEVENT
 UID:ff20ae0c3ebb6a28acc39b87a0dc5d6f@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261028T094500
 DTEND;TZID=Europe/Berlin:20261028T111500
 SUMMARY:Rechtliche Grundlagen und Einführung in das Grundsicherungsrecht
@@ -883,7 +883,7 @@ DESCRIPTION:Modul: M08 – Rechtliche Grundlagen\nLehrperson: Prof. Dr.in Tam
 END:VEVENT
 BEGIN:VEVENT
 UID:07e41c952b8ff8b3598939b80209ed8f@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261104T094500
 DTEND;TZID=Europe/Berlin:20261104T111500
 SUMMARY:Rechtliche Grundlagen und Einführung in das Grundsicherungsrecht
@@ -894,7 +894,7 @@ DESCRIPTION:Modul: M08 – Rechtliche Grundlagen\nLehrperson: Prof. Dr.in Tam
 END:VEVENT
 BEGIN:VEVENT
 UID:b6905a4539852eb062108b29ab745baf@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261111T094500
 DTEND;TZID=Europe/Berlin:20261111T111500
 SUMMARY:Rechtliche Grundlagen und Einführung in das Grundsicherungsrecht
@@ -905,7 +905,7 @@ DESCRIPTION:Modul: M08 – Rechtliche Grundlagen\nLehrperson: Prof. Dr.in Tam
 END:VEVENT
 BEGIN:VEVENT
 UID:09d9cd0c17fc6fe60f2fa95b924c88f4@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261118T094500
 DTEND;TZID=Europe/Berlin:20261118T111500
 SUMMARY:Rechtliche Grundlagen und Einführung in das Grundsicherungsrecht
@@ -916,7 +916,7 @@ DESCRIPTION:Modul: M08 – Rechtliche Grundlagen\nLehrperson: Prof. Dr.in Tam
 END:VEVENT
 BEGIN:VEVENT
 UID:68364221321fa46ec0cc6245bf1c57a7@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261009T140000
 DTEND;TZID=Europe/Berlin:20261009T181500
 SUMMARY:Arbeitsfelder und Aufträge Sozialer Arbeit
@@ -927,7 +927,7 @@ DESCRIPTION:Modul: M08 – Rechtliche Grundlagen\nLehrperson: M.A. Jeannette
 END:VEVENT
 BEGIN:VEVENT
 UID:8b0a9e47bb294a2d348de109b3c8c3e3@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261010T090000
 DTEND;TZID=Europe/Berlin:20261010T171500
 SUMMARY:Arbeitsfelder und Aufträge Sozialer Arbeit
@@ -938,7 +938,7 @@ DESCRIPTION:Modul: M08 – Rechtliche Grundlagen\nLehrperson: M.A. Jeannette
 END:VEVENT
 BEGIN:VEVENT
 UID:84cf1916b95810f2c4ea63228ca8a877@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261007T114500
 DTEND;TZID=Europe/Berlin:20261007T131500
 SUMMARY:Methoden der empirischen Sozialforschung
@@ -948,7 +948,7 @@ DESCRIPTION:Modul: M10 – Forschung\nLehrperson: Prof. Dr. Peter Höfflin\nLV
 END:VEVENT
 BEGIN:VEVENT
 UID:18c6bf6bf16449ad3e1811aec3a13604@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261014T114500
 DTEND;TZID=Europe/Berlin:20261014T131500
 SUMMARY:Methoden der empirischen Sozialforschung
@@ -958,7 +958,7 @@ DESCRIPTION:Modul: M10 – Forschung\nLehrperson: Prof. Dr. Peter Höfflin\nLV
 END:VEVENT
 BEGIN:VEVENT
 UID:cde254696f30caacaa2ad1f2723b8363@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261021T114500
 DTEND;TZID=Europe/Berlin:20261021T131500
 SUMMARY:Methoden der empirischen Sozialforschung
@@ -968,7 +968,7 @@ DESCRIPTION:Modul: M10 – Forschung\nLehrperson: Prof. Dr. Peter Höfflin\nLV
 END:VEVENT
 BEGIN:VEVENT
 UID:0fe9c582c1785582b788d14dbec02d87@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261028T114500
 DTEND;TZID=Europe/Berlin:20261028T131500
 SUMMARY:Methoden der empirischen Sozialforschung
@@ -978,7 +978,7 @@ DESCRIPTION:Modul: M10 – Forschung\nLehrperson: Prof. Dr. Peter Höfflin\nLV
 END:VEVENT
 BEGIN:VEVENT
 UID:158873fb18d1c5e9240c78768cf1f907@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261104T114500
 DTEND;TZID=Europe/Berlin:20261104T131500
 SUMMARY:Methoden der empirischen Sozialforschung
@@ -988,7 +988,7 @@ DESCRIPTION:Modul: M10 – Forschung\nLehrperson: Prof. Dr. Peter Höfflin\nLV
 END:VEVENT
 BEGIN:VEVENT
 UID:e0e5bb5a9f651609018a5dc83129b6ee@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261111T114500
 DTEND;TZID=Europe/Berlin:20261111T131500
 SUMMARY:Methoden der empirischen Sozialforschung
@@ -998,7 +998,7 @@ DESCRIPTION:Modul: M10 – Forschung\nLehrperson: Prof. Dr. Peter Höfflin\nLV
 END:VEVENT
 BEGIN:VEVENT
 UID:48f87de6518ff84ee9490ee080e71dd5@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261118T114500
 DTEND;TZID=Europe/Berlin:20261118T131500
 SUMMARY:Methoden der empirischen Sozialforschung
@@ -1008,7 +1008,7 @@ DESCRIPTION:Modul: M10 – Forschung\nLehrperson: Prof. Dr. Peter Höfflin\nLV
 END:VEVENT
 BEGIN:VEVENT
 UID:ecbd08ae2800a59c702f5547fdd7a5d8@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261125T114500
 DTEND;TZID=Europe/Berlin:20261125T131500
 SUMMARY:Methoden der empirischen Sozialforschung
@@ -1018,7 +1018,7 @@ DESCRIPTION:Modul: M10 – Forschung\nLehrperson: Prof. Dr. Peter Höfflin\nLV
 END:VEVENT
 BEGIN:VEVENT
 UID:436e25cd076329c614a903c50df73793@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261202T114500
 DTEND;TZID=Europe/Berlin:20261202T131500
 SUMMARY:Methoden der empirischen Sozialforschung
@@ -1028,7 +1028,7 @@ DESCRIPTION:Modul: M10 – Forschung\nLehrperson: Prof. Dr. Peter Höfflin\nLV
 END:VEVENT
 BEGIN:VEVENT
 UID:878bc9875e76bcfcf83bb32caf168c29@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261209T114500
 DTEND;TZID=Europe/Berlin:20261209T131500
 SUMMARY:Methoden der empirischen Sozialforschung
@@ -1038,7 +1038,7 @@ DESCRIPTION:Modul: M10 – Forschung\nLehrperson: Prof. Dr. Peter Höfflin\nLV
 END:VEVENT
 BEGIN:VEVENT
 UID:9314d5c33d7209f2e2a88b373569d850@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261216T114500
 DTEND;TZID=Europe/Berlin:20261216T131500
 SUMMARY:Methoden der empirischen Sozialforschung
@@ -1048,7 +1048,7 @@ DESCRIPTION:Modul: M10 – Forschung\nLehrperson: Prof. Dr. Peter Höfflin\nLV
 END:VEVENT
 BEGIN:VEVENT
 UID:fc10000483b522bd144bbbddb340322f@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20270113T114500
 DTEND;TZID=Europe/Berlin:20270113T131500
 SUMMARY:Methoden der empirischen Sozialforschung
@@ -1058,7 +1058,7 @@ DESCRIPTION:Modul: M10 – Forschung\nLehrperson: Prof. Dr. Peter Höfflin\nLV
 END:VEVENT
 BEGIN:VEVENT
 UID:2054ebf8d312ec7f15161fe6d4af0410@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20270120T114500
 DTEND;TZID=Europe/Berlin:20270120T131500
 SUMMARY:Methoden der empirischen Sozialforschung
@@ -1068,7 +1068,7 @@ DESCRIPTION:Modul: M10 – Forschung\nLehrperson: Prof. Dr. Peter Höfflin\nLV
 END:VEVENT
 BEGIN:VEVENT
 UID:110f1bedcca9ff294f4f1143ef0d2f67@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20270127T114500
 DTEND;TZID=Europe/Berlin:20270127T131500
 SUMMARY:Methoden der empirischen Sozialforschung
@@ -1078,7 +1078,7 @@ DESCRIPTION:Modul: M10 – Forschung\nLehrperson: Prof. Dr. Peter Höfflin\nLV
 END:VEVENT
 BEGIN:VEVENT
 UID:1793daae555094c7095965ef0b9d9fef@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20270203T114500
 DTEND;TZID=Europe/Berlin:20270203T131500
 SUMMARY:Methoden der empirischen Sozialforschung
@@ -1088,7 +1088,7 @@ DESCRIPTION:Modul: M10 – Forschung\nLehrperson: Prof. Dr. Peter Höfflin\nLV
 END:VEVENT
 BEGIN:VEVENT
 UID:b0c19bdbaaa0d9c6976aa3ecfdfc79eb@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261008T173000
 DTEND;TZID=Europe/Berlin:20261008T194500
 SUMMARY:Der Einsatz von Forschungsmethoden in sozialen Arbeitsfeldern
@@ -1098,7 +1098,7 @@ DESCRIPTION:Modul: M10 – Forschung\nLehrperson: Dr.in Johanna Possinger\nLV
 END:VEVENT
 BEGIN:VEVENT
 UID:60bf3aff6ef7b8eb506e2aa754a9d188@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261015T173000
 DTEND;TZID=Europe/Berlin:20261015T194500
 SUMMARY:Der Einsatz von Forschungsmethoden in sozialen Arbeitsfeldern
@@ -1108,7 +1108,7 @@ DESCRIPTION:Modul: M10 – Forschung\nLehrperson: Dr.in Johanna Possinger\nLV
 END:VEVENT
 BEGIN:VEVENT
 UID:6bae7fd80aaeae38f241105c5a951699@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261022T173000
 DTEND;TZID=Europe/Berlin:20261022T194500
 SUMMARY:Der Einsatz von Forschungsmethoden in sozialen Arbeitsfeldern
@@ -1118,7 +1118,7 @@ DESCRIPTION:Modul: M10 – Forschung\nLehrperson: Dr.in Johanna Possinger\nLV
 END:VEVENT
 BEGIN:VEVENT
 UID:146ef5d9a8709d78b11cb19aff0b4604@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261029T173000
 DTEND;TZID=Europe/Berlin:20261029T194500
 SUMMARY:Der Einsatz von Forschungsmethoden in sozialen Arbeitsfeldern
@@ -1128,7 +1128,7 @@ DESCRIPTION:Modul: M10 – Forschung\nLehrperson: Dr.in Johanna Possinger\nLV
 END:VEVENT
 BEGIN:VEVENT
 UID:9d0da2d37f1e3de3b7acb863722a5f17@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261105T173000
 DTEND;TZID=Europe/Berlin:20261105T194500
 SUMMARY:Der Einsatz von Forschungsmethoden in sozialen Arbeitsfeldern
@@ -1138,7 +1138,7 @@ DESCRIPTION:Modul: M10 – Forschung\nLehrperson: Dr.in Johanna Possinger\nLV
 END:VEVENT
 BEGIN:VEVENT
 UID:1877b6ccb13018b6350f0279cea33643@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261112T173000
 DTEND;TZID=Europe/Berlin:20261112T194500
 SUMMARY:Der Einsatz von Forschungsmethoden in sozialen Arbeitsfeldern
@@ -1148,7 +1148,7 @@ DESCRIPTION:Modul: M10 – Forschung\nLehrperson: Dr.in Johanna Possinger\nLV
 END:VEVENT
 BEGIN:VEVENT
 UID:f5a27d08a5a0dcd9382a2f287078e0d1@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261119T173000
 DTEND;TZID=Europe/Berlin:20261119T194500
 SUMMARY:Der Einsatz von Forschungsmethoden in sozialen Arbeitsfeldern
@@ -1158,7 +1158,7 @@ DESCRIPTION:Modul: M10 – Forschung\nLehrperson: Dr.in Johanna Possinger\nLV
 END:VEVENT
 BEGIN:VEVENT
 UID:00b52fce99c1ae1c08b4b357a0e48fde@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261126T173000
 DTEND;TZID=Europe/Berlin:20261126T194500
 SUMMARY:Der Einsatz von Forschungsmethoden in sozialen Arbeitsfeldern
@@ -1168,7 +1168,7 @@ DESCRIPTION:Modul: M10 – Forschung\nLehrperson: Dr.in Johanna Possinger\nLV
 END:VEVENT
 BEGIN:VEVENT
 UID:578a070dda7e199fda178f5621a95abd@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261203T173000
 DTEND;TZID=Europe/Berlin:20261203T194500
 SUMMARY:Der Einsatz von Forschungsmethoden in sozialen Arbeitsfeldern
@@ -1178,7 +1178,7 @@ DESCRIPTION:Modul: M10 – Forschung\nLehrperson: Dr.in Johanna Possinger\nLV
 END:VEVENT
 BEGIN:VEVENT
 UID:db13ca2343236c48392bd0b68c416b5d@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261210T173000
 DTEND;TZID=Europe/Berlin:20261210T194500
 SUMMARY:Der Einsatz von Forschungsmethoden in sozialen Arbeitsfeldern
@@ -1188,7 +1188,7 @@ DESCRIPTION:Modul: M10 – Forschung\nLehrperson: Dr.in Johanna Possinger\nLV
 END:VEVENT
 BEGIN:VEVENT
 UID:7f3f6235ec36ce259ce59eb02af153a0@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261217T173000
 DTEND;TZID=Europe/Berlin:20261217T194500
 SUMMARY:Der Einsatz von Forschungsmethoden in sozialen Arbeitsfeldern
@@ -1198,7 +1198,7 @@ DESCRIPTION:Modul: M10 – Forschung\nLehrperson: Dr.in Johanna Possinger\nLV
 END:VEVENT
 BEGIN:VEVENT
 UID:9f1752a97fdf3364db80ced2cf3ef596@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20270114T173000
 DTEND;TZID=Europe/Berlin:20270114T194500
 SUMMARY:Der Einsatz von Forschungsmethoden in sozialen Arbeitsfeldern
@@ -1208,7 +1208,7 @@ DESCRIPTION:Modul: M10 – Forschung\nLehrperson: Dr.in Johanna Possinger\nLV
 END:VEVENT
 BEGIN:VEVENT
 UID:ca4be00efe63072406bf0dda7a3ec6a7@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20270121T173000
 DTEND;TZID=Europe/Berlin:20270121T194500
 SUMMARY:Der Einsatz von Forschungsmethoden in sozialen Arbeitsfeldern
@@ -1218,7 +1218,7 @@ DESCRIPTION:Modul: M10 – Forschung\nLehrperson: Dr.in Johanna Possinger\nLV
 END:VEVENT
 BEGIN:VEVENT
 UID:32a6049de59d3e541e6cef85265c6043@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20270128T173000
 DTEND;TZID=Europe/Berlin:20270128T194500
 SUMMARY:Der Einsatz von Forschungsmethoden in sozialen Arbeitsfeldern
@@ -1228,7 +1228,7 @@ DESCRIPTION:Modul: M10 – Forschung\nLehrperson: Dr.in Johanna Possinger\nLV
 END:VEVENT
 BEGIN:VEVENT
 UID:a28ceb3b3c27fafaead4de0f17e3c8ec@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20270204T173000
 DTEND;TZID=Europe/Berlin:20270204T194500
 SUMMARY:Der Einsatz von Forschungsmethoden in sozialen Arbeitsfeldern
@@ -1238,7 +1238,7 @@ DESCRIPTION:Modul: M10 – Forschung\nLehrperson: Dr.in Johanna Possinger\nLV
 END:VEVENT
 BEGIN:VEVENT
 UID:692bfcd792253239a1cd3fa2a28e43e7@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20270115T140000
 DTEND;TZID=Europe/Berlin:20270115T181500
 SUMMARY:Übungen zu Gesprächsführung und Kommunikationskompetenzen
@@ -1248,7 +1248,7 @@ DESCRIPTION:Modul: M02 – Theorie und Methoden der Beratung\nLehrperson: –\n
 END:VEVENT
 BEGIN:VEVENT
 UID:760bbaf569c2421f7b40d040b20a5395@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20270116T100000
 DTEND;TZID=Europe/Berlin:20270116T171500
 SUMMARY:Übungen zu Gesprächsführung und Kommunikationskompetenzen
@@ -1258,7 +1258,7 @@ DESCRIPTION:Modul: M02 – Theorie und Methoden der Beratung\nLehrperson: –\n
 END:VEVENT
 BEGIN:VEVENT
 UID:89aadf9fbfc5fc10a5cf8a0f0904734d@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20270122T140000
 DTEND;TZID=Europe/Berlin:20270122T181500
 SUMMARY:Übungen zu Gesprächsführung und Kommunikationskompetenzen
@@ -1268,7 +1268,7 @@ DESCRIPTION:Modul: M02 – Theorie und Methoden der Beratung\nLehrperson: –\n
 END:VEVENT
 BEGIN:VEVENT
 UID:195d4361aa409cd96cffcc377e6e1109@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20270123T100000
 DTEND;TZID=Europe/Berlin:20270123T171500
 SUMMARY:Übungen zu Gesprächsführung und Kommunikationskompetenzen
@@ -1278,7 +1278,7 @@ DESCRIPTION:Modul: M02 – Theorie und Methoden der Beratung\nLehrperson: –\n
 END:VEVENT
 BEGIN:VEVENT
 UID:1072100f18dfe8271a218d520f8d577a@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261123T173000
 DTEND;TZID=Europe/Berlin:20261123T190000
 SUMMARY:Aus der Ohnmacht ins Handeln kommen – Für eine Politisierung Sozial
@@ -1289,7 +1289,7 @@ DESCRIPTION:Modul: Freiwilliges Zusatzangebot\nLehrperson: Andreas Foitzik\
 END:VEVENT
 BEGIN:VEVENT
 UID:54dd918f7fe908177f316a79a48eb4d4@kalender.xn--peppermita-lnb.de
-DTSTAMP:20260808T184639Z
+DTSTAMP:20260809T064432Z
 DTSTART;TZID=Europe/Berlin:20261212T100000
 DTEND;TZID=Europe/Berlin:20261212T170000
 SUMMARY:Aus der Ohnmacht ins Handeln kommen – Für eine Politisierung Sozial

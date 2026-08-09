@@ -107,17 +107,26 @@
   /* ── NÄCHSTE VERANSTALTUNG ── */
   .next-up {
     display: none; /* wird per JS auf 'flex' gesetzt, sobald ein kommender Termin feststeht */
-    align-items: center;
-    gap: 9px;
+    flex-direction: column;
+    gap: 6px;
     padding: 11px 24px;
     background: var(--surface);
     border-bottom: 1px solid var(--border);
     font-size: 13px;
-    cursor: pointer;
+  }
+  /* Eigene Zeile statt der gesamten Leiste klickbar, damit Haupttermin und
+     nächste Prüfung/Abgabe unabhängig voneinander zu ihrem jeweiligen
+     Termin springen. */
+  .next-up-row {
+    display: flex;
+    align-items: center;
+    gap: 9px;
     flex-wrap: wrap;
+    cursor: pointer;
     transition: filter .12s;
   }
-  .next-up:hover { filter: brightness(.96); }
+  .next-up-row:hover { filter: brightness(.96); }
+  .next-up-type-row { font-size: 12px; opacity: .85; }
   .next-up-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
   .next-up-label { font-weight: 700; letter-spacing: .1px; }
   .next-up-when { font-family: 'JetBrains Mono', monospace; font-size: 12px; opacity: .8; }
@@ -128,8 +137,8 @@
   .toolbar {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 16px;
+    justify-content: flex-start;
+    gap: 10px;
     padding: 12px 24px;
     background: var(--surface);
     border-bottom: 1px solid var(--border);
@@ -337,6 +346,7 @@
   .chip-M08  { background: var(--M08-bg);  color: var(--M08-tx);  border-color: var(--M08-bd); }
   .chip-M10 { background: var(--M10-bg); color: var(--M10-tx); border-color: var(--M10-bd); }
   .chip-ZA  { background: var(--ZA-bg);  color: var(--ZA-tx);  border-color: var(--ZA-bd); }
+  .chip-EIGEN { background: var(--EIGEN-bg); color: var(--EIGEN-tx); border-color: var(--EIGEN-bd); }
   .chip-M02  { background: var(--M02-bg);  color: var(--M02-tx);  border-color: var(--M02-bd); }
 
   /* ── PRÜFUNGS-/ABGABETERMINE: zusätzlicher Akzentrand, Modulfarbe bleibt
@@ -402,6 +412,7 @@
   }
   .modal-type-badge.type-pruefung { display: inline-block; background: #FCE2E2; color: #A11B1B; }
   .modal-type-badge.type-abgabe   { display: inline-block; background: #FDE6D2; color: #9A4A0C; }
+  .modal-type-badge.type-eigen    { display: inline-block; background: #FDE7EA; color: #8C1F2E; }
   .modal-close {
     background: var(--bg);
     border: 1px solid var(--border);
@@ -427,6 +438,14 @@
   .modal-body { padding: 16px 20px 20px; }
 
   .note-section { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); }
+  .modal-delete-btn {
+    margin-top: 14px; width: 100%;
+    font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 500;
+    padding: 9px 12px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--bg); color: var(--muted); cursor: pointer;
+    transition: background .15s, border-color .15s, color .15s;
+  }
+  .modal-delete-btn:hover { background: #FCE2E2; border-color: #DC2626; color: #A11B1B; }
   .note-label {
     display: block; font-size: 10.5px; font-weight: 700; text-transform: uppercase;
     letter-spacing: .4px; color: var(--muted); margin-bottom: 7px;
@@ -548,6 +567,35 @@
   .day-event-title { font-size: 14px; font-weight: 600; line-height: 1.35; }
   .day-event-room { font-size: 12px; color: var(--muted); margin-top: 3px; }
 
+  /* ── EIGENEN TERMIN HINZUFÜGEN (Tagesansicht) ── */
+  .day-add-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 13px 14px; border: 1px dashed var(--border); border-radius: var(--radius);
+    color: var(--muted); font-size: 13.5px; font-weight: 500; cursor: pointer;
+    transition: border-color .15s, color .15s;
+  }
+  .day-add-row:hover { border-color: #AAAAAA; color: var(--text); }
+  .day-add-form {
+    padding: 14px; border: 1px solid var(--border); border-radius: var(--radius);
+    background: var(--surface); display: flex; flex-direction: column; gap: 10px;
+  }
+  .day-add-form input[type="text"], .day-add-form input[type="time"] {
+    font-family: 'Inter', sans-serif; font-size: 13.5px; padding: 9px 12px;
+    border: 1px solid var(--border); border-radius: 7px; background: var(--bg);
+    color: var(--text); width: 100%;
+  }
+  .day-add-form input[type="time"] { max-width: 140px; }
+  .day-add-form-hint { font-size: 11.5px; color: var(--muted); margin-top: -4px; }
+  .day-add-form-actions { display: flex; gap: 8px; }
+  .day-add-form-actions button {
+    font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
+    padding: 8px 16px; border-radius: 7px; border: 1px solid var(--border); cursor: pointer;
+  }
+  #dayAddSave { background: var(--EIGEN-bg); border-color: var(--EIGEN-bd); color: var(--EIGEN-tx); }
+  #dayAddSave:hover { filter: brightness(.97); }
+  #dayAddCancel { background: var(--bg); color: var(--muted); }
+  #dayAddCancel:hover { background: var(--border); }
+
   /* ── SCROLL NAV DOTS ── */
   .month-dots {
     display: flex;
@@ -667,6 +715,10 @@
     header p {
       display: none !important;
     }
+
+    /* Eigene Freitext-Termine bewusst nicht im Ausdruck (private Ad-hoc-
+       Termine, s. Ideensammlung) – echte Veranstaltungen bleiben sichtbar. */
+    .event-chip.event-type-eigen { display: none !important; }
 
     * {
       -webkit-print-color-adjust: exact;
@@ -834,6 +886,7 @@
         <textarea id="modalNote" class="note-textarea" placeholder="z. B. Buch mitbringen, Raum prüfen …" rows="2"></textarea>
         <span class="note-saved" id="noteSaved">Gespeichert ✓</span>
       </div>
+      <button type="button" id="modalDeletePersonal" class="modal-delete-btn" style="display:none;">🗑️ Eigenen Termin löschen</button>
     </div>
   </div>
 </div>
@@ -849,12 +902,13 @@
     <div class="modal-body">
       <div class="modal-divider"></div>
       <p style="font-size:12.5px;color:var(--muted);line-height:1.6;margin:0 0 16px;">
-        Notizen liegen bewusst nur lokal auf diesem Gerät. Um sie auf ein anderes Gerät zu
-        bekommen: Text unten kopieren, auf dem anderen Gerät hier einfügen und importieren.
-        Der Import überschreibt nur Notizen zu denselben Terminen, alle anderen bleiben erhalten.
+        Notizen und eigene Termine liegen bewusst nur lokal auf diesem Gerät. Um sie auf ein
+        anderes Gerät zu bekommen: Text unten kopieren, auf dem anderen Gerät hier einfügen und
+        importieren. Der Import überschreibt nur Einträge zu denselben Terminen, alle anderen
+        bleiben erhalten.
       </p>
 
-      <label class="note-label" for="notesSyncExport">Export (<span id="notesSyncCount">0</span> Notizen auf diesem Gerät)</label>
+      <label class="note-label" for="notesSyncExport">Export (<span id="notesSyncCount">0</span> Einträge auf diesem Gerät)</label>
       <textarea id="notesSyncExport" class="note-textarea" rows="4" readonly onclick="this.select()"></textarea>
       <button type="button" class="subscribe-copy" id="notesSyncCopyBtn" style="margin-top:8px;">🔗 Kopieren</button>
 
@@ -3193,6 +3247,10 @@ const MODS = {
   M09: { label:'M09 – Ästhetik, Kultur, Medien',              bg:'#E8F5ED', tx:'#1A5C34', bd:'#A8D5B5', dot:'#2E8B57' },
   M10: { label:'M10 – Forschung',                            bg:'#FCE8EF', tx:'#7A1038', bd:'#F0A0BC', dot:'#C41A50' },
   ZA:  { label:'Freiwilliges Zusatzangebot',                 bg:'#EEEEEC', tx:'#444440', bd:'#BBBBBA', dot:'#777775' },
+  // Eigene Freitext-Termine (rein lokal, s. Ideensammlung) – Bubblegum Pink
+  // aus der Projektpalette, bisher für keine Modulfarbe verwendet, damit
+  // sich eigene Termine klar von echten Veranstaltungen abgrenzen.
+  EIGEN: { label:'Eigener Termin', bg:'#FDE7EA', tx:'#8C1F2E', bd:'#F5AFB8', dot:'#F45866' },
 };
 
 // CSS-Variablen für die Chip-Farben (.chip-M02 usw.) aus MODS ableiten,
@@ -3339,7 +3397,17 @@ const ROOMS = {
 // Veranstaltung wie bisher. ev.start/ev.end sind bei diesen beiden Typen
 // optional (z.B. eine Abgabefrist ohne genaue Uhrzeit) – Sortierung und
 // Live-Status-Berechnung sind entsprechend null-sicher.
-const TYPE_ICON = {pruefung: '📝', abgabe: '📤'};
+const TYPE_ICON = {pruefung: '📝', abgabe: '📤', eigen: '📌'};
+
+// Escaped Text beim Einfügen in innerHTML. Bisher unnötig, weil alle
+// Termin-Titel fest im Quellcode standen (vertrauenswürdig) – seit eigenen
+// Freitext-Terminen (Ideensammlung) kommen Titel aber vom Nutzer selbst,
+// darum an allen Render-Stellen mit .title vorsichtshalber escapen.
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
 
 // Raum füllen + Semester-id an jedes Event anhängen (_semesterId) – einmalig
 // für ALLE Semester, nicht nur das gerade angezeigte. So funktionieren Suche
@@ -3351,6 +3419,57 @@ SEMESTERS.forEach(sem => {
     ev._semesterId = sem.id;
   });
 });
+
+// ─── EIGENE FREITEXT-TERMINE (rein lokal, s. Ideensammlung) ─────────────────
+// Persönliche Ad-hoc-Termine, komplett getrennt vom Quellcode gepflegt.
+// Werden absichtlich wie normale Termine behandelt (gleiche Datenform,
+// landen im selben EVENTS_BY_SEMESTER-Topf) – erscheinen dadurch automatisch
+// überall dort, wo normale Termine auch erscheinen (Next-Up, Suche,
+// Monatsraster, Tagesansicht, Legende), ohne Sonderbehandlung an jeder
+// einzelnen Stelle. Zwei bewusste Ausnahmen: nicht im Google-Kalender-Feed
+// (der wird serverseitig aus den fest im Repo hinterlegten Daten gebaut,
+// sieht localStorage nie) und nicht im Ausdruck (s. @media print oben).
+
+// Findet die Semester-id, in deren Start-Ende-Spanne ein Datum fällt.
+function findSemesterIdForDate(dateStr){
+  const match = SEMESTERS.find(s => dateStr >= s.start && dateStr <= s.end);
+  return match ? match.id : null;
+}
+
+function getPersonalEvents(){
+  const events = [];
+  for (let i = 0; i < localStorage.length; i++){
+    const key = localStorage.key(i);
+    if (!key || !key.startsWith('personalEvent:')) continue;
+    try {
+      const data = JSON.parse(localStorage.getItem(key));
+      events.push({
+        date: data.date, start: data.start || null, end: data.end || null,
+        modul: 'EIGEN', lvnr: null, pg: null, title: data.title,
+        lehrperson: null, type: 'eigen', raum: null,
+        _personalKey: key,
+      });
+    } catch(e) { /* defekter/fremder Eintrag unter diesem Präfix, überspringen */ }
+  }
+  return events;
+}
+
+// Mischt alle in localStorage gespeicherten eigenen Termine in
+// EVENTS_BY_SEMESTER ein (nach Semester-Löschen+Neuaufbau, damit erneutes
+// Aufrufen nach Hinzufügen/Löschen keine Duplikate erzeugt). Termine
+// außerhalb aller bekannten Semester-Spannen werden nicht angezeigt.
+function loadPersonalEventsIntoSemesters(){
+  SEMESTERS.forEach(sem => {
+    EVENTS_BY_SEMESTER[sem.id] = (EVENTS_BY_SEMESTER[sem.id] || []).filter(ev => ev.type !== 'eigen');
+  });
+  getPersonalEvents().forEach(ev => {
+    const semId = findSemesterIdForDate(ev.date);
+    if (!semId) return;
+    ev._semesterId = semId;
+    (EVENTS_BY_SEMESTER[semId] = EVENTS_BY_SEMESTER[semId] || []).push(ev);
+  });
+}
+loadPersonalEventsIntoSemesters();
 
 function allEventsFlat(){
   return SEMESTERS.flatMap(sem => EVENTS_BY_SEMESTER[sem.id] || []);
@@ -3538,7 +3657,7 @@ function renderMonth(idx){
       const typeIcon = ev.type ? `${TYPE_ICON[ev.type]} ` : '';
       const timeLabel = ev.start ? ev.start : 'Ganztägig';
       const roomHtml = ev.raum ? ` <span class="chip-room">· 📍 ${ev.raum}</span>` : '';
-      chip.innerHTML = `<span class="chip-time">${timeLabel}</span><span class="chip-mod">${modLabel}</span>${typeIcon}${ev.title}${roomHtml}`;
+      chip.innerHTML = `<span class="chip-time">${timeLabel}</span><span class="chip-mod">${modLabel}</span>${typeIcon}${escapeHtml(ev.title)}${roomHtml}`;
       chip.onclick = (e)=>{ e.stopPropagation(); openModal(ev); };
       eventsWrap.appendChild(chip);
     });
@@ -3627,10 +3746,11 @@ modalNoteEl.addEventListener('input', () => {
 
 function openModal(ev){
   const m = MODS[ev.modul];
+  const isPersonal = ev.type === 'eigen';
   const badge = document.getElementById('modalBadge');
-  badge.textContent = ev.modul === 'ZA' ? 'Zusatzangebot' : `${ev.modul} ↗`;
+  badge.textContent = ev.modul === 'ZA' ? 'Zusatzangebot' : (isPersonal ? 'Eigener Termin' : `${ev.modul} ↗`);
   badge.style.cssText = `background:${m.bg};color:${m.tx};border-color:${m.bd}`;
-  if (ev.modul === 'ZA') {
+  if (ev.modul === 'ZA' || isPersonal) {
     badge.removeAttribute('href');
     badge.classList.remove('linked');
   } else {
@@ -3655,8 +3775,10 @@ function openModal(ev){
     ['Datum',    dateStr],
     ['Uhrzeit',  uhrzeitStr],
   ];
-  if (ev.type !== 'abgabe') rows.push(['Raum', ev.raum || 'wird noch bekannt gegeben']);
-  rows.push(['Modul', m.label]);
+  // Eigene Termine haben weder Raum noch Modul im eigentlichen Sinn – "Eigener
+  // Termin" steht dafür schon oben im Badge, keine Dopplung in der Zeilenliste.
+  if (ev.type !== 'abgabe' && !isPersonal) rows.push(['Raum', ev.raum || 'wird noch bekannt gegeben']);
+  if (!isPersonal) rows.push(['Modul', m.label]);
   if (ev.lvnr) rows.push(['LV-Nummer', ev.lvnr]);
   if (ev.pg) rows.push(['Parallelgruppe', `PG ${ev.pg}`]);
 
@@ -3668,6 +3790,21 @@ function openModal(ev){
   currentModalEvent = ev;
   modalNoteEl.value = localStorage.getItem(noteKeyFor(ev)) || '';
   noteSavedEl.style.display = 'none';
+
+  // Löschen-Option nur für selbst angelegte Freitext-Termine (s. Ideensammlung)
+  const deleteBtn = document.getElementById('modalDeletePersonal');
+  if (isPersonal) {
+    deleteBtn.style.display = 'block';
+    deleteBtn.onclick = () => {
+      if (!confirm(`"${ev.title}" wirklich löschen?`)) return;
+      localStorage.removeItem(ev._personalKey);
+      closeModal();
+      loadPersonalEventsIntoSemesters();
+      loadSemester(currentSemesterId, {resetMonth:false});
+    };
+  } else {
+    deleteBtn.style.display = 'none';
+  }
 
   overlay.classList.add('open');
 }
@@ -3689,11 +3826,15 @@ const notesSyncCountEl = document.getElementById('notesSyncCount');
 const notesSyncImportEl = document.getElementById('notesSyncImport');
 const notesSyncImportResultEl = document.getElementById('notesSyncImportResult');
 
+// Sammelt Notizen UND eigene Freitext-Termine für den Export – beide nutzen
+// bewusst denselben Übertragungsweg statt eines zweiten, separaten
+// (s. Ideensammlung "Eigene Freitext-Termine"). Name beibehalten, obwohl
+// der Funktionsumfang inzwischen über reine Notizen hinausgeht.
 function getAllNotes(){
   const notes = {};
   for (let i = 0; i < localStorage.length; i++){
     const key = localStorage.key(i);
-    if (key && key.startsWith('note:')) notes[key] = localStorage.getItem(key);
+    if (key && (key.startsWith('note:') || key.startsWith('personalEvent:'))) notes[key] = localStorage.getItem(key);
   }
   return notes;
 }
@@ -3703,7 +3844,7 @@ function refreshNotesSyncExport(){
   const count = Object.keys(notes).length;
   notesSyncCountEl.textContent = count;
   notesSyncExportEl.value = count ? JSON.stringify(notes) : '';
-  notesSyncExportEl.placeholder = count ? '' : 'Noch keine Notizen auf diesem Gerät vorhanden.';
+  notesSyncExportEl.placeholder = count ? '' : 'Noch keine Notizen oder eigenen Termine auf diesem Gerät vorhanden.';
 }
 
 function openNotesSync(){
@@ -3755,14 +3896,20 @@ document.getElementById('notesSyncImportBtn').addEventListener('click', () => {
     notesSyncImportResultEl.textContent = '⚠️ Ungültiges Format.';
     return;
   }
-  let imported = 0;
+  let importedNotes = 0, importedEvents = 0;
   Object.entries(parsed).forEach(([key, val]) => {
-    if (typeof key === 'string' && key.startsWith('note:') && typeof val === 'string') {
-      localStorage.setItem(key, val);
-      imported++;
-    }
+    if (typeof key !== 'string' || typeof val !== 'string') return;
+    if (key.startsWith('note:')) { localStorage.setItem(key, val); importedNotes++; }
+    else if (key.startsWith('personalEvent:')) { localStorage.setItem(key, val); importedEvents++; }
   });
-  notesSyncImportResultEl.textContent = imported ? `✓ ${imported} Notiz(en) importiert.` : 'Keine gültigen Notizen gefunden.';
+  const parts = [];
+  if (importedNotes) parts.push(`${importedNotes} Notiz(en)`);
+  if (importedEvents) parts.push(`${importedEvents} eigene(r) Termin(e)`);
+  notesSyncImportResultEl.textContent = parts.length ? `✓ ${parts.join(', ')} importiert.` : 'Keine gültigen Einträge gefunden.';
+  if (importedEvents) {
+    loadPersonalEventsIntoSemesters();
+    loadSemester(currentSemesterId, {resetMonth:false});
+  }
   notesSyncImportEl.value = '';
   refreshNotesSyncExport();
 });
@@ -3815,11 +3962,11 @@ function updateDayFocus(events){
   if(running){
     m = MODS[running.ev.modul];
     const minsLeft = Math.max(1, Math.round((running.endDt-now)/60000));
-    statusHtml = `<span class="day-focus-status">Läuft gerade</span> <span class="day-focus-detail">– endet in ${formatCountdown(minsLeft)} (${running.ev.title})</span>`;
+    statusHtml = `<span class="day-focus-status">Läuft gerade</span> <span class="day-focus-detail">– endet in ${formatCountdown(minsLeft)} (${escapeHtml(running.ev.title)})</span>`;
   } else if(next){
     m = MODS[next.ev.modul];
     const minsLeft = Math.max(1, Math.round((next.startDt-now)/60000));
-    statusHtml = `<span class="day-focus-status">Startet in ${formatCountdown(minsLeft)}</span> <span class="day-focus-detail">– ${next.ev.title}</span>`;
+    statusHtml = `<span class="day-focus-status">Startet in ${formatCountdown(minsLeft)}</span> <span class="day-focus-detail">– ${escapeHtml(next.ev.title)}</span>`;
   } else {
     statusHtml = `<span class="day-focus-status">Keine weiteren Termine heute</span>`;
   }
@@ -3854,20 +4001,51 @@ function renderDayView(iso, {pushHistory=true} = {}){
       const typeCls = ev.type ? ` event-type-${ev.type}` : '';
       const typeIcon = ev.type ? `${TYPE_ICON[ev.type]} ` : '';
       const timeLabel = ev.start ? ev.start : 'Ganztägig';
-      const roomLine = ev.type === 'abgabe' ? '' : `<div class="day-event-room">📍 ${ev.raum || 'Raum wird noch bekannt gegeben'}</div>`;
+      const roomLine = (ev.type === 'abgabe' || ev.type === 'eigen') ? '' : `<div class="day-event-room">📍 ${ev.raum || 'Raum wird noch bekannt gegeben'}</div>`;
       return `
         <div class="day-event${typeCls}">
           <div class="day-event-time">${timeLabel}</div>
           <div class="day-event-main">
             <span class="day-event-badge" style="background:${m.bg};color:${m.tx};border-color:${m.bd}">${ev.modul}</span>
-            <div class="day-event-title">${typeIcon}${ev.title}</div>
+            <div class="day-event-title">${typeIcon}${escapeHtml(ev.title)}</div>
             ${roomLine}
           </div>
         </div>`;
     }).join('');
   }
+
+  // Eigene Freitext-Termine hinzufügen (rein lokal, s. Ideensammlung) – als
+  // Listeneintrag ganz unten statt im Verwalten-Menü, weil es eine
+  // datumsgebundene statt App-weite Aktion ist.
+  html += `
+    <div class="day-add-row" id="dayAddRow">+ Eigenen Termin hinzufügen</div>
+    <div class="day-add-form" id="dayAddForm" style="display:none;">
+      <input type="text" id="dayAddTitle" placeholder="Titel, z. B. Gruppentreffen Bibliothek" maxlength="120" autocomplete="off" />
+      <input type="time" id="dayAddTime" />
+      <div class="day-add-form-hint">Uhrzeit optional – ohne Angabe erscheint der Termin als ganztägig.</div>
+      <div class="day-add-form-actions">
+        <button type="button" id="dayAddSave">Speichern</button>
+        <button type="button" id="dayAddCancel">Abbrechen</button>
+      </div>
+    </div>`;
+
   dayViewBody.innerHTML = html;
   dayViewBody.querySelectorAll('.day-event').forEach((el,i) => { el.onclick = () => openModal(events[i]); });
+
+  const addRow = document.getElementById('dayAddRow');
+  const addForm = document.getElementById('dayAddForm');
+  const addTitle = document.getElementById('dayAddTitle');
+  addRow.onclick = () => {
+    addRow.style.display = 'none';
+    addForm.style.display = 'flex';
+    addTitle.focus();
+  };
+  document.getElementById('dayAddCancel').onclick = () => {
+    addForm.style.display = 'none';
+    addRow.style.display = 'flex';
+  };
+  document.getElementById('dayAddSave').onclick = () => savePersonalEvent(iso);
+  addTitle.addEventListener('keydown', e => { if (e.key === 'Enter') savePersonalEvent(iso); });
 
   dayView.classList.add('open');
   currentDayIso = iso;
@@ -3879,6 +4057,32 @@ function renderDayView(iso, {pushHistory=true} = {}){
     updateDayFocus(events);
     dayFocusTimer = setInterval(() => updateDayFocus(events), 30000);
   }
+}
+
+// Rechnet eine Uhrzeit "HH:MM" eine Stunde weiter (mit Überlauf über
+// Mitternacht) – eigene Termine bekommen so, wenn eine Startzeit angegeben
+// wurde, automatisch eine Standarddauer von 1h statt einer leeren
+// End-Uhrzeit, die an mehreren Stellen der App Probleme machen würde
+// (z.B. "14:00 – Uhr" ohne Endzeit im Termin-Detail).
+function addOneHour(hhmm){
+  const [h, mnt] = hhmm.split(':').map(Number);
+  const total = (h * 60 + mnt + 60) % (24 * 60);
+  return `${String(Math.floor(total / 60)).padStart(2,'0')}:${String(total % 60).padStart(2,'0')}`;
+}
+
+function savePersonalEvent(iso){
+  const titleEl = document.getElementById('dayAddTitle');
+  const timeEl = document.getElementById('dayAddTime');
+  const title = titleEl.value.trim();
+  if (!title) { titleEl.focus(); return; }
+  const start = timeEl.value || null;
+  const id = (crypto.randomUUID ? crypto.randomUUID() : `p${Date.now()}${Math.random().toString(16).slice(2)}`);
+  localStorage.setItem(`personalEvent:${id}`, JSON.stringify({
+    date: iso, start, end: start ? addOneHour(start) : null, title,
+  }));
+  loadPersonalEventsIntoSemesters();
+  loadSemester(currentSemesterId, {resetMonth:false});
+  renderDayView(iso, {pushHistory:false});
 }
 
 function openDayView(iso){ renderDayView(iso, {pushHistory:true}); }
@@ -3942,6 +4146,21 @@ window.addEventListener('popstate', () => {
 })();
 
 // ─── NÄCHSTE VERANSTALTUNG ──────────────────────────────────────────────────
+// Sucht die nächste Prüfung/Abgabe – bewusst NICHT mit der ev.start-Filterung
+// von oben, weil Abgaben meist ganztägig sind (kein start). Ganztägige
+// Termine zählen ab dem heutigen Datum noch als "kommend", nicht erst ab
+// einer Uhrzeit.
+function findNextPruefungAbgabe(){
+  const now = new Date();
+  const todayISO = isoDate(now.getFullYear(), now.getMonth(), now.getDate());
+  return allEventsFlat()
+    .filter(ev => ev.type === 'pruefung' || ev.type === 'abgabe')
+    .filter(ev => ev.start
+      ? new Date(`${ev.date}T${ev.start}:00`).getTime() >= now.getTime()
+      : ev.date >= todayISO)
+    .sort((a, b) => (a.date + (a.start || '00:00')).localeCompare(b.date + (b.start || '00:00')))[0] || null;
+}
+
 function renderNextUp(){
   const el = document.getElementById('nextUp');
   if(!el) return;
@@ -3972,14 +4191,43 @@ function renderNextUp(){
   el.style.background = m.bg;
   el.style.color = m.tx;
   el.style.borderBottom = `1px solid ${m.bd}`;
+
+  // Zweite Zeile: nächste Prüfung/Abgabe, damit die zwischen normalen
+  // Terminen nicht untergeht. Entfällt, wenn es dieselbe wie oben ist
+  // (keine Dopplung, falls der ohnehin nächste Termin schon eine
+  // Prüfung/Abgabe ist).
+  const nextTypeEv = findNextPruefungAbgabe();
+  const showTypeRow = nextTypeEv && nextTypeEv !== ev;
+  let typeRowHtml = '';
+  if (showTypeRow) {
+    const tm = MODS[nextTypeEv.modul];
+    const tDObj = new Date(nextTypeEv.date + 'T12:00:00Z');
+    const tIsToday = nextTypeEv.date === todayISO;
+    const tWhenDate = tIsToday ? 'heute' : `${WEEKDAY_ABBR[tDObj.getUTCDay()]}, ${tDObj.getUTCDate()}. ${MONTH_NAMES_SHORT[tDObj.getUTCMonth()]}`;
+    const tWhen = `${tWhenDate}, ${nextTypeEv.start ? nextTypeEv.start + ' Uhr' : 'ganztägig'}`;
+    const typeLabel = nextTypeEv.type === 'pruefung' ? 'Nächste Prüfung' : 'Nächste Abgabe';
+    typeRowHtml = `
+      <div class="next-up-row next-up-type-row">
+        <span class="next-up-dot" style="background:${tm.dot}"></span>
+        <span class="next-up-label">${TYPE_ICON[nextTypeEv.type]} ${typeLabel}</span>
+        <span class="next-up-when">${tWhen}</span>
+        <span class="next-up-sep">·</span>
+        <span class="next-up-title">${escapeHtml(nextTypeEv.title)}</span>
+      </div>`;
+  }
+
   el.innerHTML = `
-    <span class="next-up-dot" style="background:${m.dot}"></span>
-    <span class="next-up-label">Nächste Veranstaltung</span>
-    <span class="next-up-when">${whenLabel}</span>
-    <span class="next-up-sep">·</span>
-    <span class="next-up-title">${ev.title}</span>
+    <div class="next-up-row">
+      <span class="next-up-dot" style="background:${m.dot}"></span>
+      <span class="next-up-label">Nächste Veranstaltung</span>
+      <span class="next-up-when">${whenLabel}</span>
+      <span class="next-up-sep">·</span>
+      <span class="next-up-title">${escapeHtml(ev.title)}</span>
+    </div>
+    ${typeRowHtml}
   `;
-  el.onclick = () => openModal(ev);
+  el.querySelector('.next-up-row').onclick = () => openModal(ev);
+  if (showTypeRow) el.querySelector('.next-up-type-row').onclick = () => openModal(nextTypeEv);
 }
 
 // ─── SUCHE ───────────────────────────────────────────────────────────────────
@@ -4045,7 +4293,7 @@ function renderSearchResults(query) {
     return `<div class="search-result" data-i="${i}">
       <span class="search-result-dot" style="background:${m.dot}"></span>
       <span class="search-result-date">${dateLabel}, ${ev.start}</span>
-      <span class="search-result-title">${typeIcon}${ev.title}</span>
+      <span class="search-result-title">${typeIcon}${escapeHtml(ev.title)}</span>
     </div>`;
   }).join('');
   searchResultsEl.style.display = 'block';
