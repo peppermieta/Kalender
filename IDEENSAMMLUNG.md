@@ -1,7 +1,7 @@
 # Vorlesungskalender – Ideensammlung
 
 Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
-*(Stand: 8. August 2026)*
+*(Stand: 9. August 2026)*
 
 ## ⚡ Schnell — geringer Aufwand
 
