@@ -11,6 +11,19 @@
 <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#5B3FC8">
+<script>
+  // Synchron vor dem ersten Rendern ausgeführt, damit beim Laden nicht
+  // kurz der helle Modus aufblitzt, bevor das Haupt-Skript unten übernimmt.
+  (function(){
+    try {
+      var stored = localStorage.getItem('darkMode');
+      var dark = stored === null
+        ? window.matchMedia('(prefers-color-scheme: dark)').matches
+        : stored === 'true';
+      if (dark) document.documentElement.setAttribute('data-theme', 'dark');
+    } catch(e) {}
+  })();
+</script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
@@ -25,6 +38,36 @@
     /* Modulfarben (--M02-bg usw.) werden zur Laufzeit aus dem MODS-Objekt
        im JavaScript weiter unten gesetzt – so gibt es dafür nur eine einzige
        Quelle statt hartkodierter Werte hier plus im JS. */
+    --accent:        #5B3FC8;
+    --accent-soft-bg: #EDE8FF;
+    --danger-bg: #FCE2E2; --danger-tx: #A11B1B; --danger-bd: #DC2626;
+    --warn-bg:   #FDE6D2; --warn-tx:   #9A4A0C; --warn-bd:   #EA580C;
+    --success-tx: #1A8C70; --success-bd: #8DD4C2;
+  }
+
+  /* ── DARK MODE ──
+     Eigens abgestimmte Dunkel-Varianten statt reiner Invertierung (wie im
+     Modulverzeichnis bereits umgesetzt). Basis-Palette identisch zur dort
+     etablierten Dunkel-Palette (s. FARBEN.txt), damit beide Projekte
+     konsistent wirken. Modulfarben (--M02-bg usw.) werden NICHT hier
+     überschrieben, weil sie als Inline-Style auf <html> gesetzt werden
+     (höhere Spezifität als jede CSS-Regel) – die Umschaltung läuft dafür
+     stattdessen über MODS_LIGHT/MODS_DARK im JavaScript weiter unten.
+     @media print setzt unten trotzdem immer auf Hell zurück, unabhängig
+     vom aktuellen Modus (Ausdrucke sollen nicht dunkel sein). */
+  :root[data-theme="dark"] {
+    --bg:       #18171a;
+    --surface:  #221f24;
+    --border:   #383540;
+    --text:     #edebe8;
+    --muted:    #a6a29e;
+    --shadow:   0 2px 10px rgba(0,0,0,.4);
+    --accent:        #a692f0;
+    --accent-soft-bg: #2A2340;
+    --danger-bg: #3A1518; --danger-tx: #F0A8AC; --danger-bd: #E8555A;
+    --warn-bg:   #33220F; --warn-tx:   #E8AD70; --warn-bd:   #F0954A;
+    --success-tx: #6FD9B8; --success-bd: #2C5C4C;
+  }
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -61,14 +104,14 @@
     color: var(--muted);
     margin-top: 1px;
   }
-  .module-link { color: #5B3FC8; font-weight: 600; text-decoration: none; }
+  .module-link { color: var(--accent); font-weight: 600; text-decoration: none; }
   .module-link:hover { text-decoration: underline; }
   .semester-select {
     font: inherit; font-size: 12px; font-weight: 600; color: var(--text);
     background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
     padding: 1px 5px; cursor: pointer; margin-right: 2px;
   }
-  .semester-select:hover { border-color: #5B3FC8; }
+  .semester-select:hover { border-color: var(--accent); }
   .nav-controls {
     display: flex;
     align-items: center;
@@ -87,15 +130,15 @@
     font-weight: 500;
   }
   .nav-btn:hover { background: var(--border); }
-  .manage-btn-icon { display: none; }
+  .manage-btn { font-size: 20px; line-height: 1; padding: 5px 13px; }
   .today-btn {
     margin-left: 4px;
     font-size: 12.5px;
     padding: 7px 11px;
-    color: #5B3FC8;
+    color: var(--accent);
     border-color: #B8A8F0;
   }
-  .today-btn:hover { background: #EDE8FF; }
+  .today-btn:hover { background: var(--accent-soft-bg); }
   .month-label {
     font-size: 16px;
     font-weight: 700;
@@ -156,7 +199,7 @@
     font-family: 'Inter', sans-serif; font-size: 13px;
     background: var(--bg); color: var(--text);
   }
-  #searchInput:focus { outline: none; border-color: #5B3FC8; background: var(--surface); }
+  #searchInput:focus { outline: none; border-color: var(--accent); background: var(--surface); }
   .search-results {
     display: none;
     position: absolute; top: calc(100% + 6px); left: 0; right: 0;
@@ -192,7 +235,7 @@
   /* Gleiche Farben wie das bestehende Prüfungstermin-Badge im Termin-Detail
      (.modal-type-badge.type-pruefung), damit der aktive Zustand sich
      erkennbar auf dieselbe Terminart bezieht. */
-  .search-filter-btn.active { background: #FCE2E2; border-color: #DC2626; color: #A11B1B; }
+  .search-filter-btn.active { background: var(--danger-bg); border-color: var(--danger-bd); color: var(--danger-tx); }
   .toolbar-kw {
     flex-shrink: 0;
     font-family: 'JetBrains Mono', monospace; font-size: 12px;
@@ -206,9 +249,27 @@
     background: var(--bg); color: var(--muted); cursor: pointer; white-space: nowrap;
   }
   .subscribe-copy:hover { background: var(--surface); color: var(--text); }
-  .subscribe-copy.copied { color: #1A8C70; border-color: #8DD4C2; }
+  .subscribe-copy.copied { color: var(--success-tx); border-color: var(--success-bd); }
 
   .feed-status { font-size: 11px; color: var(--muted); margin-top: 8px; }
+
+  /* ── EINSTELLUNGEN-SCHALTER (Verwalten-Menü) ── */
+  .settings-row { display: flex; align-items: center; justify-content: space-between; }
+  .switch-label { font-size: 13.5px; font-weight: 500; color: var(--text); }
+  .switch { position: relative; display: inline-block; width: 42px; height: 24px; cursor: pointer; flex-shrink: 0; }
+  .switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+  .switch-track {
+    position: absolute; inset: 0; background: var(--border); border-radius: 999px;
+    transition: background .15s;
+  }
+  .switch-track::before {
+    content: ''; position: absolute; width: 18px; height: 18px; left: 3px; top: 3px;
+    background: var(--surface); border-radius: 50%; transition: transform .15s;
+    box-shadow: 0 1px 3px rgba(0,0,0,.25);
+  }
+  .switch input:checked + .switch-track { background: var(--accent); }
+  .switch input:checked + .switch-track::before { transform: translateX(18px); }
+  .switch input:focus-visible + .switch-track { outline: 2px solid var(--accent); outline-offset: 2px; }
   #qrCodeWrap { margin-top: 10px; }
   #qrCodeWrap svg { display: block; border: 1px solid var(--border); border-radius: 8px; padding: 8px; }
 
@@ -271,8 +332,8 @@
     transition: border-color .15s;
   }
   .cal-cell:hover { border-color: #AAAAAA; }
-  .cal-cell.other-month { background: #F2F1EE; opacity: .5; }
-  .cal-cell.today { border-color: #5B3FC8; border-width: 2px; }
+  .cal-cell.other-month { background: var(--border); opacity: .5; }
+  .cal-cell.today { border-color: var(--accent); border-width: 2px; }
   .cal-cell.has-ferien {
     background: repeating-linear-gradient(
       45deg,
@@ -293,7 +354,7 @@
   }
   .day-dow { display: none; } /* nur auf Mobile sichtbar, siehe Media Query unten */
   .day-num .today-badge {
-    background: #5B3FC8;
+    background: var(--accent);
     color: #fff;
     font-size: 11px;
     border-radius: 50%;
@@ -356,10 +417,10 @@
 
   /* ── PRÜFUNGS-/ABGABETERMINE: zusätzlicher Akzentrand, Modulfarbe bleibt
      als Hintergrund erhalten (Termin bleibt dem Modul zuordenbar) ── */
-  .event-chip.event-type-pruefung { border-left: 3px solid #DC2626; }
-  .event-chip.event-type-abgabe   { border-left: 3px solid #EA580C; }
-  .day-event.event-type-pruefung  { border-left: 3px solid #DC2626; }
-  .day-event.event-type-abgabe    { border-left: 3px solid #EA580C; }
+  .event-chip.event-type-pruefung { border-left: 3px solid var(--danger-bd); }
+  .event-chip.event-type-abgabe   { border-left: 3px solid var(--warn-bd); }
+  .day-event.event-type-pruefung  { border-left: 3px solid var(--danger-bd); }
+  .day-event.event-type-abgabe    { border-left: 3px solid var(--warn-bd); }
 
   /* ── MODAL ── */
   .modal-overlay {
@@ -415,8 +476,8 @@
     font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px;
     white-space: nowrap; display: none;
   }
-  .modal-type-badge.type-pruefung { display: inline-block; background: #FCE2E2; color: #A11B1B; }
-  .modal-type-badge.type-abgabe   { display: inline-block; background: #FDE6D2; color: #9A4A0C; }
+  .modal-type-badge.type-pruefung { display: inline-block; background: var(--danger-bg); color: var(--danger-tx); }
+  .modal-type-badge.type-abgabe   { display: inline-block; background: var(--warn-bg); color: var(--warn-tx); }
   .modal-type-badge.type-eigen    { display: inline-block; background: #FDE7EA; color: #8C1F2E; }
   .modal-close {
     background: var(--bg);
@@ -450,7 +511,7 @@
     background: var(--bg); color: var(--muted); cursor: pointer;
     transition: background .15s, border-color .15s, color .15s;
   }
-  .modal-delete-btn:hover { background: #FCE2E2; border-color: #DC2626; color: #A11B1B; }
+  .modal-delete-btn:hover { background: var(--danger-bg); border-color: var(--danger-bd); color: var(--danger-tx); }
   .note-label {
     display: block; font-size: 10.5px; font-weight: 700; text-transform: uppercase;
     letter-spacing: .4px; color: var(--muted); margin-bottom: 7px;
@@ -462,9 +523,9 @@
     background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
     padding: 8px 10px;
   }
-  .note-textarea:focus { outline: none; border-color: #5B3FC8; background: var(--surface); }
+  .note-textarea:focus { outline: none; border-color: var(--accent); background: var(--surface); }
   .note-saved {
-    display: none; font-size: 11px; color: #1A8C70; font-weight: 600; margin-top: 5px;
+    display: none; font-size: 11px; color: var(--success-tx); font-weight: 600; margin-top: 5px;
   }
 
   .info-grid {
@@ -537,7 +598,7 @@
     display: inline-flex; align-items: center; gap: 6px;
   }
   .day-view-copy:hover { background: var(--surface); color: var(--text); }
-  .day-view-copy.copied { color: #1A8C70; border-color: #8DD4C2; }
+  .day-view-copy.copied { color: var(--success-tx); border-color: var(--success-bd); }
 
   .day-view-body { max-width: 640px; margin: 0 auto; padding: 20px 24px 40px; width: 100%; box-sizing: border-box; }
 
@@ -632,9 +693,6 @@
     .search-wrap { max-width: none; flex: 1 1 auto; }
     .nav-controls { flex-wrap: wrap; justify-content: flex-end; row-gap: 8px; gap: 6px; }
     .month-label { min-width: 0; font-size: 15px; }
-    .manage-btn-label { display: none; }
-    .manage-btn-icon { display: inline-block; font-size: 20px; line-height: 1; }
-    #manageMenuBtn { padding: 5px 13px; }
 
     /* Wochentagsleiste ausblenden – Wochentag steht jetzt direkt am Datum */
     .weekday-header { display: none; }
@@ -713,6 +771,18 @@
      bevor das JS dazu kommt. */
   @media print {
     @page { margin: 14mm; }
+
+    /* Ausdrucke immer hell, unabhängig vom gerade aktiven Dark Mode –
+       gleiche Spezifität wie die Dark-Mode-Regel oben (Attribut-Selektor),
+       damit dieser Reset sie zuverlässig überschreibt. */
+    :root, :root[data-theme="dark"] {
+      --bg: #F7F6F3; --surface: #FFFFFF; --border: #E2E0D8;
+      --text: #1A1A18; --muted: #7A7870;
+      --accent: #5B3FC8; --accent-soft-bg: #EDE8FF;
+      --danger-bg: #FCE2E2; --danger-tx: #A11B1B; --danger-bd: #DC2626;
+      --warn-bg: #FDE6D2; --warn-tx: #9A4A0C; --warn-bd: #EA580C;
+      --success-tx: #1A8C70; --success-bd: #8DD4C2;
+    }
 
     #pw-overlay,
     .toolbar,
@@ -798,10 +868,7 @@
     </p>
   </div>
   <div class="nav-controls">
-    <button class="nav-btn" id="manageMenuBtn" type="button" aria-label="Verwalten">
-      <span class="manage-btn-label">⚙️ Verwalten</span>
-      <span class="manage-btn-icon" aria-hidden="true">⋮</span>
-    </button>
+    <button class="nav-btn manage-btn" id="manageMenuBtn" type="button" aria-label="Verwalten" title="Verwalten">⋮</button>
     <button class="nav-btn" id="prevBtn">&#8592;</button>
     <span class="month-label" id="monthLabel"></span>
     <button class="nav-btn" id="nextBtn">&#8594;</button>
@@ -872,6 +939,17 @@
       <span class="note-label">Notizen</span>
       <div class="subscribe-wrap">
         <button id="notesSyncOpenBtn" class="subscribe-copy" type="button">📋 Notizen übertragen</button>
+      </div>
+
+      <div class="modal-divider"></div>
+
+      <span class="note-label">Einstellungen</span>
+      <div class="settings-row">
+        <label class="switch-label" for="darkModeToggle">🌙 Dark Mode</label>
+        <label class="switch">
+          <input type="checkbox" id="darkModeToggle">
+          <span class="switch-track"></span>
+        </label>
       </div>
     </div>
   </div>
@@ -3255,7 +3333,7 @@ var qrcode = function() {
 
 <script>
 // ─── MODULE CONFIG ──────────────────────────────────────────────────────────
-const MODS = {
+const MODS_LIGHT = {
   M02: { label:'M02 – Theorie und Methoden der Beratung',    bg:'#E0EEFF', tx:'#1A3A8C', bd:'#A0BCEA', dot:'#2050C8' },
   M06: { label:'M06 – Inklusion und Exklusion',               bg:'#E0F4EF', tx:'#0D5A4A', bd:'#8DD4C2', dot:'#1A8C70' },
   M07: { label:'M07 – Entwicklung & Sozialisation',           bg:'#EDE8FF', tx:'#3B1D8C', bd:'#B8A8F0', dot:'#5B3FC8' },
@@ -3269,12 +3347,75 @@ const MODS = {
   EIGEN: { label:'Eigener Termin', bg:'#FDE7EA', tx:'#8C1F2E', bd:'#F5AFB8', dot:'#F45866' },
 };
 
+// Eigens abgestimmte Dunkel-Varianten (nicht einfach invertiert) – gleiche
+// Systematik wie die restliche Dark-Mode-Palette: dunkler, leicht
+// gesättigter Farbton als Hintergrund, heller/kräftigerer Farbton als Text,
+// damit Kontrast und Wiedererkennbarkeit je Modul erhalten bleiben.
+const MODS_DARK = {
+  M02: { label:'M02 – Theorie und Methoden der Beratung',    bg:'#182640', tx:'#8FB0F0', bd:'#2B4370', dot:'#5C8AE8' },
+  M06: { label:'M06 – Inklusion und Exklusion',               bg:'#132420', tx:'#6FCBB0', bd:'#254A3E', dot:'#2FA688' },
+  M07: { label:'M07 – Entwicklung & Sozialisation',           bg:'#241D3D', tx:'#B3A0F5', bd:'#3D3164', dot:'#8670E8' },
+  M08: { label:'M08 – Rechtliche Grundlagen',                 bg:'#2C2414', tx:'#E8BE5E', bd:'#4A3B1A', dot:'#D9A22E' },
+  M09: { label:'M09 – Ästhetik, Kultur, Medien',              bg:'#17281D', tx:'#7DD9A0', bd:'#2E4A38', dot:'#3FA873' },
+  M10: { label:'M10 – Forschung',                            bg:'#2E1520', tx:'#EF8DAC', bd:'#4C1F32', dot:'#D93B6E' },
+  ZA:  { label:'Freiwilliges Zusatzangebot',                 bg:'#252523', tx:'#B8B8B5', bd:'#403F3D', dot:'#8F8F8C' },
+  EIGEN: { label:'Eigener Termin', bg:'#2E161A', tx:'#F2A0AA', bd:'#4A2429', dot:'#F26E7A' },
+};
+
+// MODS bewusst als "let" statt "const": beim Umschalten des Dark Mode wird
+// diese Bindung neu zugewiesen, damit ALLE bestehenden MODS[ev.modul]-
+// Zugriffe im Code automatisch die passende Palette bekommen, ohne jede
+// einzelne Render-Stelle einzeln anzufassen.
+let MODS = MODS_LIGHT;
+
 // CSS-Variablen für die Chip-Farben (.chip-M02 usw.) aus MODS ableiten,
-// statt die Werte zusätzlich hartkodiert in :root zu pflegen
-Object.entries(MODS).forEach(([key, m]) => {
-  document.documentElement.style.setProperty(`--${key}-bg`, m.bg);
-  document.documentElement.style.setProperty(`--${key}-tx`, m.tx);
-  document.documentElement.style.setProperty(`--${key}-bd`, m.bd);
+// statt die Werte zusätzlich hartkodiert in :root zu pflegen. Werden als
+// Inline-Style auf <html> gesetzt (höhere Spezifität als jede CSS-Regel) –
+// deshalb reicht ein reiner [data-theme="dark"]-Override in CSS hierfür
+// nicht aus, s. Kommentar bei :root[data-theme="dark"] oben.
+function applyModsCssVars(){
+  Object.entries(MODS).forEach(([key, m]) => {
+    document.documentElement.style.setProperty(`--${key}-bg`, m.bg);
+    document.documentElement.style.setProperty(`--${key}-tx`, m.tx);
+    document.documentElement.style.setProperty(`--${key}-bd`, m.bd);
+  });
+}
+applyModsCssVars();
+
+// ─── DARK MODE ──────────────────────────────────────────────────────────────
+// Ob beim Laden schon Dunkel aktiv ist, hat das Bootstrap-Skript im <head>
+// bereits synchron entschieden (verhindert das kurze Aufblitzen von Hell) –
+// hier nur übernehmen und MODS entsprechend nachziehen.
+function isDarkModeActive(){ return document.documentElement.getAttribute('data-theme') === 'dark'; }
+if (isDarkModeActive()) { MODS = MODS_DARK; applyModsCssVars(); }
+
+function setDarkMode(dark){
+  if (dark) document.documentElement.setAttribute('data-theme', 'dark');
+  else document.documentElement.removeAttribute('data-theme');
+  localStorage.setItem('darkMode', String(dark));
+  MODS = dark ? MODS_DARK : MODS_LIGHT;
+  applyModsCssVars();
+  const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+  if (themeColorMeta) themeColorMeta.setAttribute('content', dark ? '#a692f0' : '#5B3FC8');
+  // Bereits gerenderte, MODS-abhängige Inline-Styles neu aufbauen (Legende,
+  // Monatsraster, Next-Up laufen alle über loadSemester()).
+  loadSemester(currentSemesterId, {resetMonth:false});
+  if (dayView.classList.contains('open') && currentDayIso) renderDayView(currentDayIso, {pushHistory:false});
+  if (searchResultsEl.style.display === 'block') renderSearchResults(searchInput.value);
+}
+
+// Ausdrucke sollen immer hell bleiben (s. @media print oben) – die dortige
+// CSS-Variablen-Rückstellung reicht für die Modulfarben aber NICHT, weil die
+// als Inline-Style gesetzt sind (höhere Spezifität, von @media-Regeln nicht
+// erreichbar). Vor dem Drucken kurz auf Hell umschalten, danach den
+// eigentlichen Modus automatisch wiederherstellen.
+let wasDarkBeforePrint = false;
+window.addEventListener('beforeprint', () => {
+  wasDarkBeforePrint = (MODS === MODS_DARK);
+  if (wasDarkBeforePrint) { MODS = MODS_LIGHT; applyModsCssVars(); loadSemester(currentSemesterId, {resetMonth:false}); }
+});
+window.addEventListener('afterprint', () => {
+  if (wasDarkBeforePrint) { MODS = MODS_DARK; applyModsCssVars(); loadSemester(currentSemesterId, {resetMonth:false}); }
 });
 
 // ─── SEMESTER-METADATEN ─────────────────────────────────────────────────────
@@ -3899,6 +4040,11 @@ function closeManageMenu(){ manageMenuOverlay.classList.remove('open'); }
 manageMenuBtn.onclick = openManageMenu;
 manageMenuClose.onclick = closeManageMenu;
 manageMenuOverlay.onclick = e => { if (e.target === manageMenuOverlay) closeManageMenu(); };
+
+// Dark-Mode-Umschalter im Verwalten-Menü
+const darkModeToggle = document.getElementById('darkModeToggle');
+darkModeToggle.checked = isDarkModeActive();
+darkModeToggle.addEventListener('change', () => setDarkMode(darkModeToggle.checked));
 // Öffnet den Notizen-Sync-Dialog aus dem Menü heraus – Menü schließt sich
 // dabei, damit nicht zwei Overlays gleichzeitig offen sind.
 document.getElementById('notesSyncOpenBtn').onclick = () => { closeManageMenu(); openNotesSync(); };
@@ -4484,37 +4630,37 @@ async function refreshFeedStatus(){
 <style>
   #pw-overlay {
     position: fixed; inset: 0;
-    background: #F7F6F3;
+    background: var(--bg);
     display: flex; align-items: center; justify-content: center;
     z-index: 9999;
     font-family: 'Inter', system-ui, sans-serif;
   }
   #pw-box {
-    background: #fff;
-    border: 1px solid #E2E0D8;
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-radius: 14px;
     padding: 36px 40px;
     width: 100%;
     max-width: 360px;
-    box-shadow: 0 4px 24px rgba(0,0,0,.08);
+    box-shadow: var(--shadow);
     text-align: center;
   }
   #pw-box h2 {
     font-size: 18px;
     font-weight: 700;
-    color: #1A1A18;
+    color: var(--text);
     margin-bottom: 6px;
     letter-spacing: -.2px;
   }
   #pw-box p {
     font-size: 13px;
-    color: #7A7870;
+    color: var(--muted);
     margin-bottom: 22px;
   }
   #pw-input {
     width: 100%;
     padding: 10px 14px;
-    border: 1px solid #E2E0D8;
+    border: 1px solid var(--border);
     border-radius: 8px;
     font-size: 15px;
     font-family: inherit;
@@ -4522,13 +4668,15 @@ async function refreshFeedStatus(){
     box-sizing: border-box;
     margin-bottom: 12px;
     transition: border-color .15s;
+    background: var(--bg);
+    color: var(--text);
   }
-  #pw-input:focus { border-color: #5B3FC8; }
+  #pw-input:focus { border-color: var(--accent); }
   #pw-btn {
     width: 100%;
     padding: 10px;
-    background: #1A1A18;
-    color: #fff;
+    background: var(--text);
+    color: var(--bg);
     border: none;
     border-radius: 8px;
     font-size: 15px;
@@ -4537,13 +4685,14 @@ async function refreshFeedStatus(){
     cursor: pointer;
     transition: background .15s;
   }
-  #pw-btn:hover { background: #333330; }
+  #pw-btn:hover { background: var(--muted); }
   #pw-error {
     margin-top: 10px;
     font-size: 13px;
     color: #C41A50;
     display: none;
   }
+  :root[data-theme="dark"] #pw-error { color: #F06090; }
 </style>
 
 <div id="pw-overlay">

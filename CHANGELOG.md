@@ -7,6 +7,33 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.8.0] - 2026-08-09
+
+### Added
+- **Dark Mode**: Umschalter im Verwalten-Menü (neue "Einstellungen"-
+  Gruppe). Gespeicherte Präferenz wird per Bootstrap-Skript im `<head>`
+  synchron vor dem ersten Rendern angewendet (kein Aufblitzen des
+  hellen Modus). Eigens abgestimmte Dunkel-Varianten für alle
+  Modulfarben (`MODS_LIGHT`/`MODS_DARK`, dynamische Umschaltung der
+  `MODS`-Bindung, da Modulfarben als Inline-Style mit höherer
+  Spezifität als jede CSS-Regel gesetzt werden) statt reiner
+  Invertierung. Gleiche Dunkel-Basispalette wie im Modulverzeichnis.
+  Neue CSS-Variablen `--accent`, `--accent-soft-bg`, `--danger-*`,
+  `--warn-*`, `--success-*` ersetzen bisher hartkodierte Hex-Werte im
+  CSS. Passwort-Screen ebenfalls auf die gemeinsamen Variablen
+  umgestellt. Ausdrucke bleiben unabhängig vom aktuellen Modus immer
+  hell (`beforeprint`/`afterprint`-Sicherheitsmechanismus).
+
+### Changed
+- **Verwalten-Button vereinheitlicht**: zeigt jetzt auf allen
+  Bildschirmgrößen nur noch das Icon "⋮" statt "⚙️ Verwalten" auf
+  Desktop bzw. "⋮" auf Mobile (zwei unterschiedliche Varianten bisher).
+
+### Fixed
+- "Anderer Monat"-Zellen im Kalenderraster hatten eine fest
+  hellgraue Hintergrundfarbe – im Dark Mode unschön hervorstechend,
+  jetzt auf `var(--border)` umgestellt.
+
 ## [3.7.1] - 2026-08-09
 
 ### Added

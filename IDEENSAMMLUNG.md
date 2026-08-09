@@ -48,9 +48,21 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
 
 ## ⚙ Mittel — machbar, etwas Umbau nötig
 
-- **Dark Mode** – umschaltbares dunkles Farbschema, wie im
-  Modulverzeichnis bereits umgesetzt; eigene abgestimmte Dunkel-Varianten
-  für die Modulfarben statt reiner Invertierung.
+- **Dark Mode** – umschaltbares dunkles Farbschema.
+  **✅ Umgesetzt** (v3.8.0) – Umschalter im Verwalten-Menü (neue
+  "Einstellungen"-Gruppe), gespeicherte Präferenz wird per Bootstrap-
+  Skript im `<head>` synchron vor dem ersten Rendern angewendet (kein
+  Aufblitzen des hellen Modus). Eigens abgestimmte Dunkel-Varianten für
+  alle Modulfarben statt reiner Invertierung, gleiche Dunkel-Basispalette
+  wie im Modulverzeichnis (Konsistenz zwischen beiden Projekten).
+  Technische Besonderheit: Modulfarben werden zur Laufzeit als
+  Inline-Style gesetzt (höhere Spezifität als jede CSS-Regel) – dafür
+  `MODS_LIGHT`/`MODS_DARK` mit dynamischer Umschaltung der `MODS`-Bindung
+  gebaut, statt nur CSS-Variablen zu überschreiben. Ausdrucke bleiben
+  unabhängig vom aktuellen Modus immer hell (eigener Sicherheits-
+  mechanismus über `beforeprint`/`afterprint`, da die reine
+  CSS-Variablen-Rückstellung die Inline-gesetzten Modulfarben nicht
+  erreicht hätte).
 - **Push-Benachrichtigungen über ntfy.sh (Phase 2)** – kurz vor einem
   Termin eine Push-Benachrichtigung aufs Handy, über einen kostenlosen
   Dienst und einen GitHub-Actions-Workflow, ohne eigenen Server. Konzept
@@ -90,6 +102,15 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   Orientierung während des Semesters – ließe sich aus den
   `SEMESTERS`-Metadaten (Start-/Enddatum) berechnen, kein neuer
   Datenbedarf.
+- **Räume und Lehrpersonen anzeigen** – Lehrpersonen-Daten sind bereits
+  vollständig gepflegt (`lehrperson`-Feld an praktisch jedem Termin),
+  werden aber nirgendwo angezeigt – im Termin-Detail als weitere
+  Info-Zeile leicht ergänzbar. Räume dagegen fehlen komplett: die
+  Lookup-Infrastruktur existiert bereits (`ROOMS`-Tabelle nach
+  LV-Nummer, plus optionales `raum:`-Feld direkt am Termin als
+  Override), die Tabelle selbst ist aber leer – müsste erst mit echten
+  Raumdaten befüllt werden (der eigentliche Aufwand liegt hier in der
+  Datenrecherche, nicht im Code).
 - **Kalender ↔ Modulverzeichnis verknüpfen** – von einem Kalendertermin
   direkt zum zugehörigen Modul im Modulverzeichnis springen.
   **✅ Umgesetzt** (v2.2.0) – Modul-Badge im Termin-Detail verlinkt
@@ -106,12 +127,45 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   Geräten synchron bleiben. Bewusst als Fernziel zurückgestellt.
   **📄 Technisches Konzept ausgearbeitet** – siehe
   [`Notiz-Sync-Konzept.md`](./Notiz-Sync-Konzept.md)
-- **Prospektive Belastungs-Heatmap** – eine farbcodierte Semesterkurve
-  aus SWS, CP-Workload und Prüfungsterminen, kombiniert aus Kalender- und
-  Modulverzeichnis-Daten. Als konkretes Vorhaben eingestuft, nicht nur
-  Vision – technisch anspruchsvollster Punkt, da Daten aus beiden
-  Projekten zusammengeführt werden müssen (bisher keine gemeinsame
-  Datenbrücke zwischen den beiden statischen Seiten).
+- **Prospektive Belastungs-Heatmap** – eine farbcodierte Semesterkurve,
+  die zeigt, wie stark jede Woche des Semesters belastet ist
+  (Kontaktzeit + Prüfungsnähe). Als konkretes Vorhaben eingestuft, nicht
+  nur Vision. Technisch anspruchsvollster Punkt der Liste – hier
+  ausführlicher geplant statt nur als Idee notiert:
+
+  **Datengrundlage:**
+  - Aus dem Modulverzeichnis: CP und SWS je Baustein, Workload-Aufteilung
+    (Kontaktzeit/Selbststudium/ggf. Praxisanteil) – in `modules_data.py`
+    bereits vorhanden.
+  - Aus dem Kalender: tatsächliche Kontaktstunden je Woche (aus den
+    echten Terminen mit Start-/Endzeit), Prüfungs-/Abgabetermine mit
+    Datum.
+
+  **Die eigentliche Hürde – Datenbrücke zwischen den Projekten:**
+  Modulverzeichnis und Kalender sind unabhängige statische Seiten ohne
+  gemeinsame Datenquelle. Lösungsansatz: Die bestehende Build-Pipeline
+  des Modulverzeichnisses (`build.py`) erzeugt zusätzlich eine schlanke,
+  öffentliche `workload.json` (Modul → CP/SWS/Workload-Aufteilung), die
+  der Kalender zur Laufzeit per `fetch()` einliest – ähnliches Prinzip
+  wie beim bereits bestehenden Modul-Link vom Kalender zum
+  Modulverzeichnis, nur umgekehrt und mit echten Daten statt nur einem
+  Link.
+
+  **Berechnung, mit einer bewussten Vereinfachung:** Kontaktzeit lässt
+  sich datumsgenau aus den echten Kalenderterminen ableiten.
+  Selbststudium dagegen hat kein festes Datum – würde gleichmäßig auf
+  die Vorlesungswochen des jeweiligen Semesters verteilt (keine
+  Berücksichtigung von individuellem Lernverhalten oder
+  Prüfungsvorbereitung, die realistisch nicht gleichmäßig verteilt ist –
+  diese Vereinfachung müsste so auch klar kommuniziert werden). Wochen
+  mit Prüfungs-/Abgabeterminen bekommen zusätzlich einen
+  Belastungs-Bonus in der Berechnung, auch wenn die reine Kontaktzeit
+  in dieser Woche gering ist.
+
+  **Darstellung:** vermutlich ein eigener Screen statt eine Einordnung
+  ins bestehende Verwalten-Menü – eine horizontale Wochenleiste über das
+  Semester, farbcodiert von grün (ruhige Woche) bis rot (intensive
+  Woche), anklickbare Wochen springen zur entsprechenden Kalenderwoche.
 - **UI-Neuordnung: Buttons & Funktionen konsolidieren** – Bedienelemente
   waren über Header, Toolbar, Footer, Tagesansicht und Notiz-Sync-Overlay
   verteilt, gewachsen Feature für Feature ohne übergreifendes Konzept.
@@ -126,6 +180,9 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   statt "⚙️ Verwalten" (zu wuchtig, nahm eine eigene Zeile ein) – jetzt
   wieder in einer Zeile mit ←/Monat/→/Heute, Desktop bleibt bei
   Icon+Text.
+  **Weiterer Nachtrag (v3.8.0):** Zahnrad-Icon und Text komplett entfernt
+  – Button zeigt jetzt auf allen Bildschirmgrößen einheitlich nur noch
+  "⋮", nicht mehr nur auf Mobile.
 
 ## 💭 Abstrakt — Vision, aber trotzdem nützlich
 
