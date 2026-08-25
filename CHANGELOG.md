@@ -7,6 +7,29 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.11.0] - 2026-08-25
+
+### Added
+- **Raumdaten anhand des offiziellen HISinOne-ICS-Exports übernommen**:
+  `ROOMS`-Tabelle für acht Kurse mit durchgängig gleichem Raum befüllt
+  (M02, M06, M08, M09 – Details in `ROOMS`). Für vier Kurse mit
+  wechselndem Raum stattdessen `raum:`-Overrides pro Termin ergänzt:
+  Grundsicherungsrecht (C4 → C9 → C1), Schulsozialarbeit (C3 → A7/A6),
+  Entwicklungstheorien (Basis C2, Ausnahme 5.10. C1), Kunst-Workshop
+  (erste Sitzung E-Learning, danach Werkräume 1.05/1.06). Mit
+  Playwright gegen 15 Stichproben verifiziert.
+- **Dozierende werden jetzt im Termin-Detail angezeigt** (Zeile
+  "Dozierende", ausgeblendet bei `"–"`-Platzhalter). Datenabgleich
+  gegen eine offizielle Quelle steht noch aus (die ICS-Datei enthält
+  keine Dozierenden-Angaben).
+
+### Fixed
+- **Falsche LV-Nummer korrigiert**: "Übungen zu Gesprächsführung und
+  Kommunikationskompetenzen" stand unter `...102102102102000`
+  (vermutlich Tippfehler bei der Ersterfassung), tatsächlich laut
+  HISinOne `...202202202202000` – gleicher Titel, identische vier
+  Termine im Abgleich bestätigt.
+
 ## [3.10.1] - 2026-08-25
 
 ### Fixed

@@ -3475,22 +3475,39 @@ function detectCurrentSemesterId(){
 const EVENTS_BY_SEMESTER = {
   "ws2026-27": [
   // M6 – Kunst (Do, Einzeltermine)
-  ...["2026-10-08","2026-10-15","2026-10-22","2026-10-29","2026-11-05","2026-11-12","2026-11-19","2026-11-26","2026-12-03","2026-12-10","2026-12-17","2027-01-21","2027-02-04"].map(d=>({
-    date:d, start:"08:00", end:"10:15", modul:"M09",
-    lvnr:"1-1-0763-1-12340-209209209207000", pg:"3",
-    title:"Workshop/Methodikseminar Kunst", lehrperson:"Sara Focke-Levin"
-  })),
-  // M7 – VL Entwicklungstheorien (Mo, wöchentlich)
-  ...["2026-10-05","2026-10-12","2026-10-19","2026-10-26","2026-11-02","2026-11-09","2026-11-16","2026-11-23","2026-11-30","2026-12-07","2026-12-14","2027-01-11","2027-01-18","2027-01-25","2027-02-01"].map(d=>({
-    date:d, start:"11:30", end:"13:00", modul:"M07",
-    lvnr:"1-1-0758-1-12345-207207207103203", pg:"1",
-    title:"Entwicklungs- und Sozialisationstheorien", lehrperson:"Prof. Dr.in Heike Stammer"
-  })),
+  // M6 – Kunst (Do, Einzeltermine) – erste Sitzung als E-Learning, danach
+  // durchgängig in den Werkräumen (laut HISinOne-ICS).
+  ...(() => {
+    const RAUM_BY_DATE = Object.fromEntries(
+      ["2026-10-08","2026-10-15","2026-10-22","2026-10-29","2026-11-05","2026-11-12","2026-11-19","2026-11-26","2026-12-03","2026-12-10","2026-12-17","2027-01-21","2027-02-04"]
+        .map(d => [d, d === "2026-10-08" ? "E-Learning – zeitunabhängig" : "Werkräume 1.05 und 1.06"])
+    );
+    return Object.keys(RAUM_BY_DATE).map(d=>({
+      date:d, start:"08:00", end:"10:15", modul:"M09",
+      lvnr:"1-1-0763-1-12340-209209209207000", pg:"3",
+      title:"Workshop/Methodikseminar Kunst", lehrperson:"Sara Focke-Levin",
+      raum: RAUM_BY_DATE[d],
+    }));
+  })(),
+  // M7 – VL Entwicklungstheorien (Mo, wöchentlich) – Basisraum Hörsaal C2,
+  // laut HISinOne-ICS mit einer Ausnahme (5.10., verlegt nach Hörsaal C1).
+  ...(() => {
+    const RAUM_BY_DATE = Object.fromEntries(
+      ["2026-10-05","2026-10-12","2026-10-19","2026-10-26","2026-11-02","2026-11-09","2026-11-16","2026-11-23","2026-11-30","2026-12-07","2026-12-14","2027-01-11","2027-01-18","2027-01-25","2027-02-01"]
+        .map(d => [d, d === "2026-10-05" ? "Hörsaal C1" : "Hörsaal C2"])
+    );
+    return Object.keys(RAUM_BY_DATE).map(d=>({
+      date:d, start:"11:30", end:"13:00", modul:"M07",
+      lvnr:"1-1-0758-1-12345-207207207103203", pg:"1",
+      title:"Entwicklungs- und Sozialisationstheorien", lehrperson:"Prof. Dr.in Heike Stammer",
+      raum: RAUM_BY_DATE[d],
+    }));
+  })(),
   // M7 – Schulsozialarbeit (Block)
-  {date:"2026-11-06",start:"14:00",end:"18:00",modul:"M07",lvnr:"1-1-0025-1-12399-207207207305305",pg:"2",title:"Schulsozialarbeit, Familienhilfe und Flüchtlingshilfe unter entwicklungspsychologischer Perspektive",lehrperson:"M.A. Jeannette Schiwek-Kleijweg"},
-  {date:"2026-11-07",start:"09:00",end:"17:00",modul:"M07",lvnr:"1-1-0025-1-12399-207207207305305",pg:"2",title:"Schulsozialarbeit, Familienhilfe und Flüchtlingshilfe unter entwicklungspsychologischer Perspektive",lehrperson:"M.A. Jeannette Schiwek-Kleijweg"},
-  {date:"2026-11-27",start:"14:00",end:"18:00",modul:"M07",lvnr:"1-1-0025-1-12399-207207207305305",pg:"2",title:"Schulsozialarbeit, Familienhilfe und Flüchtlingshilfe unter entwicklungspsychologischer Perspektive",lehrperson:"M.A. Jeannette Schiwek-Kleijweg"},
-  {date:"2026-11-28",start:"09:00",end:"17:00",modul:"M07",lvnr:"1-1-0025-1-12399-207207207305305",pg:"2",title:"Schulsozialarbeit, Familienhilfe und Flüchtlingshilfe unter entwicklungspsychologischer Perspektive",lehrperson:"M.A. Jeannette Schiwek-Kleijweg"},
+  {date:"2026-11-06",start:"14:00",end:"18:00",modul:"M07",lvnr:"1-1-0025-1-12399-207207207305305",pg:"2",title:"Schulsozialarbeit, Familienhilfe und Flüchtlingshilfe unter entwicklungspsychologischer Perspektive",lehrperson:"M.A. Jeannette Schiwek-Kleijweg",raum:"Hörsaal C3"},
+  {date:"2026-11-07",start:"09:00",end:"17:00",modul:"M07",lvnr:"1-1-0025-1-12399-207207207305305",pg:"2",title:"Schulsozialarbeit, Familienhilfe und Flüchtlingshilfe unter entwicklungspsychologischer Perspektive",lehrperson:"M.A. Jeannette Schiwek-Kleijweg",raum:"Hörsaal C3"},
+  {date:"2026-11-27",start:"14:00",end:"18:00",modul:"M07",lvnr:"1-1-0025-1-12399-207207207305305",pg:"2",title:"Schulsozialarbeit, Familienhilfe und Flüchtlingshilfe unter entwicklungspsychologischer Perspektive",lehrperson:"M.A. Jeannette Schiwek-Kleijweg",raum:"Seminarraum A7"},
+  {date:"2026-11-28",start:"09:00",end:"17:00",modul:"M07",lvnr:"1-1-0025-1-12399-207207207305305",pg:"2",title:"Schulsozialarbeit, Familienhilfe und Flüchtlingshilfe unter entwicklungspsychologischer Perspektive",lehrperson:"M.A. Jeannette Schiwek-Kleijweg",raum:"Seminarraum A6"},
   // M8 – VL Inklusion-Exklusion (Di, wöchentlich)
   ...["2026-10-06","2026-10-13","2026-10-20","2026-10-27","2026-11-03","2026-11-10","2026-11-17","2026-11-24","2026-12-01","2026-12-08","2026-12-15","2027-01-12","2027-01-19","2027-01-26","2027-02-02"].map(d=>({
     date:d, start:"08:00", end:"09:30", modul:"M06",
@@ -3515,11 +3532,25 @@ const EVENTS_BY_SEMESTER = {
     title:"Sozialverwaltungsrecht", lehrperson:"Prof. Dr. Marc Sieper"
   })),
   // M9 – Grundsicherungsrecht (Mi, 07.10.–18.11., PG1 – Paket mit Sozialverwaltungsrecht)
-  ...["2026-10-07","2026-10-14","2026-10-21","2026-10-28","2026-11-04","2026-11-11","2026-11-18"].map(d=>({
-    date:d, start:"09:45", end:"11:15", modul:"M08",
-    lvnr:"1-1-0028-1-12340-208208208313000", pg:"1",
-    title:"Rechtliche Grundlagen und Einführung in das Grundsicherungsrecht", lehrperson:"Prof. Dr.in Tamara Bloch"
-  })),
+  // Raum wechselt mehrfach zwischen den Terminen (laut HISinOne-Export) –
+  // deshalb Datum→Raum-Zuordnung statt einheitlichem ROOMS-Lookup.
+  ...(() => {
+    const RAUM_BY_DATE = {
+      "2026-10-07": "Hörsaal C4",
+      "2026-10-14": "Hörsaal C4",
+      "2026-10-21": "Seminarraum C9",
+      "2026-10-28": "Hörsaal C1",
+      "2026-11-04": "Hörsaal C1",
+      "2026-11-11": "Hörsaal C1",
+      "2026-11-18": "Hörsaal C1",
+    };
+    return Object.keys(RAUM_BY_DATE).map(d => ({
+      date:d, start:"09:45", end:"11:15", modul:"M08",
+      lvnr:"1-1-0028-1-12340-208208208313000", pg:"1",
+      title:"Rechtliche Grundlagen und Einführung in das Grundsicherungsrecht", lehrperson:"Prof. Dr.in Tamara Bloch",
+      raum: RAUM_BY_DATE[d],
+    }));
+  })(),
   // M9 – Arbeitsfelder (Block)
   {date:"2026-10-09",start:"14:00",end:"18:15",modul:"M08",lvnr:"1-1-0030-1-12340-208208208313000",pg:"5",title:"Arbeitsfelder und Aufträge Sozialer Arbeit",lehrperson:"M.A. Jeannette Schiwek-Kleijweg"},
   {date:"2026-10-10",start:"09:00",end:"17:15",modul:"M08",lvnr:"1-1-0030-1-12340-208208208313000",pg:"5",title:"Arbeitsfelder und Aufträge Sozialer Arbeit",lehrperson:"M.A. Jeannette Schiwek-Kleijweg"},
@@ -3536,10 +3567,10 @@ const EVENTS_BY_SEMESTER = {
     title:"Der Einsatz von Forschungsmethoden in sozialen Arbeitsfeldern", lehrperson:"Dr.in Johanna Possinger"
   })),
   // M3 – Übungen zu Gesprächsführung und Kommunikationskompetenzen (PG5, Block)
-  {date:"2027-01-15",start:"14:00",end:"18:15",modul:"M02",lvnr:"1-1-0007-1-12340-102102102102000",pg:"5",title:"Übungen zu Gesprächsführung und Kommunikationskompetenzen",lehrperson:"–"},
-  {date:"2027-01-16",start:"10:00",end:"17:15",modul:"M02",lvnr:"1-1-0007-1-12340-102102102102000",pg:"5",title:"Übungen zu Gesprächsführung und Kommunikationskompetenzen",lehrperson:"–"},
-  {date:"2027-01-22",start:"14:00",end:"18:15",modul:"M02",lvnr:"1-1-0007-1-12340-102102102102000",pg:"5",title:"Übungen zu Gesprächsführung und Kommunikationskompetenzen",lehrperson:"–"},
-  {date:"2027-01-23",start:"10:00",end:"17:15",modul:"M02",lvnr:"1-1-0007-1-12340-102102102102000",pg:"5",title:"Übungen zu Gesprächsführung und Kommunikationskompetenzen",lehrperson:"–"},
+  {date:"2027-01-15",start:"14:00",end:"18:15",modul:"M02",lvnr:"1-1-0007-1-12340-202202202202000",pg:"5",title:"Übungen zu Gesprächsführung und Kommunikationskompetenzen",lehrperson:"–"},
+  {date:"2027-01-16",start:"10:00",end:"17:15",modul:"M02",lvnr:"1-1-0007-1-12340-202202202202000",pg:"5",title:"Übungen zu Gesprächsführung und Kommunikationskompetenzen",lehrperson:"–"},
+  {date:"2027-01-22",start:"14:00",end:"18:15",modul:"M02",lvnr:"1-1-0007-1-12340-202202202202000",pg:"5",title:"Übungen zu Gesprächsführung und Kommunikationskompetenzen",lehrperson:"–"},
+  {date:"2027-01-23",start:"10:00",end:"17:15",modul:"M02",lvnr:"1-1-0007-1-12340-202202202202000",pg:"5",title:"Übungen zu Gesprächsführung und Kommunikationskompetenzen",lehrperson:"–"},
   // Zusatzangebot
   {date:"2026-11-23",start:"17:30",end:"19:00",modul:"ZA",lvnr:"–",pg:"1",title:"Aus der Ohnmacht ins Handeln kommen – Für eine Politisierung Sozialer Arbeit",lehrperson:"Andreas Foitzik"},
   {date:"2026-12-12",start:"10:00",end:"17:00",modul:"ZA",lvnr:"–",pg:"1",title:"Aus der Ohnmacht ins Handeln kommen – Für eine Politisierung Sozialer Arbeit",lehrperson:"Andreas Foitzik"},
@@ -3554,7 +3585,18 @@ const EVENTS_BY_SEMESTER = {
 // eintragen – gilt dann automatisch für alle Termine dieser Veranstaltung.
 // Beispiel:  "1-1-0021-1-12357-206206620209731": "Raum 2.14",
 const ROOMS = {
-  // "1-1-XXXX-1-XXXXX-XXXXXXXXXXXXXXX": "Gebäude/Raum",
+  // Quelle: HISinOne-ICS-Export (25.08.2026). Kurse mit wechselndem Raum
+  // stehen NICHT hier, sondern haben eigene raum:-Overrides pro Termin
+  // (s. M9-Grundsicherungsrecht, M9-Grundlagen-KJ-Familienrecht,
+  // M7-Entwicklungstheorien, M6-Kunst weiter unten).
+  "1-1-0021-1-12357-206206620209731": "Hörsaal C1",
+  "1-1-0022-1-12357-206206620109731": "Hörsaal C3",
+  "1-1-0027-1-12340-208208208313000": "Hörsaal C2",
+  "1-1-0029-1-12340-208208208313000": "Hörsaal C4",
+  "1-1-0030-1-12340-208208208313000": "Seminarraum A7",
+  "1-1-0034-1-12300-210210210000000": "Hörsaal C1",
+  "1-1-0765-1-12300-210210210000000": "Seminarraum A2",
+  "1-1-0007-1-12340-202202202202000": "Seminarraum C9",
 };
 
 // Raum je Termin setzen (LV-Nummer-Lookup; einzelne Termine können das mit
@@ -3957,6 +3999,7 @@ function openModal(ev){
   // Termin" steht dafür schon oben im Badge, keine Dopplung in der Zeilenliste.
   if (ev.type !== 'abgabe' && !isPersonal) rows.push(['Raum', ev.raum || 'wird noch bekannt gegeben']);
   if (!isPersonal) rows.push(['Modul', m.label]);
+  if (ev.lehrperson && ev.lehrperson !== '–') rows.push(['Dozierende', ev.lehrperson]);
   if (ev.lvnr) rows.push(['LV-Nummer', ev.lvnr]);
   if (ev.pg) rows.push(['Parallelgruppe', `PG ${ev.pg}`]);
 
