@@ -7,6 +7,15 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.9.1] - 2026-08-25
+
+### Fixed
+- **Push-Trigger beim Anlegen eigener Termine fehlte**: `savePersonalEvent()`
+  löste `scheduleGistPush()` bisher nicht aus, im Gegensatz zum
+  Notiz-Tippen und zum Löschen eigener Termine. Neu angelegte eigene
+  Freitext-Termine landeten dadurch nie im Sync-Gist. Fehlenden Aufruf
+  ergänzt.
+
 ## [3.9.0] - 2026-08-25
 
 ### Added
