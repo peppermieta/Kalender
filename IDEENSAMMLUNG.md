@@ -111,6 +111,15 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   Override), die Tabelle selbst ist aber leer – müsste erst mit echten
   Raumdaten befüllt werden (der eigentliche Aufwand liegt hier in der
   Datenrecherche, nicht im Code).
+  **✅ Umgesetzt** (v3.11.0) – Dozierende-Zeile im Termin-Detail
+  ergänzt. Raumdaten anhand des offiziellen HISinOne-ICS-Exports
+  übernommen: `ROOMS`-Tabelle für 8 Einzelraum-Kurse befüllt, 4 Kurse
+  mit wechselndem Raum über `raum:`-Overrides pro Termin abgebildet.
+  Dabei nebenbei eine falsche LV-Nummer gefunden und korrigiert
+  ("Übungen zu Gesprächsführung"). **Noch offen:** Dozierenden-Daten
+  sind zwar jetzt sichtbar, aber noch nicht gegen eine offizielle
+  Quelle geprüft – der HISinOne-ICS-Export selbst enthält keine
+  Dozierenden-Angaben, dafür wird noch eine andere Quelle gebraucht.
 - **Kalender ↔ Modulverzeichnis verknüpfen** – von einem Kalendertermin
   direkt zum zugehörigen Modul im Modulverzeichnis springen.
   **✅ Umgesetzt** (v2.2.0) – Modul-Badge im Termin-Detail verlinkt
