@@ -125,15 +125,21 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
 - **Echter geräteübergreifender Notiz-Sync** – ein richtiges Backend
   statt des manuellen Export/Imports, damit Notizen automatisch zwischen
   Geräten synchron bleiben. Bewusst als Fernziel zurückgestellt.
-  **✅ Umgesetzt** (v3.9.0) – Einbahnstraßen-Modell über einen GitHub
-  Secret Gist statt eines eigenen Backends: nur ein als Schreibgerät
-  markiertes Gerät (Token in `localStorage`) lädt Notizen und eigene
-  Freitext-Termine automatisch hoch (2,5s nach Eingabe), alle anderen
-  Geräte lesen den Gist beim Laden/Fokuswechsel mit, ganz ohne eigenen
-  Token. Kein Konfliktmanagement nötig, da bewusst nur ein Gerät jemals
-  schreibt. Der ursprünglich angedachte Ansatz mit eigenem Backend
-  (Cloudflare Worker, Zeitstempel, Mehrschreiber-Konfliktauflösung)
-  wurde zugunsten dieser deutlich einfacheren Lösung verworfen.
+  **✅ Umgesetzt** (v3.9.0, stabil seit v3.9.2, Aufräumarbeiten in
+  v3.10.0) – Einbahnstraßen-Modell über einen GitHub Secret Gist statt
+  eines eigenen Backends: nur ein als Schreibgerät markiertes Gerät
+  (Token in `localStorage`) lädt Notizen und eigene Freitext-Termine
+  automatisch hoch (2,5s nach Eingabe), alle anderen Geräte lesen den
+  Gist beim Laden/Fokuswechsel mit, ganz ohne eigenen Token. Kein
+  Konfliktmanagement nötig, da bewusst nur ein Gerät jemals schreibt.
+  Der ursprünglich angedachte Ansatz mit eigenem Backend (Cloudflare
+  Worker, Zeitstempel, Mehrschreiber-Konfliktauflösung) wurde zugunsten
+  dieser deutlich einfacheren Lösung verworfen. Nach dem ersten
+  Praxistest zwei echte Bugs gefunden und behoben (v3.9.1: fehlender
+  Push-Trigger beim Anlegen eigener Termine; v3.9.2: Service Worker
+  cachte Gist-API-Antworten fälschlich statt sie frisch zu holen).
+  Die inzwischen überflüssige manuelle Copy-Paste-Übertragung wieder
+  entfernt, Notiz-Indikator in der Tagesansicht ergänzt (v3.10.0).
 - **Prospektive Belastungs-Heatmap** – eine farbcodierte Semesterkurve,
   die zeigt, wie stark jede Woche des Semesters belastet ist
   (Kontaktzeit + Prüfungsnähe). Als konkretes Vorhaben eingestuft, nicht
