@@ -7,6 +7,22 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.10.1] - 2026-08-25
+
+### Fixed
+- **Dark-Mode-"Lag" trat weiterhin auf, jetzt am richtigen Ansatzpunkt
+  behoben**: Der Fix aus v3.10.0 unterdrückte Transitions nur beim
+  Seitenladen, das eigentliche Problem trat aber beim Umschalten des
+  Dark-Mode-Schalters selbst auf. Mit präziser Zeitmessung
+  nachgewiesen: `--bg`/`--border` wechseln beim Umschalten sofort,
+  Elemente mit `transition: background .15s` (z. B. `.nav-btn` fürs
+  Hover-Gefühl) blendeten dieselbe Änderung aber sichtbar über
+  150–200ms über, während der Rest der Seite (ohne Transition) sofort
+  umsprang. `setDarkMode()` unterdrückt Transitions jetzt zusätzlich
+  im Umschalt-Moment selbst (`no-transition`-Klasse, zwei rAF-Ticks
+  danach entfernt) – Hover-Verhalten bleibt danach unverändert
+  erhalten, mit Playwright verifiziert.
+
 ## [3.10.0] - 2026-08-25
 
 ### Added

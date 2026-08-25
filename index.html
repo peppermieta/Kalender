@@ -3390,6 +3390,13 @@ function isDarkModeActive(){ return document.documentElement.getAttribute('data-
 if (isDarkModeActive()) { MODS = MODS_DARK; applyModsCssVars(); }
 
 function setDarkMode(dark){
+  // Verhindert das sichtbare Überblenden von Elementen mit Hover-Transition
+  // (z.B. .nav-btn: transition: background .15s) beim Umschalten selbst –
+  // ohne das würde --bg/--border/--text zwar überall sofort wechseln, aber
+  // Elemente mit eigener Transition blenden dieselbe Änderung sichtbar über
+  // ~150-200ms über, während der Rest (kein transition) sofort umspringt.
+  // Genau das sorgte für den gemeldeten "Lag" beim Umschalten.
+  document.documentElement.classList.add('no-transition');
   if (dark) document.documentElement.setAttribute('data-theme', 'dark');
   else document.documentElement.removeAttribute('data-theme');
   localStorage.setItem('darkMode', String(dark));
@@ -3402,6 +3409,9 @@ function setDarkMode(dark){
   loadSemester(currentSemesterId, {resetMonth:false});
   if (dayView.classList.contains('open') && currentDayIso) renderDayView(currentDayIso, {pushHistory:false});
   if (searchResultsEl.style.display === 'block') renderSearchResults(searchInput.value);
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    document.documentElement.classList.remove('no-transition');
+  }));
 }
 
 // Ausdrucke sollen immer hell bleiben (s. @media print oben) – die dortige
