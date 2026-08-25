@@ -11,7 +11,7 @@ Privater, passwortgeschützter Vorlesungskalender für das Studium (Bachelor Soz
 - **Farbcodierung nach Modul** – jede Veranstaltung ist ihrem Modul farblich zugeordnet, Legende oben auf der Seite (sortiert M02 → M10, Zusatzangebot am Ende)
 - **Mobile Ansicht** – unter 700px Breite wechselt die Seite automatisch von der 7-Spalten-Rasteransicht zu einer einspaltigen Tagesliste, damit Termine nicht abgeschnitten werden; Modulkürzel werden dort direkt am Termin angezeigt
 - **Termin-Details per Klick/Tap** – Datum, Uhrzeit, Raum, Modul, LV-Nummer und Parallelgruppe
-- **Private Notizen** – pro Termin, rein lokal im Browser gespeichert (kein Sync, kein Server), z. B. "Buch mitbringen"
+- **Private Notizen** – pro Termin, rein lokal im Browser gespeichert, z. B. "Buch mitbringen"; optional automatischer Sync zwischen Geräten über einen GitHub Gist (Einbahnstraßen-Modell: ein Gerät schreibt, alle anderen lesen mit)
 - **Installierbare App (PWA)** – auf Android als App installierbar (eigenes Icon, kein Browser-Rahmen), funktioniert dank Service Worker auch ohne Internetverbindung
 - **Suche** – Freitextsuche nach Veranstaltung oder Modulname direkt im Header; Klick auf ein Ergebnis springt zum passenden Monat und öffnet die Detailansicht
 - **Kalender-Abo (ICS)** – Termine lassen sich per Klick zu Google Kalender hinzufügen oder als Link für andere Kalender-Apps kopieren, inkl. automatischer Aktualisierung bei Änderungen und über alle Semester hinweg (siehe Abschnitt "Kalender-Abo" unten)
@@ -73,7 +73,7 @@ Danach startet der Kalender wie eine normale App (eigenes Icon, kein Browser-Rah
 
 ## Versionshistorie
 
-Alle Änderungen werden in [CHANGELOG.md](CHANGELOG.md) dokumentiert (aktuelle Version: **3.2.0**).
+Alle Änderungen werden in [CHANGELOG.md](CHANGELOG.md) dokumentiert (aktuelle Version: **3.9.0**).
 
 ## Farbpalette
 

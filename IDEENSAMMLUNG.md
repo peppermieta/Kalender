@@ -125,8 +125,15 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
 - **Echter geräteübergreifender Notiz-Sync** – ein richtiges Backend
   statt des manuellen Export/Imports, damit Notizen automatisch zwischen
   Geräten synchron bleiben. Bewusst als Fernziel zurückgestellt.
-  **📄 Technisches Konzept ausgearbeitet** – siehe
-  [`Notiz-Sync-Konzept.md`](./Notiz-Sync-Konzept.md)
+  **✅ Umgesetzt** (v3.9.0) – Einbahnstraßen-Modell über einen GitHub
+  Secret Gist statt eines eigenen Backends: nur ein als Schreibgerät
+  markiertes Gerät (Token in `localStorage`) lädt Notizen und eigene
+  Freitext-Termine automatisch hoch (2,5s nach Eingabe), alle anderen
+  Geräte lesen den Gist beim Laden/Fokuswechsel mit, ganz ohne eigenen
+  Token. Kein Konfliktmanagement nötig, da bewusst nur ein Gerät jemals
+  schreibt. Der ursprünglich angedachte Ansatz mit eigenem Backend
+  (Cloudflare Worker, Zeitstempel, Mehrschreiber-Konfliktauflösung)
+  wurde zugunsten dieser deutlich einfacheren Lösung verworfen.
 - **Prospektive Belastungs-Heatmap** – eine farbcodierte Semesterkurve,
   die zeigt, wie stark jede Woche des Semesters belastet ist
   (Kontaktzeit + Prüfungsnähe). Als konkretes Vorhaben eingestuft, nicht
