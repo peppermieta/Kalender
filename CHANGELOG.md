@@ -7,6 +7,22 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.9.2] - 2026-08-25
+
+### Fixed
+- **Service Worker fing Gist-API-Anfragen fälschlich cache-first ab**:
+  `pullNotesFromGist()` fällt bei GET-Requests an `api.github.com`
+  weder unter `isHTML` noch unter `isFeed`, landete also im
+  Cache-first-Zweig, der eigentlich nur für selten wechselnde statische
+  Assets (Icons, Manifest) gedacht ist. Ergebnis: Der allererste
+  erfolgreiche Pull wurde eingefroren, jede spätere Änderung im Gist kam
+  auf Lesegeräten nie an, ohne sichtbare Fehlermeldung. Erklärt, warum
+  Notizen ankamen (zufällig schon beim ersten Pull vorhanden), eigene
+  Termine aber nie (erst danach angelegt). Neue `isGistApi`-Erkennung
+  ergänzt, Gist-Requests laufen jetzt wie der ICS-Feed network-first.
+  Mit einem isolierten Unit-Test der Fetch-Handler-Logik verifiziert
+  (fetch()/caches.match()-Aufrufe vorher/nachher gegenübergestellt).
+
 ## [3.9.1] - 2026-08-25
 
 ### Fixed
