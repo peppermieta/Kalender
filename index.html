@@ -943,6 +943,17 @@
 
       <div class="modal-divider"></div>
 
+      <span class="note-label">Notiz-Sync (GitHub Gist)</span>
+      <div class="subscribe-wrap" style="margin-bottom:4px;flex-wrap:wrap;">
+        <input type="password" id="gistTokenInput" class="note-textarea"
+               style="min-height:auto;flex:1 1 180px;"
+               placeholder="GitHub-Token (nur auf diesem Gerät)" autocomplete="off">
+        <button id="gistTokenSaveBtn" class="subscribe-copy" type="button">Speichern</button>
+      </div>
+      <div class="feed-status" id="gistSyncStatusText">Lädt …</div>
+
+      <div class="modal-divider"></div>
+
       <span class="note-label">Einstellungen</span>
       <div class="settings-row">
         <label class="switch-label" for="darkModeToggle">🌙 Dark Mode</label>
@@ -3907,6 +3918,7 @@ modalNoteEl.addEventListener('input', () => {
   const val = modalNoteEl.value;
   if (val.trim()) localStorage.setItem(key, val);
   else localStorage.removeItem(key);
+  scheduleGistPush();
   noteSavedEl.style.display = 'inline';
   clearTimeout(noteSaveTimer);
   noteSaveTimer = setTimeout(() => { noteSavedEl.style.display = 'none'; }, 1500);
@@ -3966,6 +3978,7 @@ function openModal(ev){
     deleteBtn.onclick = () => {
       if (!confirm(`"${ev.title}" wirklich löschen?`)) return;
       localStorage.removeItem(ev._personalKey);
+      scheduleGistPush();
       closeModal();
       loadPersonalEventsIntoSemesters();
       loadSemester(currentSemesterId, {resetMonth:false});
@@ -4086,6 +4099,75 @@ document.getElementById('notesSyncImportBtn').addEventListener('click', () => {
   notesSyncImportEl.value = '';
   refreshNotesSyncExport();
 });
+
+// ─── NOTIZ-SYNC über GitHub Gist (Einbahnstraße: nur dieses Gerät schreibt,
+// wenn ein Token hinterlegt ist – alle anderen Geräte lesen nur) ───────────
+const GIST_SYNC_ID = 'a3dbce24e5f9aab57771f03c10ad75e3';
+const GIST_TOKEN_KEY = 'gistSyncToken';
+const getGistToken = () => localStorage.getItem(GIST_TOKEN_KEY) || '';
+
+async function pullNotesFromGist(){
+  try {
+    const res = await fetch(`https://api.github.com/gists/${GIST_SYNC_ID}`);
+    if (!res.ok) return;
+    const data = await res.json();
+    const content = data.files && data.files['notes.json'] && data.files['notes.json'].content;
+    if (!content) return;
+    const remote = JSON.parse(content);
+    Object.entries(remote).forEach(([key, val]) => {
+      if (typeof val === 'string' && (key.startsWith('note:') || key.startsWith('personalEvent:'))) {
+        localStorage.setItem(key, val);
+      }
+    });
+    loadPersonalEventsIntoSemesters();
+    loadSemester(currentSemesterId, {resetMonth:false});
+    if (typeof refreshNotesSyncExport === 'function') refreshNotesSyncExport();
+  } catch (e) { /* kein Netz/GitHub nicht erreichbar – bestehender Stand bleibt unberührt */ }
+}
+
+let gistPushTimer = null;
+function scheduleGistPush(){
+  if (!getGistToken()) return; // nur das Schreibgerät hat einen Token hinterlegt
+  clearTimeout(gistPushTimer);
+  gistPushTimer = setTimeout(pushNotesToGist, 2500);
+}
+
+async function pushNotesToGist(){
+  const token = getGistToken();
+  if (!token) return;
+  try {
+    await fetch(`https://api.github.com/gists/${GIST_SYNC_ID}`, {
+      method: 'PATCH',
+      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ files: { 'notes.json': { content: JSON.stringify(getAllNotes()) } } })
+    });
+  } catch (e) { /* nächster Versuch beim nächsten Speichern/Fokuswechsel */ }
+}
+
+function refreshGistSyncStatus(){
+  const el = document.getElementById('gistSyncStatusText');
+  if (!el) return;
+  el.textContent = getGistToken()
+    ? 'Token hinterlegt – dieses Gerät sendet Notizen automatisch.'
+    : 'Kein Token hinterlegt – dieses Gerät liest nur.';
+}
+const gistTokenSaveBtn = document.getElementById('gistTokenSaveBtn');
+const gistTokenInput = document.getElementById('gistTokenInput');
+gistTokenSaveBtn.addEventListener('click', () => {
+  const val = gistTokenInput.value.trim();
+  if (val) localStorage.setItem(GIST_TOKEN_KEY, val); else localStorage.removeItem(GIST_TOKEN_KEY);
+  gistTokenInput.value = '';
+  refreshGistSyncStatus();
+});
+refreshGistSyncStatus();
+// Pull bei Fokuswechsel NUR auf Lesegeräten (kein Token) – auf dem
+// Schreibgerät würde ein Pull kurz nach dem Tippen (Bildschirm sperren o.ä.,
+// bevor der 2,5s-Debounce gefeuert hat) sonst die frische, noch nicht
+// hochgeladene Notiz mit dem älteren Gist-Stand überschreiben. Pull beim
+// Laden bleibt auf allen Geräten unkritisch, da zu dem Zeitpunkt in der
+// Session noch nichts editiert wurde.
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && !getGistToken()) pullNotesFromGist(); });
+window.addEventListener('load', pullNotesFromGist);
 
 // ─── TAGESANSICHT (Fokus-Ansicht für heute / Tagesausblick für andere Tage) ──
 // Zeigt alle Termine eines Tages in einem eigenen Vollbild-Screen (nicht im

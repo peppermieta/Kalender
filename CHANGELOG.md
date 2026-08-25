@@ -7,6 +7,26 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.9.0] - 2026-08-25
+
+### Added
+- **Notiz-Sync über GitHub Gist (Einbahnstraßen-Modell)**: Notizen und
+  eigene Freitext-Termine werden automatisch (2,5s nach Eingabe) von einem
+  als Schreibgerät markierten Gerät (Token in `localStorage` hinterlegt) in
+  einen Secret Gist hochgeladen (`getAllNotes()`, unverändert, liefert
+  bereits beide Präfixe `note:` und `personalEvent:`). Alle anderen Geräte
+  lesen den Gist beim Laden automatisch, ganz ohne eigenen Token (Secret
+  Gists sind anonym lesbar – gegen den echten Gist verifiziert). Lesegeräte
+  pullen zusätzlich bei jedem Fokuswechsel neu; das Schreibgerät bewusst
+  nicht (verhindert, dass eine frische, noch nicht hochgeladene Notiz durch
+  einen Pull kurz nach dem Tippen überschrieben wird). Kein
+  Konfliktmanagement nötig, da bewusst nur ein Gerät jemals schreibt. Der
+  bestehende manuelle Export/Import (`notesSyncOverlay`) bleibt unverändert
+  als Fallback erhalten, z. B. für die Erstübertragung auf ein neues Gerät.
+- Neuer Menü-Abschnitt „Notiz-Sync (GitHub Gist)" im Verwalten-Menü mit
+  Token-Eingabefeld und Statusanzeige („Token hinterlegt – sendet
+  automatisch" / „liest nur").
+
 ## [3.8.1] - 2026-08-09
 
 ### Fixed
