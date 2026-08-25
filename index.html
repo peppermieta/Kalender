@@ -17,13 +17,33 @@
   // WICHTIG: Dark Mode ist bewusst NIE der Standard, auch nicht bei
   // System-Präferenz Dunkel – nur aktiv, wenn explizit im Verwalten-Menü
   // angeschaltet (gespeichert in localStorage).
+  //
+  // Die zusätzliche "no-transition"-Klasse unterdrückt alle CSS-Transitions
+  // für die ersten Momente nach dem Laden: Lädt z.B. die Google-Fonts-
+  // Stylesheet (@import) etwas langsamer, wird jede Stilaktualisierung, die
+  // dadurch verzögert eintrifft, sonst über die normalen Hover-Transitions
+  // (u.a. .nav-btn) sichtbar "eingeblendet" statt sofort zu erscheinen -
+  // wirkt dann wie ein Lag/Nachziehen, besonders im Dark Mode auffällig
+  // (Buttons ändern ihre Farbe dann mit sichtbarem Überblenden statt
+  // augenblicklich). Die Klasse wird nach dem vollständigen Laden wieder
+  // entfernt, damit normale Hover-Übergänge danach wie gewohnt animiert sind.
   (function(){
     try {
+      document.documentElement.classList.add('no-transition');
       if (localStorage.getItem('darkMode') === 'true') {
         document.documentElement.setAttribute('data-theme', 'dark');
       }
     } catch(e) {}
   })();
+  window.addEventListener('load', () => {
+    // Zwei rAF-Ticks statt nur einem setTimeout(0): stellt sicher, dass der
+    // Browser mindestens einmal wirklich fertig gemalt hat, bevor Transitions
+    // wieder aktiv werden - sonst könnte derselbe Lag-Effekt beim Entfernen
+    // der Klasse selbst nochmal auftreten.
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      document.documentElement.classList.remove('no-transition');
+    }));
+  });
 </script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
@@ -71,6 +91,9 @@
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  /* Unterdrückt alle Transitions für den allerersten Ladeaugenblick, s.
+     Erklärung im Bootstrap-Skript im <head> oben. */
+  html.no-transition, html.no-transition * { transition: none !important; }
 
   body {
     font-family: 'Inter', system-ui, sans-serif;
@@ -632,6 +655,7 @@
     border-radius: 20px; border: 1px solid; letter-spacing: .3px; margin-bottom: 5px;
   }
   .day-event-title { font-size: 14px; font-weight: 600; line-height: 1.35; }
+  .day-event-note-icon { font-size: 12px; opacity: .75; }
   .day-event-room { font-size: 12px; color: var(--muted); margin-top: 3px; }
 
   /* ── EIGENEN TERMIN HINZUFÜGEN (Tagesansicht) ── */
@@ -936,13 +960,6 @@
 
       <div class="modal-divider"></div>
 
-      <span class="note-label">Notizen</span>
-      <div class="subscribe-wrap">
-        <button id="notesSyncOpenBtn" class="subscribe-copy" type="button">📋 Notizen übertragen</button>
-      </div>
-
-      <div class="modal-divider"></div>
-
       <span class="note-label">Notiz-Sync (GitHub Gist)</span>
       <div class="subscribe-wrap" style="margin-bottom:4px;flex-wrap:wrap;">
         <input type="password" id="gistTokenInput" class="note-textarea"
@@ -981,7 +998,7 @@
       <div class="modal-divider"></div>
       <div class="info-grid" id="modalInfo"></div>
       <div class="note-section">
-        <label class="note-label" for="modalNote">🔒 Private Notiz <span class="note-hint">– nur auf diesem Gerät gespeichert</span></label>
+        <label class="note-label" for="modalNote">Notiz</label>
         <textarea id="modalNote" class="note-textarea" placeholder="z. B. Buch mitbringen, Raum prüfen …" rows="2"></textarea>
         <span class="note-saved" id="noteSaved">Gespeichert ✓</span>
       </div>
@@ -990,34 +1007,6 @@
   </div>
 </div>
 
-<!-- NOTIZEN ÜBERTRAGEN (manueller Export/Import zwischen Geräten, da Notizen
-     bewusst nur lokal in localStorage liegen, kein automatischer Cloud-Sync) -->
-<div class="modal-overlay" id="notesSyncOverlay">
-  <div class="modal" id="notesSyncModal">
-    <div class="modal-header">
-      <div class="modal-badges"><span style="font-weight:700;font-size:14px;">📋 Notizen zwischen Geräten übertragen</span></div>
-      <button class="modal-close" id="notesSyncClose">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="modal-divider"></div>
-      <p style="font-size:12.5px;color:var(--muted);line-height:1.6;margin:0 0 16px;">
-        Notizen und eigene Termine liegen bewusst nur lokal auf diesem Gerät. Um sie auf ein
-        anderes Gerät zu bekommen: Text unten kopieren, auf dem anderen Gerät hier einfügen und
-        importieren. Der Import überschreibt nur Einträge zu denselben Terminen, alle anderen
-        bleiben erhalten.
-      </p>
-
-      <label class="note-label" for="notesSyncExport">Export (<span id="notesSyncCount">0</span> Einträge auf diesem Gerät)</label>
-      <textarea id="notesSyncExport" class="note-textarea" rows="4" readonly onclick="this.select()"></textarea>
-      <button type="button" class="subscribe-copy" id="notesSyncCopyBtn" style="margin-top:8px;">🔗 Kopieren</button>
-
-      <label class="note-label" for="notesSyncImport" style="margin-top:20px;">Import (hier einfügen)</label>
-      <textarea id="notesSyncImport" class="note-textarea" rows="4" placeholder="Exportierten Text vom anderen Gerät hier einfügen…"></textarea>
-      <button type="button" class="subscribe-copy" id="notesSyncImportBtn" style="margin-top:8px;">📥 Importieren</button>
-      <span id="notesSyncImportResult" style="font-size:12px;color:var(--muted);margin-left:8px;"></span>
-    </div>
-  </div>
-</div>
 
 <!-- TAGESANSICHT (Fokus-Ansicht für heute / Tagesausblick für andere Tage) -->
 <div class="day-view" id="dayView">
@@ -3884,7 +3873,6 @@ document.getElementById('todayBtn').onclick=goToToday;
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){
     if(overlay.classList.contains('open')){ closeModal(); return; }
-    if(notesSyncOverlay.classList.contains('open')){ closeNotesSync(); return; }
     if(manageMenuOverlay.classList.contains('open')){ closeManageMenu(); return; }
     if(dayView.classList.contains('open')){ closeDayView(); return; }
     searchResultsEl.style.display = 'none';
@@ -3997,20 +3985,9 @@ modalClose.onclick = closeModal;
 overlay.onclick = e=>{ if(e.target===overlay) closeModal(); };
 
 // ─── NOTIZEN ÜBERTRAGEN (manueller Export/Import zwischen Geräten) ──────────
-// Notizen liegen bewusst nur lokal in localStorage (kein automatischer
-// Cloud-Sync) – dieses Panel erlaubt einen manuellen Textexport, den man auf
-// einem anderen Gerät wieder einfügt. Import ist additiv/überschreibend pro
-// Termin, nicht destruktiv für alle übrigen Notizen.
-const notesSyncOverlay = document.getElementById('notesSyncOverlay');
-const notesSyncExportEl = document.getElementById('notesSyncExport');
-const notesSyncCountEl = document.getElementById('notesSyncCount');
-const notesSyncImportEl = document.getElementById('notesSyncImport');
-const notesSyncImportResultEl = document.getElementById('notesSyncImportResult');
-
-// Sammelt Notizen UND eigene Freitext-Termine für den Export – beide nutzen
-// bewusst denselben Übertragungsweg statt eines zweiten, separaten
-// (s. Ideensammlung "Eigene Freitext-Termine"). Name beibehalten, obwohl
-// der Funktionsumfang inzwischen über reine Notizen hinausgeht.
+// getAllNotes() sammelt Notizen UND eigene Freitext-Termine – wird vom
+// Notiz-Sync über GitHub Gist genutzt (s. weiter unten). Name beibehalten,
+// obwohl der Funktionsumfang inzwischen über reine Notizen hinausgeht.
 function getAllNotes(){
   const notes = {};
   for (let i = 0; i < localStorage.length; i++){
@@ -4020,28 +3997,10 @@ function getAllNotes(){
   return notes;
 }
 
-function refreshNotesSyncExport(){
-  const notes = getAllNotes();
-  const count = Object.keys(notes).length;
-  notesSyncCountEl.textContent = count;
-  notesSyncExportEl.value = count ? JSON.stringify(notes) : '';
-  notesSyncExportEl.placeholder = count ? '' : 'Noch keine Notizen oder eigenen Termine auf diesem Gerät vorhanden.';
-}
-
-function openNotesSync(){
-  refreshNotesSyncExport();
-  notesSyncImportEl.value = '';
-  notesSyncImportResultEl.textContent = '';
-  notesSyncOverlay.classList.add('open');
-}
-function closeNotesSync(){ notesSyncOverlay.classList.remove('open'); }
-document.getElementById('notesSyncClose').onclick = closeNotesSync;
-
 // Druck-Button: window.print() funktioniert auch ganz ohne Browser-Oberfläche
 // (z.B. installierte PWA im Standalone-Modus, wo Adressleiste/Menü fehlen und
 // es damit auch kein Strg/Cmd+P oder Drucken-Menüpunkt gibt).
 document.getElementById('printBtn').addEventListener('click', () => window.print());
-notesSyncOverlay.onclick = e => { if (e.target === notesSyncOverlay) closeNotesSync(); };
 
 // ─── KALENDER VERWALTEN (bündelt Abo/Drucken/Notizen-Sync, statt über
 // Toolbar und Footer verstreut – s. Ideensammlung "UI-Neuordnung") ──────────
@@ -4058,47 +4017,6 @@ manageMenuOverlay.onclick = e => { if (e.target === manageMenuOverlay) closeMana
 const darkModeToggle = document.getElementById('darkModeToggle');
 darkModeToggle.checked = isDarkModeActive();
 darkModeToggle.addEventListener('change', () => setDarkMode(darkModeToggle.checked));
-// Öffnet den Notizen-Sync-Dialog aus dem Menü heraus – Menü schließt sich
-// dabei, damit nicht zwei Overlays gleichzeitig offen sind.
-document.getElementById('notesSyncOpenBtn').onclick = () => { closeManageMenu(); openNotesSync(); };
-
-const notesSyncCopyBtn = document.getElementById('notesSyncCopyBtn');
-notesSyncCopyBtn.addEventListener('click', () => {
-  if (!notesSyncExportEl.value) return;
-  navigator.clipboard.writeText(notesSyncExportEl.value).then(() => {
-    notesSyncCopyBtn.textContent = '✓ Kopiert';
-    notesSyncCopyBtn.classList.add('copied');
-    setTimeout(() => { notesSyncCopyBtn.textContent = '🔗 Kopieren'; notesSyncCopyBtn.classList.remove('copied'); }, 2000);
-  });
-});
-
-document.getElementById('notesSyncImportBtn').addEventListener('click', () => {
-  const raw = notesSyncImportEl.value.trim();
-  if (!raw) { notesSyncImportResultEl.textContent = 'Kein Text zum Importieren eingefügt.'; return; }
-  let parsed;
-  try { parsed = JSON.parse(raw); }
-  catch(e) { notesSyncImportResultEl.textContent = '⚠️ Ungültiges Format – bitte den kompletten kopierten Text einfügen.'; return; }
-  if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
-    notesSyncImportResultEl.textContent = '⚠️ Ungültiges Format.';
-    return;
-  }
-  let importedNotes = 0, importedEvents = 0;
-  Object.entries(parsed).forEach(([key, val]) => {
-    if (typeof key !== 'string' || typeof val !== 'string') return;
-    if (key.startsWith('note:')) { localStorage.setItem(key, val); importedNotes++; }
-    else if (key.startsWith('personalEvent:')) { localStorage.setItem(key, val); importedEvents++; }
-  });
-  const parts = [];
-  if (importedNotes) parts.push(`${importedNotes} Notiz(en)`);
-  if (importedEvents) parts.push(`${importedEvents} eigene(r) Termin(e)`);
-  notesSyncImportResultEl.textContent = parts.length ? `✓ ${parts.join(', ')} importiert.` : 'Keine gültigen Einträge gefunden.';
-  if (importedEvents) {
-    loadPersonalEventsIntoSemesters();
-    loadSemester(currentSemesterId, {resetMonth:false});
-  }
-  notesSyncImportEl.value = '';
-  refreshNotesSyncExport();
-});
 
 // ─── NOTIZ-SYNC über GitHub Gist (Einbahnstraße: nur dieses Gerät schreibt,
 // wenn ein Token hinterlegt ist – alle anderen Geräte lesen nur) ───────────
@@ -4121,7 +4039,6 @@ async function pullNotesFromGist(){
     });
     loadPersonalEventsIntoSemesters();
     loadSemester(currentSemesterId, {resetMonth:false});
-    if (typeof refreshNotesSyncExport === 'function') refreshNotesSyncExport();
   } catch (e) { /* kein Netz/GitHub nicht erreichbar – bestehender Stand bleibt unberührt */ }
 }
 
@@ -4257,12 +4174,16 @@ function renderDayView(iso, {pushHistory=true} = {}){
       const typeIcon = ev.type ? `${TYPE_ICON[ev.type]} ` : '';
       const timeLabel = ev.start ? ev.start : 'Ganztägig';
       const roomLine = (ev.type === 'abgabe' || ev.type === 'eigen') ? '' : `<div class="day-event-room">📍 ${ev.raum || 'Raum wird noch bekannt gegeben'}</div>`;
+      // Notiz-Indikator: prüft nur, OB eine Notiz existiert (kein Vorschau-
+      // Text), damit die Zeile nicht unterschiedlich hoch wird je nach Länge.
+      const hasNote = !!(localStorage.getItem(noteKeyFor(ev)) || '').trim();
+      const noteIcon = hasNote ? ' <span class="day-event-note-icon" title="Notiz vorhanden">🗒️</span>' : '';
       return `
         <div class="day-event${typeCls}">
           <div class="day-event-time">${timeLabel}</div>
           <div class="day-event-main">
             <span class="day-event-badge" style="background:${m.bg};color:${m.tx};border-color:${m.bd}">${ev.modul}</span>
-            <div class="day-event-title">${typeIcon}${escapeHtml(ev.title)}</div>
+            <div class="day-event-title">${typeIcon}${escapeHtml(ev.title)}${noteIcon}</div>
             ${roomLine}
           </div>
         </div>`;

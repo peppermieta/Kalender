@@ -7,6 +7,32 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.10.0] - 2026-08-25
+
+### Added
+- **Notiz-Indikator in der Tagesansicht**: Termine mit einer hinterlegten
+  Notiz zeigen jetzt ein kleines 🗒️-Symbol neben dem Titel (ohne
+  Vorschautext, damit die Zeilenhöhe konstant bleibt).
+
+### Changed
+- **Alte manuelle "Notizen übertragen"-Funktion entfernt** (Export/Import
+  per Copy-Paste-Text): seit dem automatischen Notiz-Sync über GitHub
+  Gist überflüssig geworden. `getAllNotes()` bleibt bestehen, wird
+  weiterhin vom Gist-Sync genutzt.
+- **Notiz-Feld-Label vereinfacht**: "🔒 Private Notiz – nur auf diesem
+  Gerät gespeichert" heißt jetzt schlicht "Notiz" – die Aussage stimmte
+  seit dem optionalen Gist-Sync nicht mehr uneingeschränkt.
+
+### Fixed
+- **Dark-Mode-"Lag" bei Buttons** (Vor/Zurück, ⋮-Menü, Filter-Icon):
+  Diese Elemente nutzen `transition: background .15s` fürs Hover-Gefühl.
+  Kam die Google-Fonts-Stylesheet beim Laden etwas später (v. a. im
+  Mobilfunknetz), zog dieselbe Transition eine dadurch verzögerte
+  Stilaktualisierung sichtbar in die Länge – wirkte wie ein Lag,
+  besonders im Dark Mode auffällig. Neue `no-transition`-Klasse
+  unterdrückt beim allerersten Rendern alle Transitions, wird nach
+  `load` (zwei rAF-Ticks später) wieder entfernt.
+
 ## [3.9.2] - 2026-08-25
 
 ### Fixed
