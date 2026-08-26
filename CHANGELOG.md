@@ -7,6 +7,26 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.12.0] - 2026-08-25
+
+### Fixed
+- **Handy-Zurück-Button schloss die App statt nur das Termin-Detail**:
+  `openModal()`/`closeModal()` hatten im Gegensatz zur Tagesansicht
+  bisher keinerlei Verlaufsanbindung. Modal bekommt jetzt einen eigenen
+  Verlaufseintrag; Zurück (Geste, Taste oder X-Button) schließt jetzt
+  schrittweise genau eine Ebene (Modal, dann ggf. Tagesansicht), statt
+  bei fehlendem vorherigem Verlauf die App zu verlassen. Mit echter
+  Browser-Navigation getestet (`page.go_back()`), inkl. verschachteltem
+  Fall Tagesansicht → Modal → zweimal zurück.
+
+### Changed
+- **Raumanzeige in Monatsraster und Tagesansicht verkürzt**: neue
+  `shortRoom()`-Funktion zeigt dort nur noch das Kürzel ("Hörsaal C1"
+  → "C1", "Werkräume 1.05 und 1.06" → "1.05/1.06"), die volle
+  Bezeichnung bleibt im Termin-Detail erhalten. Pin-Symbol (📍) vor der
+  Raumangabe entfernt (kam an drei Stellen vor: Monatsraster-Chip,
+  Tagesansicht, sowie nochmal im Kalenderraster selbst).
+
 ## [3.11.0] - 2026-08-25
 
 ### Added

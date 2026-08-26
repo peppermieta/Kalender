@@ -3618,6 +3618,21 @@ function escapeHtml(str){
   return div.innerHTML;
 }
 
+// Kompakte Raumkürzel für Monatsraster/Tagesansicht (z.B. "Hörsaal C2" ->
+// "C2") - die volle Bezeichnung bleibt im Termin-Detail erhalten (dort wird
+// ev.raum direkt verwendet, ohne diese Funktion). Bekannte Sonderfälle zuerst
+// (Werkräume/E-Learning haben kein Standard-"Buchstabe+Zahl"-Kürzel),
+// ansonsten wird das Kürzel am Ende der Bezeichnung extrahiert. Kommt kein
+// Muster vor, wird sicherheitshalber die volle Bezeichnung zurückgegeben
+// (lieber etwas länger als eine falsche/verstümmelte Kurzform).
+function shortRoom(raum){
+  if (!raum) return raum;
+  if (raum.startsWith('E-Learning')) return 'E-Learning';
+  if (raum.startsWith('Werkräume ')) return raum.slice('Werkräume '.length).replace(' und ', '/');
+  const m = raum.match(/([A-ZÄÖÜ]\s?\d+(\.\d+)?)\s*$/);
+  return m ? m[1] : raum;
+}
+
 // Raum füllen + Semester-id an jedes Event anhängen (_semesterId) – einmalig
 // für ALLE Semester, nicht nur das gerade angezeigte. So funktionieren Suche
 // und "Nächste Veranstaltung" semesterübergreifend, und ein Klick auf einen
@@ -3876,7 +3891,7 @@ function renderMonth(idx){
       const modLabel = ev.modul;
       const typeIcon = ev.type ? `${TYPE_ICON[ev.type]} ` : '';
       const timeLabel = ev.start ? ev.start : 'Ganztägig';
-      const roomHtml = ev.raum ? ` <span class="chip-room">· 📍 ${ev.raum}</span>` : '';
+      const roomHtml = ev.raum ? ` <span class="chip-room">· ${escapeHtml(shortRoom(ev.raum))}</span>` : '';
       chip.innerHTML = `<span class="chip-time">${timeLabel}</span><span class="chip-mod">${modLabel}</span>${typeIcon}${escapeHtml(ev.title)}${roomHtml}`;
       chip.onclick = (e)=>{ e.stopPropagation(); openModal(ev); };
       eventsWrap.appendChild(chip);
@@ -4029,10 +4044,20 @@ function openModal(ev){
   }
 
   overlay.classList.add('open');
+  // Eigener Verlaufseintrag fürs Modal: vorher gab es dafür GAR KEINEN,
+  // wodurch der Handy-Zurück-Button (Geste oder Taste) beim Schließen direkt
+  // aus der App raussprang statt nur das Modal zu schließen. Da ein Modal nie
+  // die allererste Seite eines Aufrufs sein kann (es öffnet sich immer aus
+  // Monatsraster/Tagesansicht heraus), ist hier IMMER ein gültiger vorheriger
+  // Zustand zum Zurückspringen vorhanden – anders als bei der Tagesansicht,
+  // die auch direkt über einen geteilten Link als allererste Seite aufgerufen
+  // werden kann (deshalb dort bewusst ein anderes Verlaufs-Muster).
+  history.pushState({...(history.state || {}), modalOpen: true}, '', location.href);
 }
 
-function closeModal(){
+function closeModal({pushHistory=true} = {}){
   overlay.classList.remove('open');
+  if (pushHistory && history.state && history.state.modalOpen) history.back();
 }
 modalClose.onclick = closeModal;
 overlay.onclick = e=>{ if(e.target===overlay) closeModal(); };
@@ -4226,7 +4251,7 @@ function renderDayView(iso, {pushHistory=true} = {}){
       const typeCls = ev.type ? ` event-type-${ev.type}` : '';
       const typeIcon = ev.type ? `${TYPE_ICON[ev.type]} ` : '';
       const timeLabel = ev.start ? ev.start : 'Ganztägig';
-      const roomLine = (ev.type === 'abgabe' || ev.type === 'eigen') ? '' : `<div class="day-event-room">📍 ${ev.raum || 'Raum wird noch bekannt gegeben'}</div>`;
+      const roomLine = (ev.type === 'abgabe' || ev.type === 'eigen') ? '' : `<div class="day-event-room">${escapeHtml(ev.raum ? shortRoom(ev.raum) : 'Raum offen')}</div>`;
       // Notiz-Indikator: prüft nur, OB eine Notiz existiert (kein Vorschau-
       // Text), damit die Zeile nicht unterschiedlich hoch wird je nach Länge.
       const hasNote = !!(localStorage.getItem(noteKeyFor(ev)) || '').trim();
@@ -4370,6 +4395,14 @@ function findSemesterForIso(iso){
 
 // Browser-Zurück/Vor bzw. direkter Aufruf eines geteilten Tages-Links
 window.addEventListener('popstate', () => {
+  // Modal war offen und ist es laut neuem Verlaufszustand nicht mehr: NUR
+  // das Modal schließen. Sonst würde ein einzelner Zurück-Tap versehentlich
+  // gleich zwei Ebenen auf einmal schließen (Modal UND Tagesansicht/Monat),
+  // statt schrittweise wie erwartet.
+  if (overlay.classList.contains('open') && !(history.state && history.state.modalOpen)) {
+    closeModal({pushHistory:false});
+    return;
+  }
   const iso = isoFromHash();
   if(iso){
     const owner = findSemesterForIso(iso);
