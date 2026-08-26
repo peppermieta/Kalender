@@ -376,6 +376,10 @@
     gap: 4px;
   }
   .day-dow { display: none; } /* nur auf Mobile sichtbar, siehe Media Query unten */
+  .day-note-dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--accent); flex-shrink: 0;
+  }
   .day-num .today-badge {
     background: var(--accent);
     color: #fff;
@@ -3868,10 +3872,12 @@ function renderMonth(idx){
 
     const dnEl = document.createElement('div');
     dnEl.className = 'day-num';
+    const hasDayNote = !otherMonth && !!(localStorage.getItem(`dayNote:${iso}`) || '').trim();
+    const dayNoteDot = hasDayNote ? '<span class="day-note-dot" title="Notiz zum Tag vorhanden"></span>' : '';
     if(isToday){
-      dnEl.innerHTML = `${dowLabel}<span class="today-badge">${dayNum}</span>`;
+      dnEl.innerHTML = `${dowLabel}<span class="today-badge">${dayNum}</span>${dayNoteDot}`;
     } else {
-      dnEl.innerHTML = `${dowLabel}${dayNum}`;
+      dnEl.innerHTML = `${dowLabel}${dayNum}${dayNoteDot}`;
     }
     cell.appendChild(dnEl);
 
@@ -4077,7 +4083,7 @@ function getAllNotes(){
   const notes = {};
   for (let i = 0; i < localStorage.length; i++){
     const key = localStorage.key(i);
-    if (key && (key.startsWith('note:') || key.startsWith('personalEvent:'))) notes[key] = localStorage.getItem(key);
+    if (key && (key.startsWith('note:') || key.startsWith('personalEvent:') || key.startsWith('dayNote:'))) notes[key] = localStorage.getItem(key);
   }
   return notes;
 }
@@ -4125,13 +4131,13 @@ async function pullNotesFromGist(){
     const localKeysToRemove = [];
     for (let i = 0; i < localStorage.length; i++){
       const key = localStorage.key(i);
-      if (key && (key.startsWith('note:') || key.startsWith('personalEvent:')) && !(key in remote)) {
+      if (key && (key.startsWith('note:') || key.startsWith('personalEvent:') || key.startsWith('dayNote:')) && !(key in remote)) {
         localKeysToRemove.push(key);
       }
     }
     localKeysToRemove.forEach(key => localStorage.removeItem(key));
     Object.entries(remote).forEach(([key, val]) => {
-      if (typeof val === 'string' && (key.startsWith('note:') || key.startsWith('personalEvent:'))) {
+      if (typeof val === 'string' && (key.startsWith('note:') || key.startsWith('personalEvent:') || key.startsWith('dayNote:'))) {
         localStorage.setItem(key, val);
       }
     });
@@ -4309,6 +4315,19 @@ function renderDayView(iso, {pushHistory=true} = {}){
     }).join('');
   }
 
+  // Notiz zum ganzen Tag (rein lokal, synct über denselben Gist-Mechanismus
+  // wie Termin-Notizen und eigene Termine) – bewusst leichtgewichtiger als
+  // eigene Termine: reiner Freitext, keine Uhrzeit, kein eigener Chip im
+  // Monatsraster. Aufklappbar wenn leer, direkt sichtbar sobald Inhalt da ist.
+  const dayNoteKey = `dayNote:${iso}`;
+  const existingDayNote = localStorage.getItem(dayNoteKey) || '';
+  html += `
+    <div class="day-add-row" id="dayNoteTrigger"${existingDayNote ? ' style="display:none;"' : ''}>+ Notiz zum Tag hinzufügen</div>
+    <div class="day-note-wrap"${existingDayNote ? '' : ' style="display:none;"'} id="dayNoteWrap">
+      <textarea id="dayNoteText" class="note-textarea" placeholder="Notiz zu diesem Tag …" rows="2">${escapeHtml(existingDayNote)}</textarea>
+      <span class="note-saved" id="dayNoteSaved">Gespeichert ✓</span>
+    </div>`;
+
   // Eigene Freitext-Termine hinzufügen (rein lokal, s. Ideensammlung) – als
   // Listeneintrag ganz unten statt im Verwalten-Menü, weil es eine
   // datumsgebundene statt App-weite Aktion ist.
@@ -4338,6 +4357,26 @@ function renderDayView(iso, {pushHistory=true} = {}){
 
   dayViewBody.innerHTML = html;
   dayViewBody.querySelectorAll('.day-event').forEach((el,i) => { el.onclick = () => openModal(events[i]); });
+
+  const dayNoteTrigger = document.getElementById('dayNoteTrigger');
+  const dayNoteWrap = document.getElementById('dayNoteWrap');
+  const dayNoteText = document.getElementById('dayNoteText');
+  const dayNoteSaved = document.getElementById('dayNoteSaved');
+  let dayNoteSaveTimer = null;
+  dayNoteTrigger.onclick = () => {
+    dayNoteTrigger.style.display = 'none';
+    dayNoteWrap.style.display = 'block';
+    dayNoteText.focus();
+  };
+  dayNoteText.addEventListener('input', () => {
+    const val = dayNoteText.value;
+    if (val.trim()) localStorage.setItem(dayNoteKey, val);
+    else localStorage.removeItem(dayNoteKey);
+    scheduleGistPush();
+    dayNoteSaved.style.display = 'inline';
+    clearTimeout(dayNoteSaveTimer);
+    dayNoteSaveTimer = setTimeout(() => { dayNoteSaved.style.display = 'none'; }, 1500);
+  });
 
   const addRow = document.getElementById('dayAddRow');
   const addForm = document.getElementById('dayAddForm');

@@ -7,6 +7,20 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.14.0] - 2026-08-25
+
+### Added
+- **Notiz zum ganzen Tag** (statt nur pro Termin): neuer, leichtgewichtiger
+  Freitext-Bereich unter der Terminliste in der Tagesansicht (`dayNote:
+  YYYY-MM-DD` in `localStorage`). Aufklappbar über "+ Notiz zum Tag
+  hinzufügen", solange leer – sobald Inhalt vorhanden ist, direkt sichtbar
+  ohne erneutes Aufklappen. Bewusst ohne eigene Uhrzeit und ohne Chip im
+  Monatsraster (im Gegensatz zu eigenen Freitext-Terminen), stattdessen
+  ein kleiner, dezenter Punkt neben der Tageszahl im Monatsraster als
+  einziger Hinweis. Synct über denselben GitHub-Gist-Mechanismus wie
+  Termin-Notizen und eigene Termine (`getAllNotes()`/`pullNotesFromGist()`
+  um den `dayNote:`-Präfix erweitert, inkl. Lösch-Erkennung).
+
 ## [3.13.3] - 2026-08-25
 
 ### Fixed
