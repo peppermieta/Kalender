@@ -4117,6 +4117,19 @@ async function pullNotesFromGist(){
     const content = data.files && data.files['notes.json'] && data.files['notes.json'].content;
     if (!content) return;
     const remote = JSON.parse(content);
+    // Erst alle lokalen note:/personalEvent:-Schlüssel sammeln, die im Gist
+    // NICHT mehr vorkommen – die wurden auf dem Schreibgerät gelöscht und
+    // müssen hier ebenfalls entfernt werden. Ohne das blieb ein einmal
+    // gepullter, später gelöschter Termin auf Lesegeräten für immer stehen
+    // (Pull hat bisher nur hinzugefügt/aktualisiert, nie entfernt).
+    const localKeysToRemove = [];
+    for (let i = 0; i < localStorage.length; i++){
+      const key = localStorage.key(i);
+      if (key && (key.startsWith('note:') || key.startsWith('personalEvent:')) && !(key in remote)) {
+        localKeysToRemove.push(key);
+      }
+    }
+    localKeysToRemove.forEach(key => localStorage.removeItem(key));
     Object.entries(remote).forEach(([key, val]) => {
       if (typeof val === 'string' && (key.startsWith('note:') || key.startsWith('personalEvent:'))) {
         localStorage.setItem(key, val);

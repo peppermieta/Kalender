@@ -7,6 +7,21 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.13.3] - 2026-08-25
+
+### Fixed
+- **Gelöschte Notizen/eigene Termine blieben auf Lesegeräten für immer
+  bestehen**: `pullNotesFromGist()` hat bisher nur Einträge aus dem Gist
+  übernommen (hinzugefügt/aktualisiert), aber nie lokale Einträge
+  entfernt, die im Gist nicht mehr vorkommen. Eine auf dem Schreibgerät
+  gelöschte Notiz oder ein gelöschter eigener Termin blieb dadurch auf
+  jedem Gerät bestehen, das ihn vorher schon einmal gepullt hatte.
+  Pull sammelt jetzt vor dem Schreiben zusätzlich alle lokalen
+  `note:`-/`personalEvent:`-Schlüssel, die im aktuellen Gist-Stand
+  fehlen, und entfernt sie. Mit gemocktem Gist-Response verifiziert
+  (bestehender Termin bleibt, gelöschter verschwindet, Notiz
+  unangetastet).
+
 ## [3.13.2] - 2026-08-25
 
 ### Changed
