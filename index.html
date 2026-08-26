@@ -436,6 +436,10 @@
   .chip-M10 { background: var(--M10-bg); color: var(--M10-tx); border-color: var(--M10-bd); }
   .chip-ZA  { background: var(--ZA-bg);  color: var(--ZA-tx);  border-color: var(--ZA-bd); }
   .chip-EIGEN { background: var(--EIGEN-bg); color: var(--EIGEN-tx); border-color: var(--EIGEN-bd); }
+  /* Eigene Termine bewusst gestrichelt umrandet statt durchgezogen – klar
+     erkennbar als selbst hinzugefügt, nicht offizielle Veranstaltung. */
+  .event-chip.event-type-eigen { border-style: dashed; border-width: 1.5px; }
+  .day-event.event-type-eigen { border-left: 3px solid var(--EIGEN-dot); }
   .chip-M02  { background: var(--M02-bg);  color: var(--M02-tx);  border-color: var(--M02-bd); }
 
   /* ── PRÜFUNGS-/ABGABETERMINE: zusätzlicher Akzentrand, Modulfarbe bleibt
@@ -3341,10 +3345,12 @@ const MODS_LIGHT = {
   M09: { label:'M09 – Ästhetik, Kultur, Medien',              bg:'#E8F5ED', tx:'#1A5C34', bd:'#A8D5B5', dot:'#2E8B57' },
   M10: { label:'M10 – Forschung',                            bg:'#FCE8EF', tx:'#7A1038', bd:'#F0A0BC', dot:'#C41A50' },
   ZA:  { label:'Freiwilliges Zusatzangebot',                 bg:'#EEEEEC', tx:'#444440', bd:'#BBBBBA', dot:'#777775' },
-  // Eigene Freitext-Termine (rein lokal, s. Ideensammlung) – Bubblegum Pink
-  // aus der Projektpalette, bisher für keine Modulfarbe verwendet, damit
-  // sich eigene Termine klar von echten Veranstaltungen abgrenzen.
-  EIGEN: { label:'Eigener Termin', bg:'#FDE7EA', tx:'#8C1F2E', bd:'#F5AFB8', dot:'#F45866' },
+  // Eigene Freitext-Termine (rein lokal, s. Ideensammlung) – Blauton nach
+  // Pascals Coolors-Auswahl (Kontrast 8.42, "Very good"). Bewusst gestrichelt
+  // umrandet (s. CSS) statt einer noch weiter entfernten Farbe, um trotz
+  // Nähe zu M02 klar unterscheidbar zu bleiben – M02 hat ohnehin nur 4
+  // Termine im ganzen Semester, alle im selben 9-Tage-Block im Januar.
+  EIGEN: { label:'Eigener Termin', bg:'#ACC8E5', tx:'#112A46', bd:'#7FA3CC', dot:'#3D6FA0' },
 };
 
 // Eigens abgestimmte Dunkel-Varianten (nicht einfach invertiert) – gleiche
@@ -3359,7 +3365,7 @@ const MODS_DARK = {
   M09: { label:'M09 – Ästhetik, Kultur, Medien',              bg:'#17281D', tx:'#7DD9A0', bd:'#2E4A38', dot:'#3FA873' },
   M10: { label:'M10 – Forschung',                            bg:'#2E1520', tx:'#EF8DAC', bd:'#4C1F32', dot:'#D93B6E' },
   ZA:  { label:'Freiwilliges Zusatzangebot',                 bg:'#252523', tx:'#B8B8B5', bd:'#403F3D', dot:'#8F8F8C' },
-  EIGEN: { label:'Eigener Termin', bg:'#2E161A', tx:'#F2A0AA', bd:'#4A2429', dot:'#F26E7A' },
+  EIGEN: { label:'Eigener Termin', bg:'#1A2A3D', tx:'#ACC8E5', bd:'#2E4560', dot:'#6FA0D4' },
 };
 
 // MODS bewusst als "let" statt "const": beim Umschalten des Dark Mode wird
@@ -3378,6 +3384,7 @@ function applyModsCssVars(){
     document.documentElement.style.setProperty(`--${key}-bg`, m.bg);
     document.documentElement.style.setProperty(`--${key}-tx`, m.tx);
     document.documentElement.style.setProperty(`--${key}-bd`, m.bd);
+    document.documentElement.style.setProperty(`--${key}-dot`, m.dot);
   });
 }
 applyModsCssVars();
@@ -3606,7 +3613,7 @@ const ROOMS = {
 // Veranstaltung wie bisher. ev.start/ev.end sind bei diesen beiden Typen
 // optional (z.B. eine Abgabefrist ohne genaue Uhrzeit) – Sortierung und
 // Live-Status-Berechnung sind entsprechend null-sicher.
-const TYPE_ICON = {pruefung: '📝', abgabe: '📤', eigen: '📌'};
+const TYPE_ICON = {pruefung: '📝', abgabe: '📤'};
 
 // Escaped Text beim Einfügen in innerHTML. Bisher unnötig, weil alle
 // Termin-Titel fest im Quellcode standen (vertrauenswürdig) – seit eigenen
@@ -3889,7 +3896,7 @@ function renderMonth(idx){
       const typeCls = ev.type ? ` event-type-${ev.type}` : '';
       chip.className = `event-chip chip-${ev.modul}${typeCls}`;
       const modLabel = ev.modul;
-      const typeIcon = ev.type ? `${TYPE_ICON[ev.type]} ` : '';
+      const typeIcon = TYPE_ICON[ev.type] ? `${TYPE_ICON[ev.type]} ` : '';
       const timeLabel = ev.start ? ev.start : 'Ganztägig';
       const roomHtml = ev.raum ? ` <span class="chip-room">· ${escapeHtml(shortRoom(ev.raum))}</span>` : '';
       chip.innerHTML = `<span class="chip-time">${timeLabel}</span><span class="chip-mod">${modLabel}</span>${typeIcon}${escapeHtml(ev.title)}${roomHtml}`;
@@ -4249,7 +4256,7 @@ function renderDayView(iso, {pushHistory=true} = {}){
     html += events.map(ev => {
       const m = MODS[ev.modul];
       const typeCls = ev.type ? ` event-type-${ev.type}` : '';
-      const typeIcon = ev.type ? `${TYPE_ICON[ev.type]} ` : '';
+      const typeIcon = TYPE_ICON[ev.type] ? `${TYPE_ICON[ev.type]} ` : '';
       const timeLabel = ev.start ? ev.start : 'Ganztägig';
       const roomLine = (ev.type === 'abgabe' || ev.type === 'eigen') ? '' : `<div class="day-event-room">${escapeHtml(ev.raum ? shortRoom(ev.raum) : 'Raum offen')}</div>`;
       // Notiz-Indikator: prüft nur, OB eine Notiz existiert (kein Vorschau-

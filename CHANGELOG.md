@@ -7,6 +7,22 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.13.0] - 2026-08-25
+
+### Changed
+- **Eigene Termine deutlicher von echten Veranstaltungen (v. a. M10)
+  abgesetzt**: Farbe von Pink (nah an M10) auf Blau umgestellt
+  (`#ACC8E5`/`#112A46`, per Kontrastprüfung ausgewählt, Kontrast 8.42
+  "Very good"), mit abgeleitetem Rand-/Akzentton und eigens
+  abgestimmter Dark-Mode-Variante. Monatsraster-Chips jetzt gestrichelt
+  statt durchgezogen umrandet. Tagesansicht bekommt einen 3px farbigen
+  Akzentstrich links (gleiches Muster wie bei Prüfung/Abgabe), Rest der
+  Karte bleibt normal weiß. Pinnadel-Symbol komplett entfernt, an allen
+  Fundstellen abgesichert – Prüfung/Abgabe behalten ihre Icons
+  unverändert. Mehrere Design-Optionen mit dem Nutzer visuell
+  durchgesprochen und iterativ verfeinert, bevor final entschieden
+  wurde.
+
 ## [3.12.0] - 2026-08-25
 
 ### Fixed
