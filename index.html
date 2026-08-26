@@ -4127,9 +4127,22 @@ async function pullNotesFromGist(){
   } catch (e) { /* kein Netz/GitHub nicht erreichbar – bestehender Stand bleibt unberührt */ }
 }
 
+// Ausstehender Push wird synchron in localStorage vermerkt (übersteht damit
+// auch einen abrupten Reload, der den 2,5s-Debounce-Timer noch vor dem
+// Feuern zerstört) und beim nächsten Laden automatisch nachgeholt (s.
+// window.addEventListener('load', ...) weiter unten). Eine zuerst
+// versuchte pagehide+keepalive-Lösung (sofortiger Push beim Verlassen der
+// Seite) erwies sich als zu unzuverlässig: der dafür nötige CORS-Preflight
+// (wegen des Authorization-Headers) schafft es im knappen Zeitfenster beim
+// Entladen nicht zuverlässig durch, der Request schlägt dann mit "Failed to
+// fetch" fehl. Das Nachholen beim nächsten Laden braucht dagegen keine
+// Sonderbehandlung des Entladens – ganz normaler Request mit ganz normaler
+// Zeit.
+const GIST_PENDING_KEY = 'gistPendingPush';
 let gistPushTimer = null;
 function scheduleGistPush(){
   if (!getGistToken()) return; // nur das Schreibgerät hat einen Token hinterlegt
+  localStorage.setItem(GIST_PENDING_KEY, '1');
   clearTimeout(gistPushTimer);
   gistPushTimer = setTimeout(pushNotesToGist, 2500);
 }
@@ -4143,7 +4156,8 @@ async function pushNotesToGist(){
       headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({ files: { 'notes.json': { content: JSON.stringify(getAllNotes()) } } })
     });
-  } catch (e) { /* nächster Versuch beim nächsten Speichern/Fokuswechsel */ }
+    localStorage.removeItem(GIST_PENDING_KEY); // nur bei Erfolg löschen
+  } catch (e) { /* Pending-Flag bleibt stehen, nächster Versuch beim nächsten Laden/Speichern */ }
 }
 
 function refreshGistSyncStatus(){
@@ -4162,14 +4176,21 @@ gistTokenSaveBtn.addEventListener('click', () => {
   refreshGistSyncStatus();
 });
 refreshGistSyncStatus();
-// Pull bei Fokuswechsel NUR auf Lesegeräten (kein Token) – auf dem
-// Schreibgerät würde ein Pull kurz nach dem Tippen (Bildschirm sperren o.ä.,
-// bevor der 2,5s-Debounce gefeuert hat) sonst die frische, noch nicht
-// hochgeladene Notiz mit dem älteren Gist-Stand überschreiben. Pull beim
-// Laden bleibt auf allen Geräten unkritisch, da zu dem Zeitpunkt in der
-// Session noch nichts editiert wurde.
+// Pull NUR auf Lesegeräten (kein Token) – weder bei Fokuswechsel noch beim
+// Laden. Grund fürs Laden: auch dort kann eine gerade gemachte Änderung
+// noch nicht hochgeladen sein (Reload direkt nach dem Bearbeiten/Löschen,
+// bevor der 2,5s-Debounce gefeuert hat) – ein Pull würde diese frische
+// Änderung sonst mit dem älteren Gist-Stand überschreiben. Das
+// Schreibgerät ist ohnehin die Quelle der Wahrheit für seine eigenen
+// Daten, ein Pull bringt ihm nichts, das er nicht schon hat.
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && !getGistToken()) pullNotesFromGist(); });
-window.addEventListener('load', pullNotesFromGist);
+window.addEventListener('load', () => {
+  if (!getGistToken()) { pullNotesFromGist(); return; }
+  // Schreibgerät: kein Pull (s. o.), aber einen beim letzten Mal
+  // ausstehend gebliebenen Push nachholen (z. B. nach einem Reload direkt
+  // nach dem Bearbeiten/Löschen, bevor der Debounce feuern konnte).
+  if (localStorage.getItem(GIST_PENDING_KEY) === '1') pushNotesToGist();
+});
 
 // ─── TAGESANSICHT (Fokus-Ansicht für heute / Tagesausblick für andere Tage) ──
 // Zeigt alle Termine eines Tages in einem eigenen Vollbild-Screen (nicht im

@@ -7,6 +7,27 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.13.1] - 2026-08-25
+
+### Fixed
+- **Notiz-Bearbeitungen/Termin-Löschungen gingen bei schnellem Reload auf
+  dem Schreibgerät verloren**: Zwei zusammenhängende Ursachen. Erstens
+  ging der 2,5s-Push-Debounce bei einem Reload vor Ablauf komplett
+  verloren (JS-Kontext wird zerstört, bevor der Timer feuert). Zweitens
+  war die Annahme "Pull beim Laden ist auf allen Geräten unkritisch"
+  falsch, wenn der Reload selbst unmittelbar nach einer Änderung
+  passiert – der Lade-Pull überschrieb die frische, noch nicht
+  hochgeladene Änderung mit dem älteren Gist-Stand.
+  Fix: Das Schreibgerät pullt jetzt grundsätzlich nie mehr (weder bei
+  Fokuswechsel noch beim Laden). Ein persistentes `localStorage`-Flag
+  merkt sich einen ausstehenden Push und holt ihn beim nächsten Laden
+  automatisch nach. Eine zuerst versuchte pagehide+keepalive-Lösung
+  (sofortiger Push beim Verlassen der Seite) erwies sich in Tests als
+  zu unzuverlässig (CORS-Preflight schafft es im knappen Zeitfenster
+  beim Entladen nicht immer durch) und wurde durch den robusteren
+  Nachhol-Mechanismus ersetzt. End-to-End gegen einen echten
+  HTTP-Server verifiziert (Notiz-Edit- und Löschszenario).
+
 ## [3.13.0] - 2026-08-25
 
 ### Changed
