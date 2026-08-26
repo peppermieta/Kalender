@@ -1,10 +1,19 @@
 # Vorlesungskalender – Ideensammlung
 
 Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
-*(Stand: 9. August 2026)*
+*(Stand: 25. August 2026)*
 
 ## ⚡ Schnell — geringer Aufwand
 
+- **Notiz zum ganzen Tag** – Notizen hingen bisher zwingend an einem
+  Termin, für Kleinigkeiten wie "Regenschirm mitnehmen" gab es keinen
+  Platz ohne einen eigenen Termin nur dafür anzulegen.
+  **✅ Umgesetzt** (v3.14.0) – leichtgewichtiger Freitext-Bereich pro Tag
+  unter der Terminliste in der Tagesansicht, aufklappbar solange leer,
+  direkt sichtbar sobald Inhalt vorhanden. Bewusst ohne Uhrzeit und ohne
+  Chip im Monatsraster (Unterschied zu eigenen Freitext-Terminen),
+  stattdessen ein kleiner Punkt neben der Tageszahl. Synct über
+  denselben Gist-Mechanismus wie Termin-Notizen und eigene Termine.
 - **Druck-Stylesheet** – eigenes CSS für den Ausdruck: Passwort-Overlay,
   Buttons und Navigation ausgeblendet, nur eine saubere Monatsübersicht
   auf Papier.
