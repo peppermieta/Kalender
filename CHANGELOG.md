@@ -7,6 +7,18 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.13.2] - 2026-08-25
+
+### Changed
+- **Badge-Text bei eigenen Terminen von "EIGEN" auf "Privat" umgestellt**
+  (Monatsraster-Chip auf Mobile und Tagesansicht) – wirkte als reiner
+  Großbuchstaben-Code neben den echten Modulcodes unpassend.
+- **README aktualisiert**: Versionsnummer korrigiert (stand noch auf
+  3.9.0), fehlende Funktionen ergänzt (Dozierende im Termin-Detail,
+  Notiz-Indikator, eigene Freitext-Termine – bisher gar nicht erwähnt),
+  Raumnummern-Abschnitt um den Datum→Raum-Zuordnungsfall für Kurse mit
+  wechselndem Raum sowie die Kurzform-Anzeige ergänzt.
+
 ## [3.13.1] - 2026-08-25
 
 ### Fixed

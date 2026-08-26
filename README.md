@@ -10,8 +10,9 @@ Privater, passwortgeschützter Vorlesungskalender für das Studium (Bachelor Soz
 - **Mehrere Semester** – Auswahl im Header (bleibt beim Scrollen sichtbar); beim Laden automatisch das zum heutigen Datum passende Semester vorausgewählt, manuelles Umschalten (auch auf noch nicht laufende Semester) jederzeit möglich. Suche und "Nächste Veranstaltung" laufen dabei semesterübergreifend.
 - **Farbcodierung nach Modul** – jede Veranstaltung ist ihrem Modul farblich zugeordnet, Legende oben auf der Seite (sortiert M02 → M10, Zusatzangebot am Ende)
 - **Mobile Ansicht** – unter 700px Breite wechselt die Seite automatisch von der 7-Spalten-Rasteransicht zu einer einspaltigen Tagesliste, damit Termine nicht abgeschnitten werden; Modulkürzel werden dort direkt am Termin angezeigt
-- **Termin-Details per Klick/Tap** – Datum, Uhrzeit, Raum, Modul, LV-Nummer und Parallelgruppe
-- **Private Notizen** – pro Termin, rein lokal im Browser gespeichert, z. B. "Buch mitbringen"; optional automatischer Sync zwischen Geräten über einen GitHub Gist (Einbahnstraßen-Modell: ein Gerät schreibt, alle anderen lesen mit)
+- **Termin-Details per Klick/Tap** – Datum, Uhrzeit, Raum (Kurzform in Monats-/Tagesansicht, volle Bezeichnung im Detail), Modul, Dozierende, LV-Nummer und Parallelgruppe
+- **Private Notizen** – pro Termin, rein lokal im Browser gespeichert, z. B. "Buch mitbringen"; optional automatischer Sync zwischen Geräten über einen GitHub Gist (Einbahnstraßen-Modell: ein Gerät schreibt, alle anderen lesen mit); ein kleines Symbol in der Tagesansicht zeigt an, ob zu einem Termin eine Notiz existiert
+- **Eigene Freitext-Termine** – persönliche Termine (z. B. Arzttermine) direkt in der Tagesansicht anlegen, rein lokal gespeichert, farblich und mit gestricheltem Rahmen klar von echten Veranstaltungen abgesetzt; nicht im ICS-Feed oder Ausdruck enthalten
 - **Installierbare App (PWA)** – auf Android als App installierbar (eigenes Icon, kein Browser-Rahmen), funktioniert dank Service Worker auch ohne Internetverbindung
 - **Suche** – Freitextsuche nach Veranstaltung oder Modulname direkt im Header; Klick auf ein Ergebnis springt zum passenden Monat und öffnet die Detailansicht
 - **Kalender-Abo (ICS)** – Termine lassen sich per Klick zu Google Kalender hinzufügen oder als Link für andere Kalender-Apps kopieren, inkl. automatischer Aktualisierung bei Änderungen und über alle Semester hinweg (siehe Abschnitt "Kalender-Abo" unten)
@@ -30,9 +31,9 @@ const ROOMS = {
 };
 ```
 
-Einzelne Termine lassen sich bei Bedarf mit einem eigenen `raum:`-Feld direkt im jeweiligen Termin-Eintrag in `EVENTS_BY_SEMESTER` überschreiben (z. B. bei einem Raumwechsel für einen einzelnen Termin).
+Einzelne Termine lassen sich bei Bedarf mit einem eigenen `raum:`-Feld direkt im jeweiligen Termin-Eintrag in `EVENTS_BY_SEMESTER` überschreiben (z. B. bei einem Raumwechsel für einen einzelnen Termin). Wechselt der Raum bei einem Kurs regelmäßig zwischen Terminen, wird stattdessen eine Datum→Raum-Zuordnung direkt beim jeweiligen Kurs verwendet (Beispiel siehe Kommentar bei "Grundsicherungsrecht" in `index.html`).
 
-Solange kein Raum hinterlegt ist, zeigt die Detailansicht "wird noch bekannt gegeben" an.
+Solange kein Raum hinterlegt ist, zeigt die Detailansicht "wird noch bekannt gegeben" an. In Monatsraster und Tagesansicht wird dabei automatisch nur eine Kurzform des Raums angezeigt (z. B. "C2" statt "Hörsaal C2"), die volle Bezeichnung steht im Termin-Detail.
 
 ## Aktualisieren
 
@@ -73,7 +74,7 @@ Danach startet der Kalender wie eine normale App (eigenes Icon, kein Browser-Rah
 
 ## Versionshistorie
 
-Alle Änderungen werden in [CHANGELOG.md](CHANGELOG.md) dokumentiert (aktuelle Version: **3.9.0**).
+Alle Änderungen werden in [CHANGELOG.md](CHANGELOG.md) dokumentiert (aktuelle Version: **3.13.1**).
 
 ## Farbpalette
 

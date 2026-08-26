@@ -3895,7 +3895,7 @@ function renderMonth(idx){
       const chip = document.createElement('span');
       const typeCls = ev.type ? ` event-type-${ev.type}` : '';
       chip.className = `event-chip chip-${ev.modul}${typeCls}`;
-      const modLabel = ev.modul;
+      const modLabel = ev.type === 'eigen' ? 'Privat' : ev.modul;
       const typeIcon = TYPE_ICON[ev.type] ? `${TYPE_ICON[ev.type]} ` : '';
       const timeLabel = ev.start ? ev.start : 'Ganztägig';
       const roomHtml = ev.raum ? ` <span class="chip-room">· ${escapeHtml(shortRoom(ev.raum))}</span>` : '';
@@ -4288,7 +4288,7 @@ function renderDayView(iso, {pushHistory=true} = {}){
         <div class="day-event${typeCls}">
           <div class="day-event-time">${timeLabel}</div>
           <div class="day-event-main">
-            <span class="day-event-badge" style="background:${m.bg};color:${m.tx};border-color:${m.bd}">${ev.modul}</span>
+            <span class="day-event-badge" style="background:${m.bg};color:${m.tx};border-color:${m.bd}">${ev.type === 'eigen' ? 'Privat' : ev.modul}</span>
             <div class="day-event-title">${typeIcon}${escapeHtml(ev.title)}${noteIcon}</div>
             ${roomLine}
           </div>
