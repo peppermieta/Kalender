@@ -1,7 +1,7 @@
 # Vorlesungskalender – Ideensammlung
 
 Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
-*(Stand: 25. August 2026)*
+*(Stand: 27. August 2026)*
 
 ## ⚡ Schnell — geringer Aufwand
 
@@ -36,6 +36,24 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   selbst gezeichnetes Trichter-Icon (kompakter, passt auf allen
   Größen direkt neben die Suche statt darunter umzubrechen), Bezeichnung
   weiterhin als Tooltip beim Hovern verfügbar.
+- **Automatische Konflikterkennung** – visueller Warnhinweis, wenn sich zwei
+  Termine zeitlich überschneiden. Ließe sich beim Laden eines Tages rein
+  clientseitig aus den vorhandenen Feldern (`date`/`start`/`end`)
+  berechnen, kein neuer Datenbedarf. Betrifft in der Praxis vor allem
+  eigene Freitext-Termine, die versehentlich mit einem echten Termin
+  kollidieren – dafür würde sich ein kleines ⚠️-Icon direkt am
+  Termin-Chip anbieten, mit Hinweis im Termin-Detail, welcher zweite
+  Termin betroffen ist.
+- **Kalender-Suche um Lehrpersonen erweitern** – das `lehrperson`-Feld ist
+  an praktisch jedem Termin bereits gepflegt, wird von der Live-Suche
+  bisher aber nicht durchsucht (im Code als Erweiterungshinweis
+  kommentiert). Reine Erweiterung der bestehenden Suchfunktion um ein
+  weiteres Feld, kein neuer Mechanismus nötig – vermutlich der schnellste
+  Punkt der ganzen Liste.
+- **Statistik "meistgenutzte Räume"** – rein informativer, verspielter
+  Überblick, welche Räume am häufigsten vorkommen.
+- **Countdown zur nächsten Prüfung** – dauerhaft sichtbarer, dezenter
+  Countdown statt nur der Next-Up-Zeile.
 - **Feed-Aktualität anzeigen** – ein kleiner Hinweis im Verwalten-Menü
   ("Feed zuletzt aktualisiert am …").
   **✅ Umgesetzt** (v3.4.0) – liest eine eigene
@@ -137,6 +155,52 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   Semester langfristig gehandhabt werden.
   **✅ Umgesetzt** (v3.0.0) – alles in einer Datei mit Semester-Umschalter
   statt eingefrorener Einzelseiten pro Semester.
+- **Ferien-Modus** – während der vorlesungsfreien Zeit automatisch eine
+  vereinfachte Ansicht statt leerem Wochenraster. Die `ferien`-Liste pro
+  Semester existiert bereits (`FERIEN`-Set, aktuell nur als Hinweis in
+  der Tagesansicht genutzt) – ließe sich für eine Erkennung "aktuell in
+  den Ferien" wiederverwenden, z. B. ein reduzierter Monatsblick ohne
+  leere Zellen oder ein Hinweistext statt des normalen Rasters.
+- **Tag/Woche als Bild teilen** – über die Web-Share-API den
+  Tages-/Wochenplan als Bild verschicken. Technisch am ehesten über ein
+  Canvas-Rendering des jeweiligen Ausschnitts lösbar (ähnlich wie beim
+  Drucken, nur als Bilddatei statt PDF) und `navigator.share()` mit
+  Datei-Anhang; auf Desktop ohne Share-API bräuchte es einen Fallback
+  (z. B. Bild-Download).
+- **"Was hab ich verpasst?"** – kurze Zusammenfassung der Lücke, wenn man
+  ein paar Tage nicht im Kalender war. Ließe sich über einen in
+  `localStorage` gespeicherten Zeitstempel "zuletzt geöffnet" umsetzen:
+  liegt er mehr als z. B. 2 Tage zurück, eine kompakte Übersicht der
+  dazwischenliegenden Termine/Prüfungen anzeigen, danach Zeitstempel
+  aktualisieren.
+- **Exportierbare Kurszusammenfassung** – PDF-Export für ein einzelnes
+  Modul statt des ganzen Semesters. Ließe sich am ehesten über eine
+  gefilterte Variante des bestehenden Druck-Stylesheets lösen (nur
+  Termine eines Moduls statt des kompletten Monats), ausgelöst über
+  einen Export-Button direkt im Modul-Kontext statt über das normale
+  Drucken.
+- **Wetter-Hinweis für heute** – kleiner Wetterhinweis über eine
+  kostenlose API. Bewusst fest auf Ludwigsburg eingestellt statt per
+  Geolocation (kein Berechtigungsdialog nötig, entspricht dem
+  persönlichen Nutzungszweck). Einzige Idee der ganzen Liste mit
+  externer Drittanbieter-Abhängigkeit zur Laufzeit – müsste entsprechend
+  defensiv eingebaut werden (z. B. stiller Fehlschlag statt kaputter
+  Anzeige, falls die API mal nicht erreichbar ist).
+- **Eigene Kategorien für private Termine** – kleine, wählbare
+  Unterkategorie statt nur "Privat". Ließe sich als zusätzliches Feld am
+  `personalEvent:`-Objekt ergänzen (z. B. eine kurze Liste vordefinierter
+  Kategorien mit je eigener Akzentfarbe innerhalb von Bubblegum Pink),
+  ohne das bestehende Zwei-Schicht-Prinzip der Modulfarben anzutasten.
+- **Semesterübergreifende Notiz-Suche** – bestehende Suche um
+  Notiz-Inhalte erweitern, nicht nur Termine. Da Notizen nur als
+  `note:`-Schlüssel in `localStorage` liegen (nicht in
+  `EVENTS_BY_SEMESTER`), bräuchte die Suche einen zweiten Durchlauf über
+  alle `note:`-Einträge, deren Treffer dann über den gleichen
+  Schlüssel-Aufbau (Datum/Uhrzeit/LV-Nummer) zum passenden Termin
+  zurückverknüpft werden.
+- **Prüfungsvorbereitungs-Rückwärtsplanung** – zu jedem Prüfungstermin
+  automatisch eine empfohlene Vorbereitungszeit davor markieren,
+  abgeleitet aus dem CP-Gewicht.
 
 ## 🏗 Größer — größere technische Themen
 
@@ -214,6 +278,23 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   **Weiterer Nachtrag (v3.8.0):** Zahnrad-Icon und Text komplett entfernt
   – Button zeigt jetzt auf allen Bildschirmgrößen einheitlich nur noch
   "⋮", nicht mehr nur auf Mobile.
+- **Homescreen-Widget (Android)** – "Nächster Termin" direkt auf dem
+  Startbildschirm. Als PWA technisch nur eingeschränkt möglich (native
+  Android-Widgets sind Trusted-Web-Activity-/Bubblewrap-Gebiet, nicht
+  mehr "reines" PWA) – müsste vorab geklärt werden, ob das über eine
+  gewöhnliche PWA-Installation überhaupt erreichbar ist oder einen
+  größeren Umbau der App-Verpackung erfordert.
+- **Frei-Zeiten-Radar** – echte freie Blöcke automatisch erkennen und
+  hervorheben ("3+ Stunden am Stück frei"), um Schichten/Arzttermine/
+  Verabredungen um die Uni-Zeiten herum zu planen.
+- **Wochenübersicht als dritte Ansicht** – kompakte 7-Tage-Streifenansicht
+  zwischen Monat und Einzeltag.
+- **Modulverzeichnis-Fortschritt sichtbar** – CP-Fortschrittsanzeige aus
+  dem Modulverzeichnis als kleiner Indikator im Kalender mitspiegeln.
+- **"Nächstes Semester"-Assistent** – geführter Ablauf für
+  SEMESTERS-Eintrag, Terminübernahme und Raumdaten beim Semesterwechsel.
+- **Wiederkehrende eigene Termine** – "wiederholt sich wöchentlich"-
+  Option für private Fixpunkte statt Einzelanlage.
 
 ## 💭 Abstrakt — Vision, aber trotzdem nützlich
 
@@ -228,3 +309,13 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   (Anzahl Termine, Prüfungen, Abgaben je Semester) – kein neuer
   Datenbedarf. Denkbar z. B. als kleine Karte, die erscheint, sobald man
   im Dropdown auf ein bereits vergangenes Semester wechselt.
+- **Mehrsemestriger Studienverlauf** – der geplante Semester-Rückblick
+  ausgebaut zu einer übergreifenden Zeitleiste über das gesamte Studium,
+  sobald mehrere Semester vorliegen. Baut auf der bereits vorhandenen
+  `SEMESTERS`-Struktur auf (mehrere Semester sind technisch schon
+  möglich, aktuell aber nur eins mit echten Daten befüllt) – sinnvoll
+  umsetzbar vermutlich erst, sobald mindestens ein zweites Semester
+  (SoSe 2027) tatsächlich eingetragen ist.
+- **Vorlage für andere Studierende** – Anleitung, wie andere Studierende
+  sich diesen Kalender für ihre eigene Modul-/Parallelgruppen-Kombination
+  anpassen könnten.
