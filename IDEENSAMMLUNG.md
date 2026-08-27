@@ -397,3 +397,52 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
 - **Vorlage für andere Studierende** – Anleitung, wie andere Studierende
   sich diesen Kalender für ihre eigene Modul-/Parallelgruppen-Kombination
   anpassen könnten.
+
+---
+
+## 🧭 Langfristige Ausrichtung
+
+**Diskutiert am 27.08.2026, im Zuge der Belastungs-Heatmap-Planung.**
+
+Beobachtung: Mit Funktionen wie der Wochenübersicht und der geplanten
+subjektiven Aufwandsbewertung bewegt sich das Projekt spürbar weg vom
+klassischen "Kalender zeigt an, wann was stattfindet" hin zu etwas
+Näherem an einem Studienplaner/Journal. Zahlen dazu: `index.html` ist von
+~4.750 Zeilen (9. August) auf ~5.085 Zeilen (27. August) gewachsen, über
+viele kleine, für sich sinnvolle Features.
+
+**Entscheidung: Anspruch/Selbstverständnis darf sich erweitern (Kalender
+als eine Funktion eines umfassenderen Studienplaners), der Code wird
+aber bewusst NICHT jetzt strukturell aufgeteilt.** Ausschlaggebend:
+Pascal will sich funktional nicht von den Terminen lösen – auch die
+Heatmap und die Aufwandsbewertung hängen weiterhin direkt an
+Terminen/Wochen. Eine vollständige Trennung (eigene Dateien, eigene
+Datenschicht, ggf. Build-Schritt) würde damit aktuell mehr zusätzlichen
+Aufwand bedeuten als sie hilft, und stünde im Widerspruch zum bewussten
+Grundprinzip des Projekts (kein Build-Schritt, niedrige Einstiegshürde
+für Änderungen).
+
+Zwei Festlegungen für den Umgang damit, die schon jetzt gelten:
+
+- **Datennamensraum sauber halten:** Neue, nicht rein kalenderbezogene
+  Daten (z. B. die geplante Aufwandsbewertung) bekommen bewusst eigene
+  `localStorage`-Präfixe (`effortByLvnr:`/`effortByEvent:`, ggf. später
+  unter einem gemeinsamen `journal:`-Namensraum) statt einfach in die
+  bestehenden `note:`/`personalEvent:`/`dayNote:`-Präfixe hineinzuwachsen.
+  Kostet beim Bauen nichts zusätzlich, hält eine spätere Trennung aber
+  offen, falls sie doch mal nötig wird.
+- **Auslöser-Kriterium für einen echten Split, statt zu raten:** Eine
+  strukturelle Trennung wird erst dann neu bewertet, wenn ein Feature
+  ansteht, das **keinen Bezug mehr zu einem Kalendertermin/-datum** hat
+  (z. B. freies Journaling, Ziele-Tracking losgelöst vom Semesterplan).
+  Solange alles Neue an Terminen/Wochen hängt – wie aktuell geplant –
+  bleibt es im bestehenden Kalender.
+
+**Vorhandenes Muster für den Fall, dass der Auslöser doch mal eintritt:**
+Das Modulverzeichnis wurde genau aus diesem Grund als eigenständiges
+Projekt ausgelagert, statt es in den Kalender zu integrieren – dasselbe
+Muster (eigenständige, verlinkte statische Seite statt ein Monolith)
+war sogar schon in der allerersten Ideensammlung vom 4. August als
+abstrakter Punkt vermerkt: "Gemeinsamer Einstiegspunkt (falls mal eine
+dritte Hauptdomain gewünscht ist)". Kein neues Konzept nötig, falls es
+später doch so weit kommt.
