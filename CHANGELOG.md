@@ -7,6 +7,26 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.19.0] - 2026-08-27
+
+### Added
+- **Hoher-Aufwand-Punkt in Monatsraster/Tagesansicht**: Termine, deren
+  Aufwandsbewertung auf Stufe 4 oder 5 steht, bekommen jetzt einen
+  kleinen Punkt in der Akzentfarbe direkt am Termin – auch außerhalb des
+  Detail-Modals sichtbar, unabhängig von der noch offenen Heatmap-
+  Verrechnung. Monatsraster-Chip: Punkt steht vor dem Titel (sonst von
+  der Ellipsis-Kürzung bei langen Namen abgeschnitten, analog zum
+  bestehenden ⚠️-Konflikt-Icon). Neue Funktion `hasHighEffort(ev)` prüft
+  direkt beide möglichen `journal:effort:`-Schlüssel, ohne die
+  Blockkurs-Klassifikation erneut zu berechnen.
+
+### Documented
+- Beim Testen bestätigt: die lvnr-basierte Gruppierung der
+  Aufwandsbewertung funktioniert wie gedacht auch bei Modulen mit
+  mehreren Bausteinen (M06 hat real zwei unterschiedliche `lvnr` unter
+  demselben Modulcode) - eine Bewertung gilt korrekt nur für die
+  tatsächlich gemeinsame Kursreihe, nicht für das ganze Modul.
+
 ## [3.18.0] - 2026-08-27
 
 ### Added

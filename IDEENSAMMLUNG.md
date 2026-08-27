@@ -398,8 +398,25 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   ein, landet also wie Notizen auf allen Geräten. Getestet: Blockkurs (M02)
   vs. reguläre LV (M06) korrekt klassifiziert, Bewertung wird innerhalb
   einer Kursreihe zwischen verschiedenen Terminen geteilt, Blockkurs-
-  Termine bleiben untereinander
-  unabhängig, Toggle-Reset funktioniert, Dark Mode/Mobile geprüft.
+  Termine bleiben untereinander unabhängig, Toggle-Reset funktioniert,
+  Dark Mode/Mobile geprüft.
+
+  **Sichtbarkeit in Monatsraster/Tagesansicht ergänzt (v3.19.0):** Ab
+  Stufe 4/5 ("Anstrengend"/"Sehr anstrengend") erscheint ein kleiner
+  Punkt direkt am Termin – Monatsraster-Chip (vor dem Titel, analog zum
+  ⚠️-Konflikt-Icon, sonst von der Ellipsis-Kürzung mit abgeschnitten) und
+  Tagesansicht. Bewusst in der Akzentfarbe (`--accent`, dieselbe wie die
+  aktive Stufe im Bewertungs-Widget) statt Rot/Orange, damit es sich
+  nicht mit den bereits vergebenen Prüfungs-/Abgabe-Akzenten vermischt.
+  Neue Hilfsfunktion `hasHighEffort(ev)` prüft direkt beide möglichen
+  Schlüssel in `localStorage`, ohne `effortScopeFor()`/`isBlockLvnr()`
+  erneut aufzurufen (würde bei jedem Chip im Monatsraster unnötig oft neu
+  klassifizieren). Beim Testen nebenbei bestätigt, dass die lvnr-basierte
+  Gruppierung wie gedacht funktioniert – M06 hat real zwei unterschiedliche
+  `lvnr` unter demselben Modulcode (zwei Bausteine), eine Bewertung gilt
+  entsprechend nur für die tatsächlich gemeinsame Kursreihe, nicht für
+  das ganze Modul.
+
   **Verrechnung in die Heatmap weiterhin offen** (s. o.) – aktuell wird nur
   erfasst, noch nicht ausgewertet.
 - **UI-Neuordnung: Buttons & Funktionen konsolidieren** – Bedienelemente

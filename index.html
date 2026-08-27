@@ -545,6 +545,10 @@
     font-size: 12.5px; line-height: 1.5;
   }
   .chip-conflict-icon { font-size: 10px; }
+  .chip-effort-dot {
+    font-size: 9px; color: var(--accent); vertical-align: 2px;
+  }
+  .day-event-effort-dot { color: var(--accent); font-size: 10px; }
   .modal-close {
     background: var(--bg);
     border: 1px solid var(--border);
@@ -4079,7 +4083,15 @@ function renderMonth(idx){
       const conflictIcon = conflicts.length
         ? `<span class="chip-conflict-icon" title="Überschneidet sich mit: ${escapeHtml(conflicts.map(c=>c.title).join(', '))}">⚠️ </span>`
         : '';
-      chip.innerHTML = `<span class="chip-time">${timeLabel}</span><span class="chip-mod">${modLabel}</span>${conflictIcon}${typeIcon}${escapeHtml(ev.title)}${roomHtml}`;
+      // Ebenfalls VOR dem Titel (s. Kommentar bei conflictIcon oben) und
+      // bewusst ein eigenes Symbol/eigene Farbe statt Rot/Orange, damit es
+      // sich nicht mit den bereits vergebenen Prüfungs-/Abgabe-Akzenten
+      // vermischt - sonst wäre bei einer als "sehr anstrengend" bewerteten
+      // Klausur nicht mehr klar, welches Signal gerade gemeint ist.
+      const effortDot = hasHighEffort(ev)
+        ? `<span class="chip-effort-dot" title="Hoher Aufwand markiert">●</span>`
+        : '';
+      chip.innerHTML = `<span class="chip-time">${timeLabel}</span><span class="chip-mod">${modLabel}</span>${effortDot}${conflictIcon}${typeIcon}${escapeHtml(ev.title)}${roomHtml}`;
       chip.onclick = (e)=>{ e.stopPropagation(); openModal(ev); };
       eventsWrap.appendChild(chip);
     });
@@ -4215,6 +4227,18 @@ function effortScopeFor(ev){
     return { scope: 'event', key: effortEventKeyFor(ev) };
   }
   return { scope: 'lvnr', key: effortLvnrKeyFor(ev.lvnr) };
+}
+
+// Für die Sichtbarkeit in Monatsraster/Tagesansicht: bewusst NICHT über
+// effortScopeFor()/isBlockLvnr() (würde bei jedem Chip im Monatsraster
+// unnötig oft neu klassifizieren), sondern direkter Blick auf beide
+// möglichen Schlüssel. Da beim Speichern ohnehin nur einer der beiden
+// gesetzt wird, reicht das. Schwelle 4/5 ("Anstrengend"/"Sehr anstrengend"),
+// s. IDEENSAMMLUNG.md.
+function hasHighEffort(ev){
+  const val = (ev.lvnr && localStorage.getItem(effortLvnrKeyFor(ev.lvnr)))
+           || localStorage.getItem(effortEventKeyFor(ev));
+  return val === '4' || val === '5';
 }
 
 let currentModalEvent = null;
@@ -4590,12 +4614,15 @@ function renderDayView(iso, {pushHistory=true} = {}){
       const conflictIcon = conflicts.length
         ? ` <span class="day-event-note-icon" title="Überschneidet sich mit: ${escapeHtml(conflicts.map(c=>c.title).join(', '))}">⚠️</span>`
         : '';
+      const effortIcon = hasHighEffort(ev)
+        ? ` <span class="day-event-effort-dot" title="Hoher Aufwand markiert">●</span>`
+        : '';
       return `
         <div class="day-event${typeCls}">
           <div class="day-event-time">${timeLabel}</div>
           <div class="day-event-main">
             <span class="day-event-badge" style="background:${m.bg};color:${m.tx};border-color:${m.bd}">${ev.type === 'eigen' ? 'Privat' : ev.modul}</span>
-            <div class="day-event-title">${typeIcon}${escapeHtml(ev.title)}${noteIcon}${conflictIcon}</div>
+            <div class="day-event-title">${typeIcon}${escapeHtml(ev.title)}${noteIcon}${conflictIcon}${effortIcon}</div>
             ${roomLine}
           </div>
         </div>`;
