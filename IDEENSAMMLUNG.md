@@ -267,6 +267,29 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   ins bestehende Verwalten-Menü – eine horizontale Wochenleiste über das
   Semester, farbcodiert von grün (ruhige Woche) bis rot (intensive
   Woche), anklickbare Wochen springen zur entsprechenden Kalenderwoche.
+
+  **Stand (27.08.2026):** Ausführliches Konzept v2 liegt vor
+  (`Konzept_Prospektive-Belastungs-Heatmap-v2.md`, bisher nur als
+  Download, nicht im Repo committet), kritisch geprüft und gegen die
+  echten Repo-Daten verifiziert (M02-Blockkurs-Beispiel, CORS-Verhalten,
+  `modules_data.py`-Feldnamen – stimmen). **Noch nicht umgesetzt,
+  Grundsatzfrage offen:** neun Umsetzungsetappen sind für ein
+  Einzelnutzer-Tool ein erheblicher Aufwand, vergleichbar mit dem
+  Mehrsemester-Umbau oder dem Gist-Sync – lohnt sich zuerst ein
+  einfacherer Zwischenschritt (s. „Workload-Transparenz" unten)?
+
+  **Konkreter blinder Fleck, wichtig für die spätere Umsetzung:**
+  Praxisanteile werden in v1 bewusst nicht auf Wochen verteilt, solange
+  keine datierten Praxiszeiten vorliegen. Real haben aber drei Module
+  Praxisstunden – M11 (150h), M15 (150h) und **M19 „Praxissemester" mit
+  800h in Semester 5** (30 CP, eines der CP-schwersten Module im
+  gesamten Studiengang). Ohne gesonderte Behandlung würde die Heatmap
+  in genau diesem Semester die dominante Belastungskomponente komplett
+  ausblenden – also am wenigsten aussagen, wenn eine Wochenübersicht
+  potenziell am nützlichsten wäre. Muss bei der Umsetzung explizit
+  adressiert werden (z. B. eigener Hinweis oder vereinfachte
+  Gesamtverteilung übers Praxissemester), nicht nur stillschweigend
+  unter „Grenzen des Modells" laufen.
 - **UI-Neuordnung: Buttons & Funktionen konsolidieren** – Bedienelemente
   waren über Header, Toolbar, Footer, Tagesansicht und Notiz-Sync-Overlay
   verteilt, gewachsen Feature für Feature ohne übergreifendes Konzept.
