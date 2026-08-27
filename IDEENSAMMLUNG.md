@@ -37,19 +37,25 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   Größen direkt neben die Suche statt darunter umzubrechen), Bezeichnung
   weiterhin als Tooltip beim Hovern verfügbar.
 - **Automatische Konflikterkennung** – visueller Warnhinweis, wenn sich zwei
-  Termine zeitlich überschneiden. Ließe sich beim Laden eines Tages rein
-  clientseitig aus den vorhandenen Feldern (`date`/`start`/`end`)
-  berechnen, kein neuer Datenbedarf. Betrifft in der Praxis vor allem
-  eigene Freitext-Termine, die versehentlich mit einem echten Termin
-  kollidieren – dafür würde sich ein kleines ⚠️-Icon direkt am
-  Termin-Chip anbieten, mit Hinweis im Termin-Detail, welcher zweite
-  Termin betroffen ist.
+  Termine zeitlich überschneiden. Betrifft in der Praxis vor allem eigene
+  Freitext-Termine, die versehentlich mit einem echten Termin kollidieren.
+  **✅ Umgesetzt** (v3.15.0) – neue `findConflicts(ev)`-Hilfsfunktion,
+  rein clientseitig aus `byDate`/`start`/`end` berechnet, kein neuer
+  Datenbedarf. Bewusst nur Termine mit fester Uhrzeit betrachtet
+  (ganztägige Abgaben hätten sonst an jedem gemeinsamen Tag fälschlich
+  als Konflikt gegolten). ⚠️-Icon an drei Stellen: Chip im Monatsraster,
+  Eintrag in der Tagesansicht, Hinweiszeile im Termin-Detail-Modal mit
+  Name/Uhrzeit des kollidierenden Termins. Kleiner Bugfix unterwegs: das
+  Icon stand ursprünglich hinter dem Titel und wurde bei langen
+  Terminnamen von der Chip-Ellipsis mit abgeschnitten – jetzt davor,
+  analog zum bestehenden Prüfungs-/Abgabe-Icon.
 - **Kalender-Suche um Lehrpersonen erweitern** – das `lehrperson`-Feld ist
-  an praktisch jedem Termin bereits gepflegt, wird von der Live-Suche
-  bisher aber nicht durchsucht (im Code als Erweiterungshinweis
-  kommentiert). Reine Erweiterung der bestehenden Suchfunktion um ein
-  weiteres Feld, kein neuer Mechanismus nötig – vermutlich der schnellste
-  Punkt der ganzen Liste.
+  an praktisch jedem Termin bereits gepflegt, wurde von der Live-Suche
+  aber nicht durchsucht.
+  **✅ Umgesetzt** (v3.15.0) – `eventMatchesQuery()` durchsucht jetzt
+  zusätzlich `lehrperson` (mit `.filter(Boolean)` gegen `null`-Werte bei
+  Prüfungen/Abgaben/eigenen Terminen). Reine Erweiterung der bestehenden
+  Suchfunktion, kein neuer Mechanismus.
 - **Statistik "meistgenutzte Räume"** – rein informativer, verspielter
   Überblick, welche Räume am häufigsten vorkommen.
 - **Countdown zur nächsten Prüfung** – dauerhaft sichtbarer, dezenter

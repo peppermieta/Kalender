@@ -510,6 +510,14 @@
   .modal-type-badge.type-pruefung { display: inline-block; background: var(--danger-bg); color: var(--danger-tx); }
   .modal-type-badge.type-abgabe   { display: inline-block; background: var(--warn-bg); color: var(--warn-tx); }
   .modal-type-badge.type-eigen    { display: inline-block; background: #FDE7EA; color: #8C1F2E; }
+  .modal-conflict-hint {
+    display: flex; align-items: flex-start; gap: 8px;
+    background: var(--warn-bg); color: var(--warn-tx);
+    border: 1px solid var(--warn-bd); border-radius: 8px;
+    padding: 8px 12px; margin-bottom: 14px;
+    font-size: 12.5px; line-height: 1.5;
+  }
+  .chip-conflict-icon { font-size: 10px; }
   .modal-close {
     background: var(--bg);
     border: 1px solid var(--border);
@@ -1004,6 +1012,7 @@
     <div class="modal-title" id="modalTitle"></div>
     <div class="modal-body">
       <div class="modal-divider"></div>
+      <div class="modal-conflict-hint" id="modalConflictHint" style="display:none;"></div>
       <div class="info-grid" id="modalInfo"></div>
       <div class="note-section">
         <label class="note-label" for="modalNote">Notiz</label>
@@ -3816,6 +3825,20 @@ function getISOWeek(date){
   return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
 }
 
+// Findet Termine am selben Tag, deren Uhrzeit sich mit ev überschneidet.
+// Bewusst nur Termine mit fester Uhrzeit (start+end) betrachtet – ganztägige
+// Einträge (Abgaben ohne Uhrzeit) haben keine sinnvolle Überschneidung und
+// würden sonst an jedem gemeinsamen Tag fälschlich als Konflikt auftauchen.
+// Betrifft in der Praxis vor allem eigene Freitext-Termine, die versehentlich
+// mit einem echten Termin kollidieren.
+function findConflicts(ev){
+  if(!ev.start || !ev.end) return [];
+  return (byDate[ev.date] || []).filter(other =>
+    other !== ev && other.start && other.end &&
+    other.start < ev.end && ev.start < other.end
+  );
+}
+
 function renderMonth(idx){
   const {year, month} = MONTHS[idx];
   document.getElementById('monthLabel').textContent =
@@ -3899,13 +3922,20 @@ function renderMonth(idx){
     eventsWrap.className = 'cal-events';
     events.forEach(ev=>{
       const chip = document.createElement('span');
+      const conflicts = findConflicts(ev);
       const typeCls = ev.type ? ` event-type-${ev.type}` : '';
-      chip.className = `event-chip chip-${ev.modul}${typeCls}`;
+      chip.className = `event-chip chip-${ev.modul}${typeCls}${conflicts.length ? ' has-conflict' : ''}`;
       const modLabel = ev.type === 'eigen' ? 'Privat' : ev.modul;
       const typeIcon = TYPE_ICON[ev.type] ? `${TYPE_ICON[ev.type]} ` : '';
       const timeLabel = ev.start ? ev.start : 'Ganztägig';
       const roomHtml = ev.raum ? ` <span class="chip-room">· ${escapeHtml(shortRoom(ev.raum))}</span>` : '';
-      chip.innerHTML = `<span class="chip-time">${timeLabel}</span><span class="chip-mod">${modLabel}</span>${typeIcon}${escapeHtml(ev.title)}${roomHtml}`;
+      // Icon bewusst VOR dem Titel statt dahinter: die Chip-Zeile kürzt lange
+      // Titel per Ellipsis ab (white-space:nowrap), ein nachgestelltes Icon
+      // würde bei langen Titeln mit abgeschnitten und wäre unsichtbar.
+      const conflictIcon = conflicts.length
+        ? `<span class="chip-conflict-icon" title="Überschneidet sich mit: ${escapeHtml(conflicts.map(c=>c.title).join(', '))}">⚠️ </span>`
+        : '';
+      chip.innerHTML = `<span class="chip-time">${timeLabel}</span><span class="chip-mod">${modLabel}</span>${conflictIcon}${typeIcon}${escapeHtml(ev.title)}${roomHtml}`;
       chip.onclick = (e)=>{ e.stopPropagation(); openModal(ev); };
       eventsWrap.appendChild(chip);
     });
@@ -4035,6 +4065,16 @@ function openModal(ev){
     <span class="info-label">${l}</span>
     <span class="info-value${l==='LV-Nummer'?' mono':''}${l==='Raum' && !ev.raum ? ' placeholder':''}">${v}</span>
   `).join('');
+
+  const conflictHint = document.getElementById('modalConflictHint');
+  const conflicts = findConflicts(ev);
+  if (conflicts.length) {
+    const names = conflicts.map(c => `${escapeHtml(c.title)} (${c.start}–${c.end})`).join(', ');
+    conflictHint.innerHTML = `⚠️ <span>Überschneidet sich mit: ${names}</span>`;
+    conflictHint.style.display = 'flex';
+  } else {
+    conflictHint.style.display = 'none';
+  }
 
   currentModalEvent = ev;
   modalNoteEl.value = localStorage.getItem(noteKeyFor(ev)) || '';
@@ -4295,6 +4335,7 @@ function renderDayView(iso, {pushHistory=true} = {}){
   } else {
     html += events.map(ev => {
       const m = MODS[ev.modul];
+      const conflicts = findConflicts(ev);
       const typeCls = ev.type ? ` event-type-${ev.type}` : '';
       const typeIcon = TYPE_ICON[ev.type] ? `${TYPE_ICON[ev.type]} ` : '';
       const timeLabel = ev.start ? ev.start : 'Ganztägig';
@@ -4303,12 +4344,15 @@ function renderDayView(iso, {pushHistory=true} = {}){
       // Text), damit die Zeile nicht unterschiedlich hoch wird je nach Länge.
       const hasNote = !!(localStorage.getItem(noteKeyFor(ev)) || '').trim();
       const noteIcon = hasNote ? ' <span class="day-event-note-icon" title="Notiz vorhanden">🗒️</span>' : '';
+      const conflictIcon = conflicts.length
+        ? ` <span class="day-event-note-icon" title="Überschneidet sich mit: ${escapeHtml(conflicts.map(c=>c.title).join(', '))}">⚠️</span>`
+        : '';
       return `
         <div class="day-event${typeCls}">
           <div class="day-event-time">${timeLabel}</div>
           <div class="day-event-main">
             <span class="day-event-badge" style="background:${m.bg};color:${m.tx};border-color:${m.bd}">${ev.type === 'eigen' ? 'Privat' : ev.modul}</span>
-            <div class="day-event-title">${typeIcon}${escapeHtml(ev.title)}${noteIcon}</div>
+            <div class="day-event-title">${typeIcon}${escapeHtml(ev.title)}${noteIcon}${conflictIcon}</div>
             ${roomLine}
           </div>
         </div>`;
@@ -4605,7 +4649,9 @@ function renderNextUp(){
 //   const haystack = [ev.title, MODS[ev.modul].label, ev.lehrperson];
 function eventMatchesQuery(ev, query) {
   const q = query.toLowerCase();
-  const haystack = [ev.title, MODS[ev.modul].label];
+  // lehrperson fehlt bei Prüfungen/Abgaben/eigenen Terminen meist (null) –
+  // .filter(Boolean) sortiert diese Felder statt an .toLowerCase() auf null zu scheitern.
+  const haystack = [ev.title, MODS[ev.modul].label, ev.lehrperson].filter(Boolean);
   return haystack.some(f => f.toLowerCase().includes(q));
 }
 

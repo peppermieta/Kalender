@@ -7,6 +7,27 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.15.0] - 2026-08-27
+
+### Added
+- **Automatische Konflikterkennung**: neue `findConflicts(ev)`-Hilfsfunktion
+  erkennt zeitlich überschneidende Termine am selben Tag rein clientseitig
+  aus `date`/`start`/`end` (nur Termine mit fester Uhrzeit, ganztägige
+  Abgaben bewusst ausgenommen). ⚠️-Icon an drei Stellen: Chip im
+  Monatsraster, Eintrag in der Tagesansicht, Hinweiszeile im
+  Termin-Detail-Modal mit Titel und Uhrzeit des kollidierenden Termins.
+  Betrifft in der Praxis vor allem eigene Freitext-Termine, die
+  versehentlich mit einem echten Termin kollidieren.
+- **Lehrpersonen-Suche**: die bestehende Live-Suche durchsucht jetzt
+  zusätzlich das `lehrperson`-Feld (war bereits an praktisch jedem Termin
+  gepflegt, wurde bisher aber nicht mitdurchsucht).
+
+### Fixed
+- **Konflikt-Icon bei langen Terminnamen unsichtbar**: stand ursprünglich
+  hinter dem Titel und wurde bei langen Namen von der Ellipsis-Kürzung
+  des Monatsraster-Chips mit abgeschnitten. Jetzt vor dem Titel platziert,
+  analog zum bestehenden Prüfungs-/Abgabe-Icon.
+
 ## [3.14.0] - 2026-08-25
 
 ### Added
