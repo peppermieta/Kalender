@@ -7,6 +7,21 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.20.0] - 2026-08-27
+
+### Changed
+- **Hoher-Aufwand-Anzeige auf Badge-Muster umgestellt**: statt eines
+  inline im Text stehenden Punkts jetzt ein rundes Badge, angelehnt an
+  das Modulverzeichnis (`.mv-card-badge`). Tagesansicht (`.day-event`,
+  genug Rand): echtes über die Kartenkante hinausragendes Badge mit
+  Border/Shadow, zeigt jetzt die konkrete Stufe (4 oder 5) als Zahl.
+  Monatsraster-Chip (dicht gepackt, nur 2px Abstand): kompakte,
+  eingerückte Variante innerhalb des bestehenden Innenabstands statt
+  Overflow, um Kollision mit dem nächsten Chip zu vermeiden.
+- Neue Funktion `getEffortLevel(ev)` liefert den rohen gespeicherten
+  Wert; `hasHighEffort(ev)` baut jetzt darauf auf statt den Wert separat
+  zu lesen.
+
 ## [3.19.0] - 2026-08-27
 
 ### Added

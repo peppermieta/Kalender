@@ -423,6 +423,7 @@
   .cal-events { display: contents; } /* rein strukturell, kein eigenes Layout */
   .event-chip {
     display: block;
+    position: relative; /* Anker für .chip-effort-badge */
     font-size: 10.5px;
     font-weight: 500;
     padding: 3px 6px;
@@ -545,10 +546,25 @@
     font-size: 12.5px; line-height: 1.5;
   }
   .chip-conflict-icon { font-size: 10px; }
-  .chip-effort-dot {
-    font-size: 9px; color: var(--accent); vertical-align: 2px;
+  /* Kompakter, eingerückter Punkt statt Overflow-Badge: bei nur 2px Abstand
+     zwischen Chips (.event-chip margin-bottom) würde ein über den Rand
+     hinausragendes Badge (wie bei .day-event-effort-badge) den Nachbar-Chip
+     überlappen. Sitzt stattdessen INNERHALB des bestehenden 6px-Innenabstands
+     rechts, berührt den Text daher nicht. */
+  .chip-effort-badge {
+    position: absolute; top: 4px; right: 4px; width: 5px; height: 5px;
+    border-radius: 50%; background: var(--accent);
   }
-  .day-event-effort-dot { color: var(--accent); font-size: 10px; }
+  /* Echtes Badge-Muster analog zum Modulverzeichnis (.mv-card-badge):
+     rundes Plättchen, das über die Kartenkante hinausragt. .day-event hat
+     genug Rand (margin-bottom 10px, padding 13px/14px), anders als die
+     dichten Monatsraster-Chips. */
+  .day-event-effort-badge {
+    position: absolute; top: -7px; right: -7px; width: 20px; height: 20px;
+    border-radius: 50%; background: var(--surface); border: 1px solid var(--border);
+    box-shadow: var(--shadow); display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700; color: var(--accent); line-height: 1;
+  }
   .modal-close {
     background: var(--bg);
     border: 1px solid var(--border);
@@ -704,6 +720,7 @@
 
   .day-event {
     display: flex; gap: 12px; align-items: flex-start;
+    position: relative; /* Anker für .day-event-effort-badge */
     padding: 13px 14px; border: 1px solid var(--border); border-radius: var(--radius);
     background: var(--surface); margin-bottom: 10px; cursor: pointer;
     transition: border-color .15s;
@@ -4083,15 +4100,16 @@ function renderMonth(idx){
       const conflictIcon = conflicts.length
         ? `<span class="chip-conflict-icon" title="Überschneidet sich mit: ${escapeHtml(conflicts.map(c=>c.title).join(', '))}">⚠️ </span>`
         : '';
-      // Ebenfalls VOR dem Titel (s. Kommentar bei conflictIcon oben) und
-      // bewusst ein eigenes Symbol/eigene Farbe statt Rot/Orange, damit es
+      // Bewusst ein eigenes Symbol/eigene Farbe statt Rot/Orange, damit es
       // sich nicht mit den bereits vergebenen Prüfungs-/Abgabe-Akzenten
       // vermischt - sonst wäre bei einer als "sehr anstrengend" bewerteten
       // Klausur nicht mehr klar, welches Signal gerade gemeint ist.
+      // position:absolute -> Reihenfolge im innerHTML ist hier anders als
+      // beim conflictIcon egal, landet ohnehin immer oben rechts im Chip.
       const effortDot = hasHighEffort(ev)
-        ? `<span class="chip-effort-dot" title="Hoher Aufwand markiert">●</span>`
+        ? `<span class="chip-effort-badge" title="Hoher Aufwand markiert"></span>`
         : '';
-      chip.innerHTML = `<span class="chip-time">${timeLabel}</span><span class="chip-mod">${modLabel}</span>${effortDot}${conflictIcon}${typeIcon}${escapeHtml(ev.title)}${roomHtml}`;
+      chip.innerHTML = `<span class="chip-time">${timeLabel}</span><span class="chip-mod">${modLabel}</span>${conflictIcon}${typeIcon}${escapeHtml(ev.title)}${roomHtml}${effortDot}`;
       chip.onclick = (e)=>{ e.stopPropagation(); openModal(ev); };
       eventsWrap.appendChild(chip);
     });
@@ -4235,9 +4253,13 @@ function effortScopeFor(ev){
 // möglichen Schlüssel. Da beim Speichern ohnehin nur einer der beiden
 // gesetzt wird, reicht das. Schwelle 4/5 ("Anstrengend"/"Sehr anstrengend"),
 // s. IDEENSAMMLUNG.md.
+function getEffortLevel(ev){
+  return (ev.lvnr && localStorage.getItem(effortLvnrKeyFor(ev.lvnr)))
+      || localStorage.getItem(effortEventKeyFor(ev))
+      || null;
+}
 function hasHighEffort(ev){
-  const val = (ev.lvnr && localStorage.getItem(effortLvnrKeyFor(ev.lvnr)))
-           || localStorage.getItem(effortEventKeyFor(ev));
+  const val = getEffortLevel(ev);
   return val === '4' || val === '5';
 }
 
@@ -4614,15 +4636,17 @@ function renderDayView(iso, {pushHistory=true} = {}){
       const conflictIcon = conflicts.length
         ? ` <span class="day-event-note-icon" title="Überschneidet sich mit: ${escapeHtml(conflicts.map(c=>c.title).join(', '))}">⚠️</span>`
         : '';
-      const effortIcon = hasHighEffort(ev)
-        ? ` <span class="day-event-effort-dot" title="Hoher Aufwand markiert">●</span>`
+      const effortLevel = getEffortLevel(ev);
+      const effortBadge = (effortLevel === '4' || effortLevel === '5')
+        ? `<span class="day-event-effort-badge" title="Aufwand: Stufe ${effortLevel} von 5">${effortLevel}</span>`
         : '';
       return `
         <div class="day-event${typeCls}">
+          ${effortBadge}
           <div class="day-event-time">${timeLabel}</div>
           <div class="day-event-main">
             <span class="day-event-badge" style="background:${m.bg};color:${m.tx};border-color:${m.bd}">${ev.type === 'eigen' ? 'Privat' : ev.modul}</span>
-            <div class="day-event-title">${typeIcon}${escapeHtml(ev.title)}${noteIcon}${conflictIcon}${effortIcon}</div>
+            <div class="day-event-title">${typeIcon}${escapeHtml(ev.title)}${noteIcon}${conflictIcon}</div>
             ${roomLine}
           </div>
         </div>`;

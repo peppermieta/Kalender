@@ -417,17 +417,24 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   entsprechend nur für die tatsächlich gemeinsame Kursreihe, nicht für
   das ganze Modul.
 
-  **Vorgemerkt für später, noch nicht umgesetzt (Stand 27.08.2026):**
-  Darstellung des Punkts soll überarbeitet werden – nicht mehr inline im
-  Text, sondern als eigenes rundes Badge oben rechts, analog zum
-  Modulverzeichnis-Muster für manuell gesetzten Status (`.mv-card-badge`:
-  `position:absolute; top:-6px; right:-6px`, 18px, weißer/`--surface`-
-  Kreis mit Border+Shadow, `.mv-card` braucht dafür `position:relative`
-  als Anker). Für die Tagesansicht (`.day-event`, kartenähnlich) dürfte
-  sich das Muster direkt übertragen lassen; die Monatsraster-Chips sind
-  dagegen deutlich kleiner/dichter (bis zu mehrere pro Tageszelle) – dort
-  braucht es beim Umsetzen vermutlich eine angepasste, kleinere Variante
-  statt einer 1:1-Übernahme.
+  **Badge-Redesign umgesetzt (v3.20.0):** Wie vorgemerkt auf das
+  Modulverzeichnis-Muster umgestellt. Tagesansicht bekommt das echte
+  `.mv-card-badge`-Pendant (`day-event-effort-badge`: 20px, `--surface`-
+  Kreis mit Border+Shadow, `position:absolute; top:-7px; right:-7px`,
+  `.day-event` als Anker) – zeigt jetzt sogar die konkrete Stufe (4 oder
+  5) als Zahl statt nur eines Punkts, dank neuer `getEffortLevel(ev)`
+  (liefert den rohen Wert, `hasHighEffort()` baut jetzt darauf auf).
+  Monatsraster-Chips bekamen wie angekündigt eine angepasste, kleinere
+  Variante statt der 1:1-Übernahme: ein 5px-Punkt, der INNERHALB des
+  bestehenden 6px-Innenabstands sitzt (`top:4px; right:4px`, kein
+  negativer Offset) – bei nur 2px Abstand zwischen Chips hätte ein
+  über den Rand hinausragendes Badge den jeweils nächsten Chip
+  überlappt. Da beide Badges `position:absolute` sind, spielt die
+  Reihenfolge im innerHTML (anders als beim ⚠️-Konflikt-Icon) keine
+  Rolle mehr für die Ellipsis-Kürzung. Getestet: keine Kollision bei
+  zwei direkt benachbarten bewerteten Chips, korrektes Zusammenspiel
+  mit dem Konflikt-Icon (beide gleichzeitig sichtbar, keine
+  Überlappung), Dark Mode/Mobile geprüft.
 
   **Verrechnung in die Heatmap weiterhin offen** (s. o.) – aktuell wird nur
   erfasst, noch nicht ausgewertet.
