@@ -303,6 +303,42 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   adressiert werden (z. B. eigener Hinweis oder vereinfachte
   Gesamtverteilung übers Praxissemester), nicht nur stillschweigend
   unter „Grenzen des Modells" laufen.
+
+  **Neue geplante Erweiterung: subjektive Aufwands-/Belastungsbewertung
+  (Stand 27.08.2026, noch nicht umgesetzt).** Ersetzt bzw. ergänzt das
+  rein modellhafte Selbststudium (Stufe 5/6) um eine echte
+  Selbsteinschätzung statt einer Formel, die nur rät. Grundsatzent-
+  scheidungen bereits getroffen:
+  - **Granularität – gemischt:** reguläre, wiederkehrende Kursreihen
+    (gruppiert über `lvnr`, da dort bereits als stabiler Schlüssel im
+    Code vorhanden) bekommen eine einzige Bewertung fürs ganze
+    Semester. Blockkurse, eigene Freitext-Termine und Prüfungen/Abgaben
+    werden einzeln pro Vorkommen bewertet. Die Unterscheidung
+    „regulär vs. Block" nutzt dieselbe Blockkurs-Erkennungsregel wie
+    Stufe 6 (Abschnitt 5.3 im Konzept: max. 2 ISO-Wochen / max.
+    14 Tage / <4 Kontaktwochen) – keine doppelte Logik nötig.
+  - **Zeitpunkt:** ein einziges, jederzeit editierbares Feld statt
+    getrennter Vorab-/Rückblick-Felder – vorab schätzen, danach
+    korrigieren, keine zwei Datenzustände.
+  - **Skala:** 5 Stufen (vorgeschlagen: Sehr entspannt · Entspannt ·
+    Normal · Anstrengend · Sehr anstrengend – Bezeichnungen bei
+    Umsetzung final bestätigen).
+  - **Geltungsbereich:** gilt auch für Prüfungen/Abgaben, obwohl die
+    bereits einen objektiven Bonus (P_w) bekommen – beide Signale
+    sollen nebeneinander existieren.
+  - **Verrechnung – bewusst noch offen:** Tendenz zu einem gewichteten
+    Multiplikator auf die Wochensumme statt eines festen Bonus je
+    Stufe, aber ausdrücklich noch nicht final – wird vor der
+    Umsetzung dieses Teils separat und genau durchgesprochen
+    (insbesondere: wirkt der Multiplikator auf die ganze Woche oder
+    gezielt auf die Komponente, die er bewertet – z. B. eine subjektiv
+    schwere Prüfung nur auf P_w statt auf B_w insgesamt).
+  - **Technisches Schlüsselschema (Vorschlag, analog zu `noteKeyFor()`):**
+    `effortByLvnr:<lvnr>` für Kursreihen, `effortByEvent:<eventKey>`
+    für Einzelbewertungen.
+  - Reihenfolge in den Umsetzungsetappen: vor Stufe 5/6 einordnen –
+    wenn die manuelle Bewertung einen Großteil des Nutzens liefert,
+    wird die komplexe Selbststudium-Modellierung eventuell überflüssig.
 - **UI-Neuordnung: Buttons & Funktionen konsolidieren** – Bedienelemente
   waren über Header, Toolbar, Footer, Tagesansicht und Notiz-Sync-Overlay
   verteilt, gewachsen Feature für Feature ohne übergreifendes Konzept.
