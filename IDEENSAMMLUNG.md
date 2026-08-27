@@ -286,10 +286,39 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   kollidieren könnte), sichtbar als schlichte Textliste unter
   „⚙️ Verwalten → Analyse (Beta)". Gegen eine komplett unabhängige
   Python-Nachrechnung (`isocalendar()`, nicht die eigene JS-Logik) über
-  alle 119 echten Termine des Semesters geprüft: 0 Abweichungen. Weitere
-  Etappen (Prüfungs-/Abgabebonus, Selbststudium mit Blockkurs-Schutz,
-  eigener Screen mit Farbskala) folgen erst nach Rückmeldung, ob diese
-  einfache Liste im Alltag überhaupt genutzt wird.
+  alle 119 echten Termine des Semesters geprüft: 0 Abweichungen.
+
+  **Etappe 2 umgesetzt (v3.18.0):** Prüfungs-/Abgabebonus P_w als eigene,
+  unabhängige Funktion `countPruefungAbgabeByWeek(semesterId)` ergänzt –
+  bewusst nur ein einfacher Zähler ohne Gewichtung ("1× Prüfung"/
+  "1× Abgabe" statt einer abstrakten Bonuszahl), da sich die Gewichtsfrage
+  erst nach etwas Alltagsnutzung sinnvoll beantworten lässt. Eigene Zeile
+  unter der jeweiligen Wochenzeile (rot für Prüfung, orange für Abgabe,
+  dieselbe Farbsemantik wie die Termin-Akzentränder), Tooltip nennt Titel
+  und Datum. Bewusst als eigenständige Funktion statt in K_w
+  hineinzurechnen, analog zur B_w = K_w+S_w+P_w-Zerlegung im Konzept.
+
+  **Beim Testen entdeckt – echter Widerspruch im Konzept selbst, keine
+  Kleinigkeit:** Abschnitt 3.1 des Konzepts sagt, Prüfungen/Abgaben zählen
+  grundsätzlich NICHT als Kontaktzeit ("eigene Belastungskomponente, nicht
+  als Kontaktstunden"). Abschnitt 5.1 dagegen sagt nur "ganztägige
+  Prüfungen/Abgaben zählen nicht als Kontaktzeit" – impliziert damit, dass
+  Prüfungen MIT fester Uhrzeit (der in `ANLEITUNG_Pruefungen-Abgaben.md`
+  dokumentierte Standardfall für Klausuren) sehr wohl mitzählen. Die
+  aktuelle Etappe-1-Implementierung folgt der 5.1-Lesart (nur ganztägige
+  ausgeschlossen) – dadurch taucht eine zeitlich fixierte Klausur sowohl
+  in K_w (als Stunden) als auch in P_w (als Prüfungs-Badge) auf. Bewusste
+  Entscheidung, keine versehentliche Doppelzählung: K_w beantwortet "wie
+  viel Zeit ist verplant", P_w beantwortet "wie viel davon ist
+  prüfungsrelevant" – zwei unabhängige Signale, die sich bei einer
+  Klausur legitim überschneiden dürfen. Für die spätere Verrechnung in
+  eine einzelne B_w-Zahl (noch offen, s. u.) muss diese Entscheidung aber
+  nochmal bewusst bestätigt werden, sonst würde eine Klausur real doppelt
+  in die Summe eingehen.
+
+  Weitere Etappen (Selbststudium mit Blockkurs-Schutz, eigener Screen mit
+  Farbskala) folgen erst nach Rückmeldung, ob die einfache Liste im
+  Alltag überhaupt genutzt wird.
 
   **Konkreter blinder Fleck, wichtig für die spätere Umsetzung:**
   Praxisanteile werden in v1 bewusst nicht auf Wochen verteilt, solange

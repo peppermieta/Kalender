@@ -7,6 +7,25 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.18.0] - 2026-08-27
+
+### Added
+- **Prüfungs-/Abgabebonus (Heatmap-Vorstufe, Etappe 2)**: neue,
+  eigenständige Funktion `countPruefungAbgabeByWeek(semesterId)` zählt
+  Prüfungen/Abgaben pro ISO-Woche, unabhängig von der Kontaktzeit-
+  Berechnung aus Etappe 1. In der Wochenübersicht als eigene Zeile unter
+  der jeweiligen Woche sichtbar (📝 Prüfung rot, 📤 Abgabe orange,
+  gleiche Farbsemantik wie die bestehenden Termin-Akzentränder), Tooltip
+  nennt Titel und Datum. Bewusst nur ein Zähler ohne Gewichtung.
+
+### Fixed / Documented
+- **Widerspruch im Heatmap-Konzept entdeckt** (Abschnitt 3.1 vs. 5.1:
+  zählen Prüfungen mit fester Uhrzeit als Kontaktzeit oder nicht?) beim
+  Testen mit einem realistischen Klausur-Beispiel gefunden. Aktuelles
+  Verhalten (Abschnitt-5.1-Lesart: nur ganztägige ausgeschlossen) bewusst
+  beibehalten und in IDEENSAMMLUNG.md dokumentiert - muss vor der
+  Verrechnung in eine gemeinsame B_w-Zahl nochmal bestätigt werden.
+
 ## [3.17.1] - 2026-08-27
 
 ### Changed

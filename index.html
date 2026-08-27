@@ -296,21 +296,32 @@
   #qrCodeWrap { margin-top: 10px; }
   #qrCodeWrap svg { display: block; border: 1px solid var(--border); border-radius: 8px; padding: 8px; }
 
-  /* ── WOCHENÜBERSICHT (Etappe 1, bewusst schlicht/ungestylt) ── */
+  /* ── WOCHENÜBERSICHT (Etappe 1/2, bewusst schlicht/ungestylt) ── */
   #weekOverviewWrap { margin-top: 10px; }
   .week-overview-hint {
     font-size: 11px; color: var(--muted); margin-bottom: 8px; line-height: 1.4;
   }
+  .week-overview-block { border-bottom: 1px solid var(--border); padding: 5px 0; }
+  .week-overview-block:last-child { border-bottom: none; }
   .week-overview-row {
     display: flex; justify-content: space-between; gap: 10px;
-    padding: 5px 0; border-bottom: 1px solid var(--border);
     font-size: 12.5px;
   }
-  .week-overview-row:last-child { border-bottom: none; }
   .week-overview-row .mono {
     font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: var(--muted);
   }
   .week-overview-row.current-week { font-weight: 700; color: var(--accent); }
+  .week-overview-pa-line { display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap; }
+  .week-overview-pa {
+    font-size: 10.5px; font-weight: 600; padding: 2px 7px; border-radius: 20px;
+    border: 1px solid;
+  }
+  .week-overview-pa.pa-pruefung {
+    background: var(--danger-bg); color: var(--danger-tx); border-color: var(--danger-bd);
+  }
+  .week-overview-pa.pa-abgabe {
+    background: var(--warn-bg); color: var(--warn-tx); border-color: var(--warn-bd);
+  }
 
   /* ── LEGEND ── */
   .legend {
@@ -3940,6 +3951,24 @@ function computeContactHoursByWeek(semesterId){
   return weeks;
 }
 
+// ─── ETAPPE 2 (Belastungs-Heatmap-Vorstufe): Prüfungs-/Abgabebonus P_w ────
+// Bewusst als eigene Funktion getrennt von computeContactHoursByWeek(),
+// analog zur B_w = K_w + S_w + P_w-Zerlegung im Konzept - jede Komponente
+// bleibt unabhängig berechenbar/testbar. Bewusst nur ein einfacher Zähler
+// ohne Gewichtung (kein p_Prüfung/p_Abgabe wie im Konzept vorgesehen) - die
+// Gewichtsfrage lässt sich erst sinnvoll beantworten, wenn K_w+P_w schon
+// eine Weile im Alltag genutzt wurden. S. IDEENSAMMLUNG.md.
+function countPruefungAbgabeByWeek(semesterId){
+  const byWeek = {};
+  (EVENTS_BY_SEMESTER[semesterId] || []).forEach(ev => {
+    if (ev.type !== 'pruefung' && ev.type !== 'abgabe') return;
+    const [y, m, d] = ev.date.split('-').map(Number);
+    const key = isoWeekKey(new Date(y, m - 1, d));
+    (byWeek[key] = byWeek[key] || []).push({ title: ev.title, type: ev.type, date: ev.date });
+  });
+  return byWeek;
+}
+
 // Findet Termine am selben Tag, deren Uhrzeit sich mit ev überschneidet.
 // Bewusst nur Termine mit fester Uhrzeit (start+end) betrachtet – ganztägige
 // Einträge (Abgaben ohne Uhrzeit) haben keine sinnvolle Überschneidung und
@@ -5025,17 +5054,35 @@ let weekOverviewBuilt = false;
 
 function buildWeekOverview(){
   const weeks = computeContactHoursByWeek(currentSemesterId);
+  const paByWeek = countPruefungAbgabeByWeek(currentSemesterId);
   const todayKey = isoWeekKey(new Date());
   const rows = weeks.map(w => {
     const dateLabel = w.monday.toLocaleDateString('de-DE', {day:'numeric', month:'short'});
     const hoursLabel = w.hours > 0 ? `${w.hours.toFixed(2).replace('.', ',')} Std.` : '–';
     const isCurrent = w.key === todayKey ? ' current-week' : '';
-    return `<div class="week-overview-row${isCurrent}"><span class="mono">${w.key}</span><span>ab ${dateLabel}</span><span>${hoursLabel}</span></div>`;
+    const weekRow = `<span class="mono">${w.key}</span><span>ab ${dateLabel}</span><span>${hoursLabel}</span>`;
+
+    const items = paByWeek[w.key] || [];
+    let paLine = '';
+    if (items.length) {
+      // Eigene Zeile statt Anhängen an die Kontaktzeit-Zeile - dieselbe Logik
+      // wie bei der zweiten Next-Up-Zeile: Kontaktzeit und Prüfungsnähe sind
+      // zwei unabhängige Signale, die nicht in einer Zahl verschwimmen sollen.
+      const pCount = items.filter(i => i.type === 'pruefung').length;
+      const aCount = items.filter(i => i.type === 'abgabe').length;
+      const badges = [];
+      if (pCount) badges.push(`<span class="week-overview-pa pa-pruefung">📝 ${pCount}× Prüfung</span>`);
+      if (aCount) badges.push(`<span class="week-overview-pa pa-abgabe">📤 ${aCount}× Abgabe</span>`);
+      const titleAttr = escapeHtml(items.map(i => `${TYPE_ICON[i.type]} ${i.title} (${i.date})`).join(' · '));
+      paLine = `<div class="week-overview-pa-line" title="${titleAttr}">${badges.join(' ')}</div>`;
+    }
+    return `<div class="week-overview-block"><div class="week-overview-row${isCurrent}">${weekRow}</div>${paLine}</div>`;
   }).join('');
   weekOverviewWrap.innerHTML = `
     <div class="week-overview-hint">Reine Kontaktzeit pro ISO-Woche, nur Termine mit fester Uhrzeit.
     Ganztägige Prüfungen/Abgaben und eigene Termine zählen nicht mit – erste,
-    bewusst einfache Vorstufe der geplanten Belastungs-Heatmap.</div>
+    bewusst einfache Vorstufe der geplanten Belastungs-Heatmap. Prüfungen/
+    Abgaben werden separat gezählt, nicht in die Kontaktzeit eingerechnet.</div>
     ${rows}`;
 }
 
