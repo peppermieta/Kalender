@@ -4144,8 +4144,39 @@ function isBlockLvnr(lvnr, semesterId){
   return weeks.size <= 2 || daySpan <= 14 || weeks.size < 4;
 }
 
-function effortEventKeyFor(ev){ return `effortByEvent:${ev.date}_${ev.start || 'allday'}_${ev.lvnr || (ev.modul + '_' + ev.title)}`; }
-function effortLvnrKeyFor(lvnr){ return `effortByLvnr:${lvnr}`; }
+// Eigener 'journal:'-Namensraum statt eines weiteren losen Präfixes: alles,
+// was NICHT unmittelbar an einem Kalendertermin hängt (subjektive
+// Aufwandsbewertung, künftig ggf. mehr), landet hier gebündelt. Vorteil
+// gegenüber einzelnen Präfixen wie 'effortByLvnr:': ein zukünftiges
+// Journal-Feature braucht die drei Gist-Sync-Filter unten nicht erneut
+// anzufassen, 'journal:' deckt es automatisch mit ab. S. IDEENSAMMLUNG.md,
+// Abschnitt "Langfristige Ausrichtung".
+function effortEventKeyFor(ev){ return `journal:effort:event:${ev.date}_${ev.start || 'allday'}_${ev.lvnr || (ev.modul + '_' + ev.title)}`; }
+function effortLvnrKeyFor(lvnr){ return `journal:effort:lvnr:${lvnr}`; }
+
+// Einmalige Migration von der ursprünglichen v3.17.0-Benennung
+// (effortByLvnr:/effortByEvent:) auf den journal:-Namensraum. Betrifft
+// vermutlich keine echten Daten (Feature ist gerade erst gebaut), aber
+// billige Absicherung gegen Datenverlust, falls doch schon etwas gesetzt
+// wurde. Kann nach ein paar Versionen wieder entfernt werden.
+function migrateEffortKeysToJournalNamespace(){
+  const renames = [];
+  for (let i = 0; i < localStorage.length; i++){
+    const key = localStorage.key(i);
+    if (!key) continue;
+    if (key.startsWith('effortByLvnr:')) {
+      renames.push([key, `journal:effort:lvnr:${key.slice('effortByLvnr:'.length)}`]);
+    } else if (key.startsWith('effortByEvent:')) {
+      renames.push([key, `journal:effort:event:${key.slice('effortByEvent:'.length)}`]);
+    }
+  }
+  renames.forEach(([oldKey, newKey]) => {
+    localStorage.setItem(newKey, localStorage.getItem(oldKey));
+    localStorage.removeItem(oldKey);
+  });
+  if (renames.length) scheduleGistPush();
+}
+migrateEffortKeysToJournalNamespace();
 
 // Ermittelt Schlüssel + Geltungsbereich für die Aufwandsbewertung eines
 // Termins. 'lvnr' = gilt für die ganze Kursreihe, 'event' = gilt nur für
@@ -4306,7 +4337,7 @@ function getAllNotes(){
   const notes = {};
   for (let i = 0; i < localStorage.length; i++){
     const key = localStorage.key(i);
-    if (key && (key.startsWith('note:') || key.startsWith('personalEvent:') || key.startsWith('dayNote:') || key.startsWith('effortByLvnr:') || key.startsWith('effortByEvent:'))) notes[key] = localStorage.getItem(key);
+    if (key && (key.startsWith('note:') || key.startsWith('personalEvent:') || key.startsWith('dayNote:') || key.startsWith('journal:'))) notes[key] = localStorage.getItem(key);
   }
   return notes;
 }
@@ -4354,13 +4385,13 @@ async function pullNotesFromGist(){
     const localKeysToRemove = [];
     for (let i = 0; i < localStorage.length; i++){
       const key = localStorage.key(i);
-      if (key && (key.startsWith('note:') || key.startsWith('personalEvent:') || key.startsWith('dayNote:') || key.startsWith('effortByLvnr:') || key.startsWith('effortByEvent:')) && !(key in remote)) {
+      if (key && (key.startsWith('note:') || key.startsWith('personalEvent:') || key.startsWith('dayNote:') || key.startsWith('journal:')) && !(key in remote)) {
         localKeysToRemove.push(key);
       }
     }
     localKeysToRemove.forEach(key => localStorage.removeItem(key));
     Object.entries(remote).forEach(([key, val]) => {
-      if (typeof val === 'string' && (key.startsWith('note:') || key.startsWith('personalEvent:') || key.startsWith('dayNote:') || key.startsWith('effortByLvnr:') || key.startsWith('effortByEvent:'))) {
+      if (typeof val === 'string' && (key.startsWith('note:') || key.startsWith('personalEvent:') || key.startsWith('dayNote:') || key.startsWith('journal:'))) {
         localStorage.setItem(key, val);
       }
     });

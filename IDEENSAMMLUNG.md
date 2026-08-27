@@ -333,26 +333,28 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
     (insbesondere: wirkt der Multiplikator auf die ganze Woche oder
     gezielt auf die Komponente, die er bewertet – z. B. eine subjektiv
     schwere Prüfung nur auf P_w statt auf B_w insgesamt).
-  - **Technisches Schlüsselschema (Vorschlag, analog zu `noteKeyFor()`):**
-    `effortByLvnr:<lvnr>` für Kursreihen, `effortByEvent:<eventKey>`
-    für Einzelbewertungen.
+  - **Technisches Schlüsselschema:** `journal:effort:lvnr:<lvnr>` für
+    Kursreihen, `journal:effort:event:<eventKey>` für Einzelbewertungen –
+    im eigenen `journal:`-Namensraum statt eines weiteren losen Präfixes,
+    s. Abschnitt "Langfristige Ausrichtung" unten.
   - Reihenfolge in den Umsetzungsetappen: vor Stufe 5/6 einordnen –
     wenn die manuelle Bewertung einen Großteil des Nutzens liefert,
     wird die komplexe Selbststudium-Modellierung eventuell überflüssig.
 
-  **Eingabemechanismus umgesetzt (v3.17.0):** `isBlockLvnr()` klassifiziert
-  jede LV-Nummer nach derselben Regel wie das Heatmap-Konzept (Abschnitt
-  5.3). `effortScopeFor(ev)` entscheidet daraus automatisch, ob eine
-  Bewertung für die ganze Kursreihe (`effortByLvnr:`) oder nur für den
-  einzelnen Termin (`effortByEvent:`) gilt – Prüfungen/Abgaben (meist ohne
-  `lvnr`) und eigene Termine fallen dabei automatisch auf „einzeln", ohne
+  **Eingabemechanismus umgesetzt (v3.17.0, Namensraum korrigiert in
+  v3.17.1):** `isBlockLvnr()` klassifiziert jede LV-Nummer nach derselben
+  Regel wie das Heatmap-Konzept (Abschnitt 5.3). `effortScopeFor(ev)`
+  entscheidet daraus automatisch, ob eine Bewertung für die ganze
+  Kursreihe (`journal:effort:lvnr:`) oder nur für den einzelnen Termin
+  (`journal:effort:event:`) gilt – Prüfungen/Abgaben (meist ohne `lvnr`)
+  und eigene Termine fallen dabei automatisch auf „einzeln", ohne
   Sonderfall-Code. 5-stufige Auswahl im Termin-Detail-Modal unterhalb der
   Notiz, erneuter Klick auf die aktive Stufe setzt zurück (kein Pflichtfeld
   bei ~120 Terminen im Semester). Fließt in den bestehenden Gist-Sync mit
-  ein (alle drei Präfixfilter erweitert), landet also wie Notizen auf allen
-  Geräten. Getestet: Blockkurs (M02) vs. reguläre LV (M06) korrekt
-  klassifiziert, Bewertung wird innerhalb einer Kursreihe zwischen
-  verschiedenen Terminen geteilt, Blockkurs-Termine bleiben untereinander
+  ein, landet also wie Notizen auf allen Geräten. Getestet: Blockkurs (M02)
+  vs. reguläre LV (M06) korrekt klassifiziert, Bewertung wird innerhalb
+  einer Kursreihe zwischen verschiedenen Terminen geteilt, Blockkurs-
+  Termine bleiben untereinander
   unabhängig, Toggle-Reset funktioniert, Dark Mode/Mobile geprüft.
   **Verrechnung in die Heatmap weiterhin offen** (s. o.) – aktuell wird nur
   erfasst, noch nicht ausgewertet.
@@ -442,12 +444,17 @@ für Änderungen).
 Zwei Festlegungen für den Umgang damit, die schon jetzt gelten:
 
 - **Datennamensraum sauber halten:** Neue, nicht rein kalenderbezogene
-  Daten (z. B. die geplante Aufwandsbewertung) bekommen bewusst eigene
-  `localStorage`-Präfixe (`effortByLvnr:`/`effortByEvent:`, ggf. später
-  unter einem gemeinsamen `journal:`-Namensraum) statt einfach in die
-  bestehenden `note:`/`personalEvent:`/`dayNote:`-Präfixe hineinzuwachsen.
-  Kostet beim Bauen nichts zusätzlich, hält eine spätere Trennung aber
-  offen, falls sie doch mal nötig wird.
+  Daten (z. B. die Aufwandsbewertung) bekommen bewusst einen eigenen
+  `journal:`-Namensraum in `localStorage` (z. B. `journal:effort:lvnr:…`)
+  statt einfach in die bestehenden `note:`/`personalEvent:`/`dayNote:`-
+  Präfixe hineinzuwachsen. **Umgesetzt ab v3.17.1** – bei der ersten
+  Version (v3.17.0) noch mit losen `effortByLvnr:`/`effortByEvent:`-
+  Präfixen gebaut und dann direkt korrigiert, inkl. einmaliger,
+  automatischer Migration bereits gesetzter Werte. Vorteil in der Praxis
+  bestätigt: die drei Gist-Sync-Filterstellen brauchen für künftige
+  Journal-Daten nicht mehr angefasst zu werden, `journal:` deckt das
+  automatisch ab. Kostet beim Bauen nichts zusätzlich, hält eine spätere
+  Trennung aber offen, falls sie doch mal nötig wird.
 - **Auslöser-Kriterium für einen echten Split, statt zu raten:** Eine
   strukturelle Trennung wird erst dann neu bewertet, wenn ein Feature
   ansteht, das **keinen Bezug mehr zu einem Kalendertermin/-datum** hat

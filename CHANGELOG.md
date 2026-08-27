@@ -7,6 +7,20 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.17.1] - 2026-08-27
+
+### Changed
+- **Aufwandsbewertung: Datennamensraum korrigiert.** `effortByLvnr:`/
+  `effortByEvent:` (v3.17.0) auf `journal:effort:lvnr:`/
+  `journal:effort:event:` umgestellt – wie in IDEENSAMMLUNG.md
+  ("Langfristige Ausrichtung") selbst festgelegt, bei der Umsetzung aber
+  übersehen. Einmalige automatische Migration bereits gesetzter Werte
+  beim ersten Laden (`migrateEffortKeysToJournalNamespace()`). Die drei
+  Gist-Sync-Filterstellen sind jetzt auf einen einzigen `journal:`-Check
+  vereinfacht statt zwei Einzelpräfixe zu listen – deckt künftige
+  Journal-Daten automatisch mit ab, ohne diese Stellen erneut anfassen
+  zu müssen.
+
 ## [3.17.0] - 2026-08-27
 
 ### Added
