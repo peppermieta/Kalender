@@ -406,13 +406,24 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   - **Geltungsbereich:** gilt auch für Prüfungen/Abgaben, obwohl die
     bereits einen objektiven Bonus (P_w) bekommen – beide Signale
     sollen nebeneinander existieren.
-  - **Verrechnung – bewusst noch offen:** Tendenz zu einem gewichteten
-    Multiplikator auf die Wochensumme statt eines festen Bonus je
-    Stufe, aber ausdrücklich noch nicht final – wird vor der
-    Umsetzung dieses Teils separat und genau durchgesprochen
-    (insbesondere: wirkt der Multiplikator auf die ganze Woche oder
-    gezielt auf die Komponente, die er bewertet – z. B. eine subjektiv
-    schwere Prüfung nur auf P_w statt auf B_w insgesamt).
+  - **Verrechnung – entschieden (27.08.2026), Umsetzung folgt mit
+    Etappe 7:** gewichteter Multiplikator statt fester Bonus je Stufe,
+    Skala `{1: 0.7, 2: 0.85, 3: 1.0 (neutral), 4: 1.3, 5: 1.6}`,
+    unbewertete Termine bleiben bei 1.0. Setzt gezielt an der einzelnen
+    LV/dem einzelnen Termin an (nicht an der ganzen Woche) – der Faktor
+    wirkt auf deren Beitrag zu K_w/S_w, *bevor* pro Woche summiert wird.
+    Damit beeinflusst eine hoch bewertete LV nicht auch andere,
+    unbewertete Module in derselben Woche. P_w wird ebenfalls gewichtet
+    (eine gefürchtete Klausur zählt dann intern z. B. als 1,6 statt 1),
+    obwohl P_w aktuell nur ein Zähler ist.
+
+    **Wichtige Abgrenzung:** Diese Gewichtung verändert **nicht** die
+    bestehenden K_w-/S_w-/P_w-Zeilen in der Wochenübersicht – die
+    bleiben bewusst reine, ungewichtete Zahlen, genau wie bisher. Der
+    Multiplikator wird ausschließlich innerhalb der künftigen
+    B_w-Berechnung für die Farbskala (Etappe 7) angewendet, die
+    ohnehin als eigener Schritt aussteht – bis dahin bleibt das eine
+    dokumentierte Entscheidung ohne sichtbaren Effekt im Code.
   - **Technisches Schlüsselschema:** `journal:effort:lvnr:<lvnr>` für
     Kursreihen, `journal:effort:event:<eventKey>` für Einzelbewertungen –
     im eigenen `journal:`-Namensraum statt eines weiteren losen Präfixes,
@@ -472,8 +483,9 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   mit dem Konflikt-Icon (beide gleichzeitig sichtbar, keine
   Überlappung), Dark Mode/Mobile geprüft.
 
-  **Verrechnung in die Heatmap weiterhin offen** (s. o.) – aktuell wird nur
-  erfasst, noch nicht ausgewertet.
+  **Verrechnung konzeptionell entschieden, Umsetzung steht mit Etappe 7
+  aus** (s. o., Multiplikator-Skala 0.7–1.6) – aktuell wird nur erfasst,
+  noch nicht ausgewertet.
 - **UI-Neuordnung: Buttons & Funktionen konsolidieren** – Bedienelemente
   waren über Header, Toolbar, Footer, Tagesansicht und Notiz-Sync-Overlay
   verteilt, gewachsen Feature für Feature ohne übergreifendes Konzept.
