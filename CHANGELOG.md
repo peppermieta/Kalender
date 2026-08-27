@@ -7,6 +7,30 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.21.0] - 2026-08-27
+
+### Added
+- **Selbststudium S_w mit Blockkurs-Schutz (Heatmap-Etappe 5+6)**: neue
+  Datenbrücke `fetchWorkloadData()` lädt `workload.json` vom
+  Modulverzeichnis (Fallback-Kette, In-Memory-Cache, Fehler werden
+  geschluckt). `computeSelfStudyHoursByWeek()` verteilt Selbststudium-
+  Stunden je Modul anteilig nach echter Kontaktzeit auf dessen
+  Bausteine/LVs (`contactHoursByLvnr()`), dann pro LV gleichmäßig auf die
+  Kontaktwochen. Blockkurse (`isBlockLvnr()`, dieselbe Regel wie bei der
+  Aufwandsbewertung) werden vorher per `expandToMinWindow()` auf ein
+  Mindestfenster von 4 Wochen symmetrisch erweitert (Ferienwochen zählen
+  mit, Semestergrenzen werden nicht überschritten), damit die
+  Selbststudium-Stunden nicht fälschlich in wenige Kontakttage gequetscht
+  werden. In der Wochenübersicht als eigene, kursive Zeile pro Woche
+  sichtbar, asynchron nachgeladen (Basisanzeige mit K_w/P_w wartet nicht
+  auf das Netzwerk).
+
+### Changed
+- `computeContactHoursByWeek()` und `isBlockLvnr()` intern refactored
+  (`allWeeksForSemester()`/`weekSetForLvnr()` als wiederverwendbare
+  Hilfsfunktionen extrahiert), Verhalten unverändert - gegen die
+  bestehende Etappe-1-Verifikation erneut geprüft, 0 Abweichungen.
+
 ## [3.20.0] - 2026-08-27
 
 ### Changed

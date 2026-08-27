@@ -322,6 +322,15 @@
   .week-overview-pa.pa-abgabe {
     background: var(--warn-bg); color: var(--warn-tx); border-color: var(--warn-bd);
   }
+  /* Kursiv + gedämpft, bewusst anders als K_w/P_w: signalisiert "geschätzt",
+     nicht "gemessen" wie die Kontaktzeit oder "gezählt" wie Prüfungen. */
+  .week-overview-selfstudy {
+    font-size: 11px; color: var(--muted); font-style: italic; margin-top: 3px;
+  }
+  .week-overview-selfstudy-status {
+    font-size: 11px; color: var(--muted); font-style: italic; margin-top: 10px;
+    padding-top: 8px; border-top: 1px solid var(--border);
+  }
 
   /* ── LEGEND ── */
   .legend {
@@ -3935,10 +3944,32 @@ function isoWeekKey(date){
 // - ganztägige Prüfungen/Abgaben zählen NICHT als Kontaktzeit
 // - eigene Freitext-Termine zählen NICHT mit (private Termine sollen den
 //   akademischen Semestervergleich nicht verändern)
-function computeContactHoursByWeek(semesterId){
-  const sem = SEMESTERS.find(s => s.id === semesterId);
-  if(!sem) return [];
 
+// Alle ISO-Wochenschlüssel (mit Montags-Datum) für den Semesterzeitraum, in
+// chronologischer Reihenfolge. Extrahiert aus computeContactHoursByWeek(),
+// damit die Blockkurs-Fenster-Erweiterung (Etappe 6, s. u.) dieselbe
+// Referenzliste nutzen kann, statt die Semestergrenzen-Logik zu duplizieren.
+function allWeeksForSemester(semesterId){
+  const sem = SEMESTERS.find(s => s.id === semesterId);
+  if (!sem) return [];
+  const weeks = [];
+  const seen = new Set();
+  const end = new Date(sem.end + 'T00:00:00');
+  const cursor = new Date(sem.start + 'T00:00:00');
+  const startWeekday = cursor.getDay() || 7; // Sonntag=0 -> 7
+  cursor.setDate(cursor.getDate() - (startWeekday - 1)); // zurück auf Montag
+  while (cursor <= end) {
+    const key = isoWeekKey(cursor);
+    if (!seen.has(key)) {
+      seen.add(key);
+      weeks.push({ key, monday: new Date(cursor) });
+    }
+    cursor.setDate(cursor.getDate() + 7);
+  }
+  return weeks;
+}
+
+function computeContactHoursByWeek(semesterId){
   const hoursByWeek = {};
   (EVENTS_BY_SEMESTER[semesterId] || []).forEach(ev => {
     if (ev.type === 'eigen') return;
@@ -3950,26 +3981,9 @@ function computeContactHoursByWeek(semesterId){
     const hours = ((eh * 60 + em) - (sh * 60 + sm)) / 60;
     hoursByWeek[key] = (hoursByWeek[key] || 0) + hours;
   });
-
-  // Vollständige Wochenliste für den Semesterzeitraum aufbauen (Montag als
-  // Wochenanker), damit Wochen ganz ohne Termine als "0 Std." erscheinen
-  // statt in der Liste einfach zu fehlen.
-  const weeks = [];
-  const seen = new Set();
-  const end = new Date(sem.end + 'T00:00:00');
-  const cursor = new Date(sem.start + 'T00:00:00');
-  const startWeekday = cursor.getDay() || 7; // Sonntag=0 -> 7
-  cursor.setDate(cursor.getDate() - (startWeekday - 1)); // zurück auf Montag
-
-  while (cursor <= end) {
-    const key = isoWeekKey(cursor);
-    if (!seen.has(key)) {
-      seen.add(key);
-      weeks.push({ key, monday: new Date(cursor), hours: hoursByWeek[key] || 0 });
-    }
-    cursor.setDate(cursor.getDate() + 7);
-  }
-  return weeks;
+  // Vollständige Wochenliste für den Semesterzeitraum (Wochen ganz ohne
+  // Termine erscheinen als "0 Std." statt einfach zu fehlen).
+  return allWeeksForSemester(semesterId).map(w => ({ ...w, hours: hoursByWeek[w.key] || 0 }));
 }
 
 // ─── ETAPPE 2 (Belastungs-Heatmap-Vorstufe): Prüfungs-/Abgabebonus P_w ────
@@ -4189,18 +4203,145 @@ function noteKeyFor(ev){ return `note:${ev.date}_${ev.start || 'allday'}_${ev.lv
 // Block-Erkennung dieselbe Regel wie das Heatmap-Konzept (Abschnitt 5.3):
 // max. 2 ISO-Wochen, max. 14 Tage Abstand, oder unter 4 aktive Kontaktwochen.
 // S. IDEENSAMMLUNG.md, Abschnitt "Prospektive Belastungs-Heatmap".
-function isBlockLvnr(lvnr, semesterId){
+
+// Extrahiert aus isBlockLvnr(): das reine Wochen-Set einer LV, auch für die
+// S_w-Verteilung (Etappe 5/6) genutzt, damit reguläre wie Blockkurs-LVs
+// vom selben Ausgangs-Set ausgehen.
+function weekSetForLvnr(lvnr, semesterId){
   const events = (EVENTS_BY_SEMESTER[semesterId] || []).filter(e => e.lvnr === lvnr && e.start && e.end);
-  if (events.length === 0) return true; // unbekannt/keine Daten -> konservativ einzeln behandeln
-  const weeks = new Set(events.map(e => {
+  return new Set(events.map(e => {
     const [y, m, d] = e.date.split('-').map(Number);
     return isoWeekKey(new Date(y, m - 1, d));
   }));
+}
+
+function isBlockLvnr(lvnr, semesterId){
+  const events = (EVENTS_BY_SEMESTER[semesterId] || []).filter(e => e.lvnr === lvnr && e.start && e.end);
+  if (events.length === 0) return true; // unbekannt/keine Daten -> konservativ einzeln behandeln
+  const weeks = weekSetForLvnr(lvnr, semesterId);
   const dates = events.map(e => e.date).sort();
   const first = new Date(dates[0] + 'T00:00:00');
   const last = new Date(dates[dates.length - 1] + 'T00:00:00');
   const daySpan = Math.round((last - first) / 86400000) + 1;
   return weeks.size <= 2 || daySpan <= 14 || weeks.size < 4;
+}
+
+// ─── ETAPPE 4 (Belastungs-Heatmap): Datenbrücke zum Modulverzeichnis ──────
+// Priorität 1: Custom-Domain, Priorität 2: raw.githubusercontent.com als
+// Fallback - beide bereits im echten Browser gegen CORS getestet und
+// bestätigt (s. IDEENSAMMLUNG.md, Etappe 3). Fehler werden bewusst
+// geschluckt: K_w/P_w müssen auch funktionieren, wenn die Datenbrücke
+// gerade nicht erreichbar ist - S_w fällt dann einfach aus.
+let workloadDataCache = null;
+let workloadFetchPromise = null;
+async function fetchWorkloadData(){
+  if (workloadDataCache) return workloadDataCache;
+  if (workloadFetchPromise) return workloadFetchPromise;
+  workloadFetchPromise = (async () => {
+    const sources = [
+      'https://module.peppermięta.de/workload.json',
+      'https://raw.githubusercontent.com/peppermieta/Modulverzeichnis/main/workload.json',
+    ];
+    for (const url of sources) {
+      try {
+        const res = await fetch(url);
+        if (!res.ok) continue;
+        const data = await res.json();
+        workloadDataCache = data;
+        return data;
+      } catch (e) { /* nächste Quelle probieren */ }
+    }
+    return null;
+  })();
+  return workloadFetchPromise;
+}
+
+// ─── ETAPPE 5+6 (Heatmap-Vorstufe): Selbststudium S_w mit Blockkurs-Schutz ──
+// Selbststudium-Stunden eines Moduls (aus workload.json) werden anteilig
+// nach echter Kontaktzeit auf seine Bausteine/LVs verteilt (ein Modul kann
+// mehrere lvnr haben, z.B. M06 zwei, M08 sogar vier - Fund aus der
+// Aufwandsbewertung, v3.19.0). Danach pro LV gleichmäßig auf die
+// Kontaktwochen verteilt. Bei Blockkursen (isBlockLvnr(), dieselbe Regel
+// wie bei der Aufwandsbewertung) wird das Wochen-Set vorher symmetrisch auf
+// ein Mindestfenster erweitert, sonst würde die naive Gleichverteilung
+// sämtliche Selbststudium-Stunden fälschlich in die paar komprimierten
+// Kontakttage quetschen ("falsche Spitze", z.B. bei M02).
+
+// Reine Kontaktzeit je LV, OHNE Prüfungen/Abgaben/eigene Termine - hier
+// geht es um die Gewichtung zwischen den Bausteinen eines Moduls, nicht um
+// allgemeine Zeitbelastung (die deckt K_w bereits ab).
+function contactHoursByLvnr(semesterId){
+  const hoursByLvnr = {};
+  (EVENTS_BY_SEMESTER[semesterId] || []).forEach(ev => {
+    if (!ev.lvnr || !ev.start || !ev.end) return;
+    if (ev.type === 'pruefung' || ev.type === 'abgabe' || ev.type === 'eigen') return;
+    const [sh, sm] = ev.start.split(':').map(Number);
+    const [eh, em] = ev.end.split(':').map(Number);
+    hoursByLvnr[ev.lvnr] = (hoursByLvnr[ev.lvnr] || 0) + ((eh * 60 + em) - (sh * 60 + sm)) / 60;
+  });
+  return hoursByLvnr;
+}
+
+// Welche lvnr-Gruppen gehören zu welchem Modul, im aktuellen Semester.
+function lvnrGroupsByModule(semesterId){
+  const groups = {};
+  (EVENTS_BY_SEMESTER[semesterId] || []).forEach(ev => {
+    if (!ev.lvnr || ev.type === 'eigen') return;
+    (groups[ev.modul] = groups[ev.modul] || new Set()).add(ev.lvnr);
+  });
+  return groups;
+}
+
+// Erweitert das Wochen-Set eines Blockkurses symmetrisch (abwechselnd
+// davor/danach) auf ein Mindestfenster von MIN_BLOCK_WINDOW_WEEKS Wochen,
+// begrenzt auf den Semesterzeitraum. Ferienwochen zählen bewusst mit
+// (einfacher, als sie auszusparen und das Fenster entsprechend weiter
+// wachsen zu lassen - bewusste Vereinfachung, s. IDEENSAMMLUNG.md).
+const MIN_BLOCK_WINDOW_WEEKS = 4;
+function expandToMinWindow(weekKeySet, semesterId){
+  const allKeys = allWeeksForSemester(semesterId).map(w => w.key);
+  const indices = [...weekKeySet].map(k => allKeys.indexOf(k)).filter(i => i !== -1);
+  if (!indices.length) return new Set(weekKeySet);
+  let lo = Math.min(...indices);
+  let hi = Math.max(...indices);
+  let growBefore = true;
+  while ((hi - lo + 1) < MIN_BLOCK_WINDOW_WEEKS && (lo > 0 || hi < allKeys.length - 1)) {
+    if (growBefore && lo > 0) lo--;
+    else if (hi < allKeys.length - 1) hi++;
+    else if (lo > 0) lo--;
+    growBefore = !growBefore;
+  }
+  return new Set(allKeys.slice(lo, hi + 1));
+}
+
+function computeSelfStudyHoursByWeek(semesterId, workloadData){
+  const result = {};
+  if (!workloadData || !workloadData.modules) return result;
+
+  const contactByLvnr = contactHoursByLvnr(semesterId);
+  const groups = lvnrGroupsByModule(semesterId);
+
+  Object.entries(groups).forEach(([modul, lvnrSet]) => {
+    const moduleData = workloadData.modules[modul];
+    if (!moduleData) return; // z.B. Zusatzangebote (ZA), nicht im Modulverzeichnis
+    const totalSelbst = moduleData.workload.selbst;
+    const lvnrs = [...lvnrSet];
+    const totalContact = lvnrs.reduce((sum, lv) => sum + (contactByLvnr[lv] || 0), 0);
+
+    lvnrs.forEach(lv => {
+      const weight = totalContact > 0 ? (contactByLvnr[lv] || 0) / totalContact : 1 / lvnrs.length;
+      const lvSelbst = totalSelbst * weight;
+
+      let weekSet = weekSetForLvnr(lv, semesterId);
+      if (weekSet.size === 0) return;
+      if (isBlockLvnr(lv, semesterId)) weekSet = expandToMinWindow(weekSet, semesterId);
+
+      const perWeek = lvSelbst / weekSet.size;
+      weekSet.forEach(key => { result[key] = (result[key] || 0) + perWeek; });
+    });
+  });
+
+  return result;
 }
 
 // Eigener 'journal:'-Namensraum statt eines weiteren losen Präfixes: alles,
@@ -5103,38 +5244,68 @@ const weekOverviewWrap = document.getElementById('weekOverviewWrap');
 const weekOverviewToggleBtn = document.getElementById('weekOverviewToggleBtn');
 let weekOverviewBuilt = false;
 
+// Rendert eine einzelne Wochenzeile (K_w + optional P_w + optional S_w).
+// selfStudyByWeek === null bedeutet "noch nicht geladen" (S_w-Zeile fehlt
+// einfach, kein Platzhalter) - undefined/leeres Objekt bedeutet "geladen,
+// aber keine Daten für diese Woche".
+function renderWeekOverviewRow(w, paByWeek, todayKey, selfStudyByWeek){
+  const dateLabel = w.monday.toLocaleDateString('de-DE', {day:'numeric', month:'short'});
+  const hoursLabel = w.hours > 0 ? `${w.hours.toFixed(2).replace('.', ',')} Std.` : '–';
+  const isCurrent = w.key === todayKey ? ' current-week' : '';
+  const weekRow = `<span class="mono">${w.key}</span><span>ab ${dateLabel}</span><span>${hoursLabel}</span>`;
+
+  const items = paByWeek[w.key] || [];
+  let paLine = '';
+  if (items.length) {
+    // Eigene Zeile statt Anhängen an die Kontaktzeit-Zeile - dieselbe Logik
+    // wie bei der zweiten Next-Up-Zeile: Kontaktzeit und Prüfungsnähe sind
+    // zwei unabhängige Signale, die nicht in einer Zahl verschwimmen sollen.
+    const pCount = items.filter(i => i.type === 'pruefung').length;
+    const aCount = items.filter(i => i.type === 'abgabe').length;
+    const badges = [];
+    if (pCount) badges.push(`<span class="week-overview-pa pa-pruefung">📝 ${pCount}× Prüfung</span>`);
+    if (aCount) badges.push(`<span class="week-overview-pa pa-abgabe">📤 ${aCount}× Abgabe</span>`);
+    const titleAttr = escapeHtml(items.map(i => `${TYPE_ICON[i.type]} ${i.title} (${i.date})`).join(' · '));
+    paLine = `<div class="week-overview-pa-line" title="${titleAttr}">${badges.join(' ')}</div>`;
+  }
+
+  let selfStudyLine = '';
+  if (selfStudyByWeek && selfStudyByWeek[w.key]) {
+    const hrs = selfStudyByWeek[w.key].toFixed(1).replace('.', ',');
+    selfStudyLine = `<div class="week-overview-selfstudy" title="Geschätzt: Selbststudium-Stunden aus dem Modulverzeichnis, gleichmäßig auf die Kontaktwochen verteilt. Bei Blockkursen auf ein Mindestfenster von ${MIN_BLOCK_WINDOW_WEEKS} Wochen erweitert, damit sie nicht fälschlich in wenige Tage gequetscht werden.">≈ ${hrs} Std. Selbststudium (geschätzt)</div>`;
+  }
+
+  return `<div class="week-overview-block"><div class="week-overview-row${isCurrent}">${weekRow}</div>${paLine}${selfStudyLine}</div>`;
+}
+
 function buildWeekOverview(){
   const weeks = computeContactHoursByWeek(currentSemesterId);
   const paByWeek = countPruefungAbgabeByWeek(currentSemesterId);
   const todayKey = isoWeekKey(new Date());
-  const rows = weeks.map(w => {
-    const dateLabel = w.monday.toLocaleDateString('de-DE', {day:'numeric', month:'short'});
-    const hoursLabel = w.hours > 0 ? `${w.hours.toFixed(2).replace('.', ',')} Std.` : '–';
-    const isCurrent = w.key === todayKey ? ' current-week' : '';
-    const weekRow = `<span class="mono">${w.key}</span><span>ab ${dateLabel}</span><span>${hoursLabel}</span>`;
 
-    const items = paByWeek[w.key] || [];
-    let paLine = '';
-    if (items.length) {
-      // Eigene Zeile statt Anhängen an die Kontaktzeit-Zeile - dieselbe Logik
-      // wie bei der zweiten Next-Up-Zeile: Kontaktzeit und Prüfungsnähe sind
-      // zwei unabhängige Signale, die nicht in einer Zahl verschwimmen sollen.
-      const pCount = items.filter(i => i.type === 'pruefung').length;
-      const aCount = items.filter(i => i.type === 'abgabe').length;
-      const badges = [];
-      if (pCount) badges.push(`<span class="week-overview-pa pa-pruefung">📝 ${pCount}× Prüfung</span>`);
-      if (aCount) badges.push(`<span class="week-overview-pa pa-abgabe">📤 ${aCount}× Abgabe</span>`);
-      const titleAttr = escapeHtml(items.map(i => `${TYPE_ICON[i.type]} ${i.title} (${i.date})`).join(' · '));
-      paLine = `<div class="week-overview-pa-line" title="${titleAttr}">${badges.join(' ')}</div>`;
-    }
-    return `<div class="week-overview-block"><div class="week-overview-row${isCurrent}">${weekRow}</div>${paLine}</div>`;
-  }).join('');
+  // Sofort rendern mit K_w+P_w (keine Netzwerk-Abhängigkeit) - S_w kommt
+  // asynchron nach und wird nachträglich in dieselben Zeilen eingefügt,
+  // statt die ganze Übersicht auf den Datenbrücken-Abruf warten zu lassen.
+  const rows = weeks.map(w => renderWeekOverviewRow(w, paByWeek, todayKey, null)).join('');
   weekOverviewWrap.innerHTML = `
     <div class="week-overview-hint">Reine Kontaktzeit pro ISO-Woche, nur Termine mit fester Uhrzeit.
     Ganztägige Prüfungen/Abgaben und eigene Termine zählen nicht mit – erste,
     bewusst einfache Vorstufe der geplanten Belastungs-Heatmap. Prüfungen/
     Abgaben werden separat gezählt, nicht in die Kontaktzeit eingerechnet.</div>
-    ${rows}`;
+    <div id="weekOverviewRows">${rows}</div>
+    <div class="week-overview-selfstudy-status" id="weekOverviewSelfStudyStatus">Selbststudium wird geladen …</div>`;
+
+  fetchWorkloadData().then(workloadData => {
+    const statusEl = document.getElementById('weekOverviewSelfStudyStatus');
+    if (!workloadData) {
+      if (statusEl) statusEl.textContent = 'Selbststudium-Daten aktuell nicht erreichbar (Modulverzeichnis-Datenbrücke).';
+      return;
+    }
+    const selfStudyByWeek = computeSelfStudyHoursByWeek(currentSemesterId, workloadData);
+    const rowsEl = document.getElementById('weekOverviewRows');
+    if (rowsEl) rowsEl.innerHTML = weeks.map(w => renderWeekOverviewRow(w, paByWeek, todayKey, selfStudyByWeek)).join('');
+    if (statusEl) statusEl.remove();
+  });
 }
 
 weekOverviewToggleBtn.addEventListener('click', () => {

@@ -332,8 +332,44 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   `"opaque"`) – beide in Priorität 1 und 2 vorgesehenen Abrufquellen
   funktionieren. **Damit ist Etappe 9 (Snapshot-Fallback) vorerst
   hinfällig** – wird nur noch relevant, falls sich das GitHub-Pages-CORS-
-  Verhalten künftig mal ändert. Etappe 4 (Datenbrücke automatisieren,
-  `workload.json` aus `build.py` generieren) kann darauf aufbauen.
+  Verhalten künftig mal ändert.
+
+  **Etappe 4 abgeschlossen (27.08.2026):** `build.py` im Modulverzeichnis-
+  Repo erzeugt bei jedem Lauf zusätzlich eine schlanke `workload.json`
+  (CP/SWS/Workload-Aufteilung je Modul, Schlüssel zweistellig gepaddet wie
+  `"M02"`). Live bestätigt über `raw.githubusercontent.com`. Details und
+  ein nebenbei gefundener Versions-Anzeigefehler (`SITE_VERSION` war
+  veraltet) stehen im Modulverzeichnis-eigenen `CHANGELOG.md` (v1.12.0).
+
+  **Etappe 5+6 kombiniert umgesetzt (v3.21.0):** Selbststudium S_w mit
+  Blockkurs-Schutz direkt zusammen gebaut, nicht nacheinander – die
+  Blockkurs-Erkennung ist ohnehin dieselbe `isBlockLvnr()`-Regel wie bei
+  der Aufwandsbewertung (v3.17.0), keine neue Logik nötig dafür.
+  - **Aufteilung auf Bausteine/LVs:** anteilig nach echter Kontaktzeit je
+    LV (`contactHoursByLvnr()`), nicht gleichmäßig – ein Modul mit einer
+    umfangreichen Vorlesung und einer kurzen Übung bekommt so eine
+    plausiblere Verteilung als bei starrem 50/50.
+  - **Blockkurs-Mindestfenster:** 4 Wochen, symmetrisch (abwechselnd
+    davor/danach) erweitert, an den Semestergrenzen gekappt
+    (`expandToMinWindow()`). Ferienwochen zählen bewusst mit statt
+    ausgespart zu werden (einfacher).
+  - **Datenbrücken-Abruf:** `fetchWorkloadData()` mit Fallback-Kette und
+    In-Memory-Cache, Fehler werden geschluckt statt K_w/P_w zu blockieren.
+    Wochenübersicht rendert sofort mit K_w/P_w, S_w kommt asynchron nach
+    und wird nachträglich in dieselben Zeilen eingefügt (Ladehinweis
+    verschwindet danach) – kein Warten auf Netzwerk für die Basisanzeige.
+  - **Verifiziert:** Summenprüfung bestanden (Summe S_w über alle Wochen
+    entspricht exakt der Summe aller `selbst`-Werte der im Semester
+    vorkommenden Module – keine Stunden gehen bei der Gewichtung verloren
+    oder werden doppelt erzeugt). M02 (Blockkurs) zeigt S_w jetzt über 4
+    statt nur 2 Wochen verteilt, an den Semesteranfang-Randfall getestet
+    (kein Überlauf vor Semesterbeginn). Fehlerfall (Datenbrücke nicht
+    erreichbar) sauber getestet: K_w/P_w bleiben vollständig sichtbar,
+    S_w-Zeilen fehlen einfach, Fehlerhinweis erscheint. Dark Mode/Mobile
+    geprüft.
+  - **Bewusst weiterhin NICHT gemacht:** S_w wird nirgends mit K_w/P_w zu
+    einer Summe verrechnet – bleibt ein eigenes, unabhängiges Signal, bis
+    die Verrechnungsfrage (s. u.) geklärt ist.
 
   **Konkreter blinder Fleck, wichtig für die spätere Umsetzung:**
   Praxisanteile werden in v1 bewusst nicht auf Wochen verteilt, solange
