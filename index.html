@@ -296,6 +296,22 @@
   #qrCodeWrap { margin-top: 10px; }
   #qrCodeWrap svg { display: block; border: 1px solid var(--border); border-radius: 8px; padding: 8px; }
 
+  /* ── WOCHENÜBERSICHT (Etappe 1, bewusst schlicht/ungestylt) ── */
+  #weekOverviewWrap { margin-top: 10px; }
+  .week-overview-hint {
+    font-size: 11px; color: var(--muted); margin-bottom: 8px; line-height: 1.4;
+  }
+  .week-overview-row {
+    display: flex; justify-content: space-between; gap: 10px;
+    padding: 5px 0; border-bottom: 1px solid var(--border);
+    font-size: 12.5px;
+  }
+  .week-overview-row:last-child { border-bottom: none; }
+  .week-overview-row .mono {
+    font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: var(--muted);
+  }
+  .week-overview-row.current-week { font-weight: 700; color: var(--accent); }
+
   /* ── LEGEND ── */
   .legend {
     display: flex;
@@ -973,6 +989,14 @@
       <div class="subscribe-wrap" style="margin-bottom:4px;">
         <button id="printBtn" class="subscribe-copy" type="button">🖨️ Drucken</button>
       </div>
+
+      <div class="modal-divider"></div>
+
+      <span class="note-label">Analyse (Beta)</span>
+      <div class="subscribe-wrap" style="margin-bottom:4px;">
+        <button id="weekOverviewToggleBtn" class="subscribe-copy" type="button">📊 Wochenübersicht anzeigen</button>
+      </div>
+      <div id="weekOverviewWrap" style="display:none;"></div>
 
       <div class="modal-divider"></div>
 
@@ -3825,6 +3849,69 @@ function getISOWeek(date){
   return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
 }
 
+// Ergänzung zu getISOWeek(): das ISO-Jahr kann vom Kalenderjahr abweichen
+// (der 31.12. kann z.B. schon zu KW 1 des Folgejahres gehören). Für einen
+// Wochenschlüssel über den Jahreswechsel hinweg (z.B. WS 2026/27) reicht
+// die reine Wochennummer nicht aus, sonst kollidieren zwei verschiedene
+// "Woche 1"-Einträge.
+function getISOYear(date){
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  return d.getUTCFullYear();
+}
+
+function isoWeekKey(date){
+  return `${getISOYear(date)}-W${String(getISOWeek(date)).padStart(2,'0')}`;
+}
+
+// ─── ETAPPE 1 (Belastungs-Heatmap-Vorstufe): reine Kontaktzeit pro Woche ──
+// Nur der erste, einfachste Baustein aus dem Heatmap-Konzept (K_w). Bewusst
+// OHNE Selbststudium, Prüfungs-/Abgabebonus oder Farbskala – die kommen erst
+// in späteren Etappen, s. IDEENSAMMLUNG.md.
+//
+// Regeln (identisch zur Heatmap-Konzeptlogik):
+// - nur Termine mit fester Uhrzeit zählen als Kontaktzeit
+// - ganztägige Prüfungen/Abgaben zählen NICHT als Kontaktzeit
+// - eigene Freitext-Termine zählen NICHT mit (private Termine sollen den
+//   akademischen Semestervergleich nicht verändern)
+function computeContactHoursByWeek(semesterId){
+  const sem = SEMESTERS.find(s => s.id === semesterId);
+  if(!sem) return [];
+
+  const hoursByWeek = {};
+  (EVENTS_BY_SEMESTER[semesterId] || []).forEach(ev => {
+    if (ev.type === 'eigen') return;
+    if (!ev.start || !ev.end) return;
+    const [y, m, d] = ev.date.split('-').map(Number);
+    const key = isoWeekKey(new Date(y, m - 1, d));
+    const [sh, sm] = ev.start.split(':').map(Number);
+    const [eh, em] = ev.end.split(':').map(Number);
+    const hours = ((eh * 60 + em) - (sh * 60 + sm)) / 60;
+    hoursByWeek[key] = (hoursByWeek[key] || 0) + hours;
+  });
+
+  // Vollständige Wochenliste für den Semesterzeitraum aufbauen (Montag als
+  // Wochenanker), damit Wochen ganz ohne Termine als "0 Std." erscheinen
+  // statt in der Liste einfach zu fehlen.
+  const weeks = [];
+  const seen = new Set();
+  const end = new Date(sem.end + 'T00:00:00');
+  const cursor = new Date(sem.start + 'T00:00:00');
+  const startWeekday = cursor.getDay() || 7; // Sonntag=0 -> 7
+  cursor.setDate(cursor.getDate() - (startWeekday - 1)); // zurück auf Montag
+
+  while (cursor <= end) {
+    const key = isoWeekKey(cursor);
+    if (!seen.has(key)) {
+      seen.add(key);
+      weeks.push({ key, monday: new Date(cursor), hours: hoursByWeek[key] || 0 });
+    }
+    cursor.setDate(cursor.getDate() + 7);
+  }
+  return weeks;
+}
+
 // Findet Termine am selben Tag, deren Uhrzeit sich mit ev überschneidet.
 // Bewusst nur Termine mit fester Uhrzeit (start+end) betrachtet – ganztägige
 // Einträge (Abgaben ohne Uhrzeit) haben keine sinnvolle Überschneidung und
@@ -4797,6 +4884,39 @@ qrToggleBtn.addEventListener('click', () => {
   const show = qrCodeWrap.style.display === 'none';
   qrCodeWrap.style.display = show ? 'block' : 'none';
   qrToggleBtn.textContent = show ? '📱 QR-Code ausblenden' : '📱 QR-Code anzeigen';
+});
+
+// ─── Wochenübersicht (Etappe 1/1b, Belastungs-Heatmap-Vorstufe) ──────────
+// Bewusst schlicht gehalten: reine Textliste ohne Farbskala, keine
+// Normalisierung, kein eigener Screen. Zeigt nur K_w (Kontaktzeit) aus
+// computeContactHoursByWeek(). Dient als Checkpoint, bevor weitere Etappen
+// (Prüfungs-/Abgabebonus, Selbststudium, Farbskala) überhaupt angegangen
+// werden - s. IDEENSAMMLUNG.md, Abschnitt "Prospektive Belastungs-Heatmap".
+const weekOverviewWrap = document.getElementById('weekOverviewWrap');
+const weekOverviewToggleBtn = document.getElementById('weekOverviewToggleBtn');
+let weekOverviewBuilt = false;
+
+function buildWeekOverview(){
+  const weeks = computeContactHoursByWeek(currentSemesterId);
+  const todayKey = isoWeekKey(new Date());
+  const rows = weeks.map(w => {
+    const dateLabel = w.monday.toLocaleDateString('de-DE', {day:'numeric', month:'short'});
+    const hoursLabel = w.hours > 0 ? `${w.hours.toFixed(2).replace('.', ',')} Std.` : '–';
+    const isCurrent = w.key === todayKey ? ' current-week' : '';
+    return `<div class="week-overview-row${isCurrent}"><span class="mono">${w.key}</span><span>ab ${dateLabel}</span><span>${hoursLabel}</span></div>`;
+  }).join('');
+  weekOverviewWrap.innerHTML = `
+    <div class="week-overview-hint">Reine Kontaktzeit pro ISO-Woche, nur Termine mit fester Uhrzeit.
+    Ganztägige Prüfungen/Abgaben und eigene Termine zählen nicht mit – erste,
+    bewusst einfache Vorstufe der geplanten Belastungs-Heatmap.</div>
+    ${rows}`;
+}
+
+weekOverviewToggleBtn.addEventListener('click', () => {
+  if (!weekOverviewBuilt) { buildWeekOverview(); weekOverviewBuilt = true; }
+  const show = weekOverviewWrap.style.display === 'none';
+  weekOverviewWrap.style.display = show ? 'block' : 'none';
+  weekOverviewToggleBtn.textContent = show ? '📊 Wochenübersicht ausblenden' : '📊 Wochenübersicht anzeigen';
 });
 
 // ─── FEED-AKTUALITÄT ─────────────────────────────────────────────────────────

@@ -278,6 +278,19 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   Mehrsemester-Umbau oder dem Gist-Sync – lohnt sich zuerst ein
   einfacherer Zwischenschritt (s. „Workload-Transparenz" unten)?
 
+  **Etappe 1a/1b umgesetzt (v3.16.0):** Erster, bewusst einfacher Baustein
+  (reine Kontaktzeit K_w, ohne Selbststudium/Prüfungsbonus/Farbskala) als
+  Beta live: `computeContactHoursByWeek(semesterId)` gruppiert nach
+  `{isoYear}-W{week}` (eigene `getISOYear()`-Ergänzung nötig, da
+  `getISOWeek()` allein bei Semestern über den Jahreswechsel hinweg
+  kollidieren könnte), sichtbar als schlichte Textliste unter
+  „⚙️ Verwalten → Analyse (Beta)". Gegen eine komplett unabhängige
+  Python-Nachrechnung (`isocalendar()`, nicht die eigene JS-Logik) über
+  alle 119 echten Termine des Semesters geprüft: 0 Abweichungen. Weitere
+  Etappen (Prüfungs-/Abgabebonus, Selbststudium mit Blockkurs-Schutz,
+  eigener Screen mit Farbskala) folgen erst nach Rückmeldung, ob diese
+  einfache Liste im Alltag überhaupt genutzt wird.
+
   **Konkreter blinder Fleck, wichtig für die spätere Umsetzung:**
   Praxisanteile werden in v1 bewusst nicht auf Wochen verteilt, solange
   keine datierten Praxiszeiten vorliegen. Real haben aber drei Module

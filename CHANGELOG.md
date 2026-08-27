@@ -7,6 +7,20 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.16.0] - 2026-08-27
+
+### Added
+- **Wochenübersicht (Beta)**: erste, bewusst einfache Vorstufe der geplanten
+  Belastungs-Heatmap. Neue Funktionen `getISOYear()` und
+  `computeContactHoursByWeek(semesterId)` berechnen reine Kontaktzeit pro
+  ISO-Woche (nur Termine mit fester Uhrzeit, ganztägige Prüfungen/Abgaben
+  und eigene Termine zählen nicht mit). Anzeige als schlichte Textliste
+  unter „⚙️ Verwalten → Analyse (Beta)", inkl. Hervorhebung der aktuellen
+  Woche. Bewusst ohne Prüfungsbonus, Selbststudium-Modellierung oder
+  Farbskala – diese folgen erst in späteren Etappen, s. IDEENSAMMLUNG.md.
+  Gegen eine unabhängige Python-Nachrechnung über alle 119 echten Termine
+  des WS 2026/27 verifiziert (0 Abweichungen).
+
 ## [3.15.0] - 2026-08-27
 
 ### Added
