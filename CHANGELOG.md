@@ -7,6 +7,15 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.22.1] - 2026-08-27
+
+### Changed
+- **Belastungsübersicht: zeitlicher Verlauf besser erkennbar.** Wochen
+  werden jetzt nach Monat des jeweiligen Wochenmontags gruppiert
+  (eigene Überschrift je Monat) statt als undifferenzierte Zahlenreihe.
+  Zellen zeigen "W40" statt nur "40" - macht auch ohne Tooltip klar,
+  dass es sich um Wochen handelt.
+
 ## [3.22.0] - 2026-08-27
 
 ### Added

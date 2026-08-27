@@ -727,10 +727,15 @@
     background: linear-gradient(to right, rgb(46,139,87), rgb(196,138,0), rgb(196,26,80));
   }
   .heatmap-hint { font-size: 11px; color: var(--muted); margin-bottom: 16px; line-height: 1.4; }
+  .heatmap-month-group { margin-bottom: 16px; }
+  .heatmap-month-label {
+    font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 7px;
+    letter-spacing: -.1px;
+  }
   .heatmap-grid { display: flex; flex-wrap: wrap; gap: 6px; }
   .heatmap-cell {
-    width: 42px; height: 42px; border-radius: 9px; border: none; cursor: pointer;
-    color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+    width: 46px; height: 42px; border-radius: 9px; border: none; cursor: pointer;
+    color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 700;
     display: flex; align-items: center; justify-content: center;
     transition: transform .1s; padding: 0;
   }
@@ -4686,14 +4691,35 @@ async function renderHeatmapView(){
   const max = Math.max(...values);
   const range = max - min;
 
-  const cells = bwList.map(w => {
-    const t = range > 0 ? (w.bw - min) / range : 0;
-    const color = bwColor(t);
-    const weekNum = w.key.split('-W')[1];
-    const dateLabel = w.monday.toLocaleDateString('de-DE', {day:'numeric', month:'short'});
-    const monday = w.monday;
-    const mondayIso = isoDate(monday.getFullYear(), monday.getMonth(), monday.getDate());
-    return `<button type="button" class="heatmap-cell" style="background:${color}" title="KW ${weekNum} · ab ${dateLabel} · B_w ≈ ${w.bw.toFixed(1)} Std." data-monday="${mondayIso}">${weekNum}</button>`;
+  // Nach Monat des jeweiligen Wochenmontags gruppiert statt einer
+  // undifferenzierten Zahlenreihe - macht den zeitlichen Verlauf auf einen
+  // Blick erkennbar. Eine Woche, die über einen Monatswechsel läuft, zählt
+  // bewusst zum Monat ihres Montags (dieselbe Konvention wie das Datum in
+  // der Wochenübersicht/im Tooltip: "ab [Montag]").
+  const groups = [];
+  let currentGroup = null;
+  bwList.forEach(w => {
+    const monthKey = `${w.monday.getFullYear()}-${w.monday.getMonth()}`;
+    if (!currentGroup || currentGroup.monthKey !== monthKey) {
+      currentGroup = { monthKey, label: `${MONTH_NAMES[w.monday.getMonth()]} ${w.monday.getFullYear()}`, weeks: [] };
+      groups.push(currentGroup);
+    }
+    currentGroup.weeks.push(w);
+  });
+
+  const groupsHtml = groups.map(group => {
+    const cells = group.weeks.map(w => {
+      const t = range > 0 ? (w.bw - min) / range : 0;
+      const color = bwColor(t);
+      const weekNum = w.key.split('-W')[1];
+      const dateLabel = w.monday.toLocaleDateString('de-DE', {day:'numeric', month:'short'});
+      const monday = w.monday;
+      const mondayIso = isoDate(monday.getFullYear(), monday.getMonth(), monday.getDate());
+      // "W" vorangestellt statt nur der Zahl - macht auch ohne Tooltip auf
+      // den ersten Blick klar, dass es sich um Wochen handelt.
+      return `<button type="button" class="heatmap-cell" style="background:${color}" title="KW ${weekNum} · ab ${dateLabel} · B_w ≈ ${w.bw.toFixed(1)} Std." data-monday="${mondayIso}">W${weekNum}</button>`;
+    }).join('');
+    return `<div class="heatmap-month-group"><div class="heatmap-month-label">${group.label}</div><div class="heatmap-grid">${cells}</div></div>`;
   }).join('');
 
   const statusNote = workloadData ? '' : `<div class="heatmap-hint">Selbststudium-Daten aktuell nicht erreichbar – Farben basieren nur auf Kontaktzeit und Prüfungen/Abgaben.</div>`;
@@ -4702,9 +4728,9 @@ async function renderHeatmapView(){
     <div class="heatmap-legend"><span>Ruhig</span><div class="heatmap-legend-gradient"></div><span>Intensiv</span></div>
     <div class="heatmap-hint">Farbe relativ zu diesem Semester, nicht zwischen Semestern vergleichbar. Kombiniert
     Kontaktzeit, geschätztes Selbststudium und Prüfungen/Abgaben, gewichtet mit deiner Aufwandsbewertung.
-    Antippen springt zur jeweiligen Woche.</div>
+    Jedes Feld ist eine Kalenderwoche, gruppiert nach Monat. Antippen springt zur jeweiligen Woche.</div>
     ${statusNote}
-    <div class="heatmap-grid">${cells}</div>
+    ${groupsHtml}
   `;
 
   heatmapViewBody.querySelectorAll('.heatmap-cell').forEach(cell => {

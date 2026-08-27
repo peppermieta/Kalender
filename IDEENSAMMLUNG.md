@@ -421,6 +421,15 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
     nach diesen Änderungen erneut ohne Abweichung geprüft. Dark
     Mode/Mobile geprüft.
 
+  **Feintuning nach erstem Feedback (v3.22.1):** Die ursprüngliche
+  Fassung zeigte alle Wochen als undifferenzierte Zahlenreihe ohne
+  erkennbaren zeitlichen Verlauf. Jetzt nach Monat des jeweiligen
+  Wochenmontags gruppiert (eigene Überschrift je Monat), Zellen zeigen
+  "W40" statt nur "40" – macht auch ohne Tooltip auf einen Blick klar,
+  dass es sich um Wochen handelt. Eine Woche, die über einen
+  Monatswechsel läuft, zählt zum Monat ihres Montags (dieselbe
+  Konvention wie überall sonst in der Heatmap/Wochenübersicht).
+
   **Damit ist die ursprüngliche 9-Etappen-Liste vollständig abgearbeitet.**
   Offen bleibt nur noch Etappe 8 (Praxissemester, absichtlich
   zurückgestellt bis Semester 5 näherrückt) sowie alles, was sich aus der
