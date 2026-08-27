@@ -7,6 +7,32 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.22.0] - 2026-08-27
+
+### Added
+- **Belastungsübersicht (Heatmap, Heatmap-Etappe 7)**: eigener Vollbild-
+  Screen, Zugang über "🌡️ Belastungsübersicht anzeigen" im Verwalten-
+  Menü. Neue `computeBwByWeek()` kombiniert gewichtete K_w/S_w/P_w zu
+  einer Zahl pro Woche (`computeContactHoursByWeek()` und
+  `computeSelfStudyHoursByWeek()` haben dafür einen neuen optionalen
+  `weighted`-Parameter bekommen, Default `false` - die Wochenübersicht
+  bleibt dadurch unverändert). Neue `computeWeightedExamHoursByWeek()`
+  mit Basiswerten 4h/Prüfung, 2h/Abgabe. Aufwands-Multiplikator-Skala
+  `{1: 0.7, 2: 0.85, 3: 1.0, 4: 1.3, 5: 1.6}` wirkt pro LV/Termin, bevor
+  pro Woche summiert wird. Stufenloser Grün-Amber-Rot-Farbverlauf,
+  relativ zum Semester normalisiert. Klick auf eine Wochenzelle springt
+  zur Tagesansicht des jeweiligen Montags.
+
+### Fixed
+- **Race Condition beim Zellklick behoben** (im selben Zug gefunden und
+  korrigiert, nie live gewesen): `closeHeatmapView()` entfernte die
+  `open`-Klasse synchron, der zugehörige `history.back()`-Popstate feuert
+  aber asynchron danach - der geplante Sprung zur Tagesansicht löste
+  dadurch nie aus. Behoben durch einen synchronen, direkten Ablauf ohne
+  Verlaufs-Umweg (bewusste Vereinfachung als Folge: ein Zurück-Tap aus
+  der so geöffneten Tagesansicht landet beim normalen Kalender, nicht
+  extra bei der Heatmap).
+
 ## [3.21.0] - 2026-08-27
 
 ### Added

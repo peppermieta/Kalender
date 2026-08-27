@@ -371,6 +371,61 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
     einer Summe verrechnet – bleibt ein eigenes, unabhängiges Signal, bis
     die Verrechnungsfrage (s. u.) geklärt ist.
 
+  **Etappe 7 umgesetzt (v3.22.0): eigener Screen mit Farbskala.** Letzte
+  und größte Etappe der ursprünglichen Liste.
+  - **B_w-Berechnung** (`computeBwByWeek()`): kombiniert gewichtete K_w
+    (`computeContactHoursByWeek(id, true)`), S_w
+    (`computeSelfStudyHoursByWeek(id, wd, true)`) und P_w
+    (`computeWeightedExamHoursByWeek()`, neue Basiswerte 4h/Prüfung,
+    2h/Abgabe, s. Verrechnungs-Entscheidung oben). Alle drei Funktionen
+    haben jetzt einen optionalen `weighted`-Parameter (Default `false`) –
+    die bestehende Wochenübersicht ruft sie weiterhin ohne diesen Parameter
+    auf und bleibt dadurch komplett unverändert, nur Etappe 7 nutzt
+    `true`.
+  - **Farbskala:** stufenloser Grün→Amber→Rot-Verlauf (lineare
+    Interpolation über drei Farbstützpunkte), relativ zum Semester
+    (Min-Max-Normalisierung über alle Wochen). Ferienwochen laufen
+    normal mit und erscheinen entsprechend als ruhigste (grünste) Wochen
+    – wie entschieden.
+  - **Screen:** eigener Vollbild-Screen (`heatmapView`), Zugang über
+    „🌡️ Belastungsübersicht anzeigen" im Verwalten-Menü. Wochenraster,
+    jede Zelle mit KW-Nummer, Tooltip zeigt Datum + B_w-Wert. Verlaufs-
+    Handling exakt nach dem bestehenden Modal-Muster
+    (`history.pushState`/`history.back()`), Android-Zurück-Button
+    getestet (sowohl Klick auf „Zurück" als auch nativer Zurück-Tap).
+  - **Klick auf eine Wochenzelle** springt zur Tagesansicht des jeweiligen
+    Wochenmontags.
+  - **Echter Bug gefunden und behoben, keine Kleinigkeit:** Erste Version
+    verband den Zellklick über `closeHeatmapView()` (nutzt
+    `history.back()`, asynchron) mit einem direkt anschließenden
+    `openDayView()` (nutzt `history.pushState()`, synchron) – eine klare
+    Race Condition, da `closeHeatmapView()` die `open`-Klasse bereits
+    synchron entfernt, der zugehörige `popstate` aber erst danach feuert.
+    Der Sprung zur Tagesansicht löste dadurch nie aus. Behoben durch
+    einen synchronen, direkten Ablauf ohne Umweg über den Verlauf.
+    **Bewusste Vereinfachung als Folge davon:** ein Zurück-Tap aus der
+    per Zellklick geöffneten Tagesansicht landet wieder beim normalen
+    Kalender, nicht extra nochmal bei der Heatmap – der zugehörige
+    History-Eintrag der Heatmap wird beim Zellklick nicht extra
+    aufgeräumt, sondern bleibt ungenutzt im Stack liegen.
+  - **Datenbrücke nicht erreichbar:** eigener Hinweistext, Farben basieren
+    dann nur auf K_w+P_w (S_w fällt weg) statt den ganzen Screen
+    unbrauchbar zu machen.
+  - **Getestet:** B_w ohne jede Aufwandsbewertung exakt identisch zu
+    unweighted K_w+S_w+P_w (Kontrollrechnung), eine hoch bewertete LV
+    verändert B_w gezielt nur in ihren eigenen Wochen, Zellklick springt
+    zum richtigen Wochenmontag, nativer Zurück-Tap schließt sauber ohne
+    Zellklick, Fehlerfall (Datenbrücke blockiert) zeigt Zusatzhinweis
+    und bleibt funktionsfähig, bestehende Etappe-1-Verifikation
+    (Python-Gegenrechnung) und die K_w-/S_w-Zeilen der Wochenübersicht
+    nach diesen Änderungen erneut ohne Abweichung geprüft. Dark
+    Mode/Mobile geprüft.
+
+  **Damit ist die ursprüngliche 9-Etappen-Liste vollständig abgearbeitet.**
+  Offen bleibt nur noch Etappe 8 (Praxissemester, absichtlich
+  zurückgestellt bis Semester 5 näherrückt) sowie alles, was sich aus der
+  echten Nutzung noch ergibt (z. B. Feintuning der Multiplikator-Werte).
+
   **Konkreter blinder Fleck, wichtig für die spätere Umsetzung:**
   Praxisanteile werden in v1 bewusst nicht auf Wochen verteilt, solange
   keine datierten Praxiszeiten vorliegen. Real haben aber drei Module
@@ -420,10 +475,10 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
     **Wichtige Abgrenzung:** Diese Gewichtung verändert **nicht** die
     bestehenden K_w-/S_w-/P_w-Zeilen in der Wochenübersicht – die
     bleiben bewusst reine, ungewichtete Zahlen, genau wie bisher. Der
-    Multiplikator wird ausschließlich innerhalb der künftigen
-    B_w-Berechnung für die Farbskala (Etappe 7) angewendet, die
-    ohnehin als eigener Schritt aussteht – bis dahin bleibt das eine
-    dokumentierte Entscheidung ohne sichtbaren Effekt im Code.
+    Multiplikator wird ausschließlich innerhalb der B_w-Berechnung für
+    die Farbskala angewendet.
+
+    **Umgesetzt mit Etappe 7 (v3.22.0)** – s. dortiger Abschnitt.
   - **Technisches Schlüsselschema:** `journal:effort:lvnr:<lvnr>` für
     Kursreihen, `journal:effort:event:<eventKey>` für Einzelbewertungen –
     im eigenen `journal:`-Namensraum statt eines weiteren losen Präfixes,
