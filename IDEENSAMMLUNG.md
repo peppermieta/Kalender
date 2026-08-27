@@ -320,6 +320,21 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   Farbskala) folgen erst nach Rückmeldung, ob die einfache Liste im
   Alltag überhaupt genutzt wird.
 
+  **Etappe 3 abgeschlossen (27.08.2026, reiner Test, kein Code-Change):**
+  CORS-Spike für die Datenbrücke zum Modulverzeichnis – wie im Konzept
+  (Abschnitt 4.1) gefordert, VOR jedem UI-Code im echten Browser von der
+  echten Kalender-Domain aus getestet (nicht nur per `curl`, das nur den
+  Header, nicht das tatsächliche Browser-Verhalten zeigt). Ergebnis
+  eindeutig: `fetch()` von `https://kalender.peppermięta.de` gegen
+  `https://module.peppermięta.de/` UND gegen
+  `raw.githubusercontent.com/peppermieta/Modulverzeichnis/…` liefert
+  jeweils `response.type: "cors"` mit vollständig lesbarem Body (nicht
+  `"opaque"`) – beide in Priorität 1 und 2 vorgesehenen Abrufquellen
+  funktionieren. **Damit ist Etappe 9 (Snapshot-Fallback) vorerst
+  hinfällig** – wird nur noch relevant, falls sich das GitHub-Pages-CORS-
+  Verhalten künftig mal ändert. Etappe 4 (Datenbrücke automatisieren,
+  `workload.json` aus `build.py` generieren) kann darauf aufbauen.
+
   **Konkreter blinder Fleck, wichtig für die spätere Umsetzung:**
   Praxisanteile werden in v1 bewusst nicht auf Wochen verteilt, solange
   keine datierten Praxiszeiten vorliegen. Real haben aber drei Module
