@@ -583,6 +583,23 @@
     display: none; font-size: 11px; color: var(--success-tx); font-weight: 600; margin-top: 5px;
   }
 
+  /* ── AUFWANDSBEWERTUNG (5-stufig, pro Termin oder pro Kursreihe) ── */
+  .effort-section { margin-top: 14px; }
+  .effort-scale { display: flex; gap: 6px; }
+  .effort-btn {
+    flex: 1; padding: 8px 0; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--bg); color: var(--muted); font-family: 'Inter', sans-serif;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    transition: background .15s, border-color .15s, color .15s;
+  }
+  .effort-btn:hover { border-color: var(--accent); color: var(--text); }
+  .effort-btn.active {
+    background: var(--accent); border-color: var(--accent); color: #fff;
+  }
+  .effort-hint {
+    display: block; font-size: 11px; color: var(--muted); margin-top: 6px; line-height: 1.4;
+  }
+
   .info-grid {
     display: grid;
     grid-template-columns: 120px 1fr;
@@ -1042,6 +1059,17 @@
         <label class="note-label" for="modalNote">Notiz</label>
         <textarea id="modalNote" class="note-textarea" placeholder="z. B. Buch mitbringen, Raum prüfen …" rows="2"></textarea>
         <span class="note-saved" id="noteSaved">Gespeichert ✓</span>
+      </div>
+      <div class="effort-section" id="effortSection">
+        <label class="note-label" id="effortLabel">Aufwand</label>
+        <div class="effort-scale" id="effortScale" role="radiogroup" aria-labelledby="effortLabel">
+          <button type="button" class="effort-btn" data-level="1" title="Sehr entspannt" aria-label="Sehr entspannt">1</button>
+          <button type="button" class="effort-btn" data-level="2" title="Entspannt" aria-label="Entspannt">2</button>
+          <button type="button" class="effort-btn" data-level="3" title="Normal" aria-label="Normal">3</button>
+          <button type="button" class="effort-btn" data-level="4" title="Anstrengend" aria-label="Anstrengend">4</button>
+          <button type="button" class="effort-btn" data-level="5" title="Sehr anstrengend" aria-label="Sehr anstrengend">5</button>
+        </div>
+        <span class="effort-hint" id="effortHint"></span>
       </div>
       <button type="button" id="modalDeletePersonal" class="modal-delete-btn" style="display:none;">🗑️ Eigenen Termin löschen</button>
     </div>
@@ -4093,6 +4121,42 @@ const modalClose = document.getElementById('modalClose');
 // echte lvnr) bleibt der Schlüssel unverändert, bestehende Notizen bleiben
 // also gültig.
 function noteKeyFor(ev){ return `note:${ev.date}_${ev.start || 'allday'}_${ev.lvnr || (ev.modul + '_' + ev.title)}`; }
+
+// ─── AUFWANDSBEWERTUNG (subjektive Belastung, 5-stufig) ────────────────────
+// Gemischte Granularität: reguläre, über das Semester verteilte Kursreihen
+// bekommen EINE Bewertung für die ganze LV (Schlüssel über lvnr), Blockkurse,
+// Prüfungen/Abgaben (haben meist keine lvnr) und eigene Termine werden
+// einzeln pro Vorkommen bewertet (Schlüssel wie bei Notizen). Nutzt zur
+// Block-Erkennung dieselbe Regel wie das Heatmap-Konzept (Abschnitt 5.3):
+// max. 2 ISO-Wochen, max. 14 Tage Abstand, oder unter 4 aktive Kontaktwochen.
+// S. IDEENSAMMLUNG.md, Abschnitt "Prospektive Belastungs-Heatmap".
+function isBlockLvnr(lvnr, semesterId){
+  const events = (EVENTS_BY_SEMESTER[semesterId] || []).filter(e => e.lvnr === lvnr && e.start && e.end);
+  if (events.length === 0) return true; // unbekannt/keine Daten -> konservativ einzeln behandeln
+  const weeks = new Set(events.map(e => {
+    const [y, m, d] = e.date.split('-').map(Number);
+    return isoWeekKey(new Date(y, m - 1, d));
+  }));
+  const dates = events.map(e => e.date).sort();
+  const first = new Date(dates[0] + 'T00:00:00');
+  const last = new Date(dates[dates.length - 1] + 'T00:00:00');
+  const daySpan = Math.round((last - first) / 86400000) + 1;
+  return weeks.size <= 2 || daySpan <= 14 || weeks.size < 4;
+}
+
+function effortEventKeyFor(ev){ return `effortByEvent:${ev.date}_${ev.start || 'allday'}_${ev.lvnr || (ev.modul + '_' + ev.title)}`; }
+function effortLvnrKeyFor(lvnr){ return `effortByLvnr:${lvnr}`; }
+
+// Ermittelt Schlüssel + Geltungsbereich für die Aufwandsbewertung eines
+// Termins. 'lvnr' = gilt für die ganze Kursreihe, 'event' = gilt nur für
+// diesen einen Termin.
+function effortScopeFor(ev){
+  if (ev.type === 'eigen' || !ev.lvnr || isBlockLvnr(ev.lvnr, ev._semesterId || currentSemesterId)) {
+    return { scope: 'event', key: effortEventKeyFor(ev) };
+  }
+  return { scope: 'lvnr', key: effortLvnrKeyFor(ev.lvnr) };
+}
+
 let currentModalEvent = null;
 const modalNoteEl = document.getElementById('modalNote');
 const noteSavedEl = document.getElementById('noteSaved');
@@ -4108,6 +4172,37 @@ modalNoteEl.addEventListener('input', () => {
   clearTimeout(noteSaveTimer);
   noteSaveTimer = setTimeout(() => { noteSavedEl.style.display = 'none'; }, 1500);
 });
+
+// Aufwandsbewertung: Klick auf den bereits aktiven Level setzt zurück auf
+// "keine Angabe" (bewusst kein Pflichtfeld - lieber nur bei Bedarf gesetzt
+// als bei ~120 Terminen im Semester zur Pflicht zu werden).
+const effortScaleEl = document.getElementById('effortScale');
+const effortHintEl = document.getElementById('effortHint');
+effortScaleEl.addEventListener('click', (e) => {
+  const btn = e.target.closest('.effort-btn');
+  if (!btn || !currentModalEvent) return;
+  const { key } = effortScopeFor(currentModalEvent);
+  const clickedLevel = btn.dataset.level;
+  const isAlreadyActive = btn.classList.contains('active');
+  if (isAlreadyActive) {
+    localStorage.removeItem(key);
+  } else {
+    localStorage.setItem(key, clickedLevel);
+  }
+  scheduleGistPush();
+  renderEffortScale(currentModalEvent);
+});
+
+function renderEffortScale(ev){
+  const { scope, key } = effortScopeFor(ev);
+  const current = localStorage.getItem(key);
+  effortScaleEl.querySelectorAll('.effort-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.level === current);
+  });
+  effortHintEl.textContent = scope === 'lvnr'
+    ? 'Gilt für die ganze Kursreihe, nicht nur diesen Termin.'
+    : 'Gilt nur für diesen Termin.';
+}
 
 function openModal(ev){
   const m = MODS[ev.modul];
@@ -4166,6 +4261,7 @@ function openModal(ev){
   currentModalEvent = ev;
   modalNoteEl.value = localStorage.getItem(noteKeyFor(ev)) || '';
   noteSavedEl.style.display = 'none';
+  renderEffortScale(ev);
 
   // Löschen-Option nur für selbst angelegte Freitext-Termine (s. Ideensammlung)
   const deleteBtn = document.getElementById('modalDeletePersonal');
@@ -4210,7 +4306,7 @@ function getAllNotes(){
   const notes = {};
   for (let i = 0; i < localStorage.length; i++){
     const key = localStorage.key(i);
-    if (key && (key.startsWith('note:') || key.startsWith('personalEvent:') || key.startsWith('dayNote:'))) notes[key] = localStorage.getItem(key);
+    if (key && (key.startsWith('note:') || key.startsWith('personalEvent:') || key.startsWith('dayNote:') || key.startsWith('effortByLvnr:') || key.startsWith('effortByEvent:'))) notes[key] = localStorage.getItem(key);
   }
   return notes;
 }
@@ -4258,13 +4354,13 @@ async function pullNotesFromGist(){
     const localKeysToRemove = [];
     for (let i = 0; i < localStorage.length; i++){
       const key = localStorage.key(i);
-      if (key && (key.startsWith('note:') || key.startsWith('personalEvent:') || key.startsWith('dayNote:')) && !(key in remote)) {
+      if (key && (key.startsWith('note:') || key.startsWith('personalEvent:') || key.startsWith('dayNote:') || key.startsWith('effortByLvnr:') || key.startsWith('effortByEvent:')) && !(key in remote)) {
         localKeysToRemove.push(key);
       }
     }
     localKeysToRemove.forEach(key => localStorage.removeItem(key));
     Object.entries(remote).forEach(([key, val]) => {
-      if (typeof val === 'string' && (key.startsWith('note:') || key.startsWith('personalEvent:') || key.startsWith('dayNote:'))) {
+      if (typeof val === 'string' && (key.startsWith('note:') || key.startsWith('personalEvent:') || key.startsWith('dayNote:') || key.startsWith('effortByLvnr:') || key.startsWith('effortByEvent:'))) {
         localStorage.setItem(key, val);
       }
     });

@@ -7,6 +7,24 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.17.0] - 2026-08-27
+
+### Added
+- **Aufwandsbewertung (Eingabemechanismus)**: 5-stufige, subjektive
+  Aufwands-/Belastungsbewertung im Termin-Detail-Modal, erste Etappe der
+  geplanten Erweiterung der Belastungs-Heatmap um Selbstauskunft statt
+  reiner Modellierung. `isBlockLvnr()` klassifiziert LV-Nummern nach
+  derselben Regel wie das Heatmap-Konzept (max. 2 ISO-Wochen, max.
+  14 Tage, oder unter 4 Kontaktwochen). `effortScopeFor(ev)` wählt daraus
+  automatisch den Geltungsbereich: reguläre Kursreihen bekommen eine
+  Bewertung fürs ganze Semester (`effortByLvnr:<lvnr>`), Blockkurse,
+  Prüfungen/Abgaben (meist ohne `lvnr`) und eigene Termine werden einzeln
+  bewertet (`effortByEvent:<key>`, Schlüsselschema wie bei Notizen).
+  Erneuter Klick auf die aktive Stufe setzt zurück. In den bestehenden
+  Gist-Sync integriert (alle drei Präfixfilter erweitert). Verrechnung in
+  die Wochenübersicht/Heatmap bewusst noch nicht umgesetzt – aktuell wird
+  nur erfasst, s. IDEENSAMMLUNG.md.
+
 ## [3.16.0] - 2026-08-27
 
 ### Added

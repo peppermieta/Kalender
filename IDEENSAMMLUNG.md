@@ -339,6 +339,23 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   - Reihenfolge in den Umsetzungsetappen: vor Stufe 5/6 einordnen –
     wenn die manuelle Bewertung einen Großteil des Nutzens liefert,
     wird die komplexe Selbststudium-Modellierung eventuell überflüssig.
+
+  **Eingabemechanismus umgesetzt (v3.17.0):** `isBlockLvnr()` klassifiziert
+  jede LV-Nummer nach derselben Regel wie das Heatmap-Konzept (Abschnitt
+  5.3). `effortScopeFor(ev)` entscheidet daraus automatisch, ob eine
+  Bewertung für die ganze Kursreihe (`effortByLvnr:`) oder nur für den
+  einzelnen Termin (`effortByEvent:`) gilt – Prüfungen/Abgaben (meist ohne
+  `lvnr`) und eigene Termine fallen dabei automatisch auf „einzeln", ohne
+  Sonderfall-Code. 5-stufige Auswahl im Termin-Detail-Modal unterhalb der
+  Notiz, erneuter Klick auf die aktive Stufe setzt zurück (kein Pflichtfeld
+  bei ~120 Terminen im Semester). Fließt in den bestehenden Gist-Sync mit
+  ein (alle drei Präfixfilter erweitert), landet also wie Notizen auf allen
+  Geräten. Getestet: Blockkurs (M02) vs. reguläre LV (M06) korrekt
+  klassifiziert, Bewertung wird innerhalb einer Kursreihe zwischen
+  verschiedenen Terminen geteilt, Blockkurs-Termine bleiben untereinander
+  unabhängig, Toggle-Reset funktioniert, Dark Mode/Mobile geprüft.
+  **Verrechnung in die Heatmap weiterhin offen** (s. o.) – aktuell wird nur
+  erfasst, noch nicht ausgewertet.
 - **UI-Neuordnung: Buttons & Funktionen konsolidieren** – Bedienelemente
   waren über Header, Toolbar, Footer, Tagesansicht und Notiz-Sync-Overlay
   verteilt, gewachsen Feature für Feature ohne übergreifendes Konzept.

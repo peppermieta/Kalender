@@ -7,7 +7,7 @@
 //
 // WICHTIG: CACHE_VERSION bei jedem inhaltlichen Update erhöhen (z.B. an die
 // CHANGELOG-Version angleichen), sonst bleiben alte, veraltete Caches liegen.
-const CACHE_VERSION = 'v3.16.0';
+const CACHE_VERSION = 'v3.17.0';
 const CACHE_NAME = `kalender-cache-${CACHE_VERSION}`;
 
 const APP_SHELL = [
