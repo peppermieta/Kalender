@@ -7,6 +7,19 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.24.1] - 2026-08-28
+
+### Changed
+- **Farbskala auf 5 statt 3 Stützpunkte erweitert** (`bwColor()`): reale
+  Datenanalyse zeigte, dass ~die Hälfte der Wochen oberhalb der
+  Skalenmitte landet (leere Ferienwochen ziehen das Minimum nach unten),
+  wodurch mit nur einem Amber-Rot-Segment fast alle "vollen" Wochen
+  ähnlich rot aussahen. Neue Zwischenfarben bei t=0,25/0,75 (reine
+  RGB-Mittelwerte der bestehenden Endpunkte) geben der oberen Hälfte
+  zwei Segmente statt einem. Grün/Amber/Rot-Endpunkte unverändert.
+  Betrifft Belastungsübersicht, Mini-Band, Wochenübersicht-Chip und
+  Tagesansicht-Chip gemeinsam (alle nutzen dieselbe Funktion).
+
 ## [3.24.0] - 2026-08-28
 
 ### Changed

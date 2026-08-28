@@ -501,6 +501,33 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   Fehlfärbung, voller Screen weiterhin unverändert bei allen 27 Wochen.
   Dark Mode/Mobile geprüft.
 
+  **Farbskala auf 5 statt 3 Stützpunkte erweitert (v3.24.1).** Grund: reale
+  Datenanalyse zeigte 10 von 27 Wochen komplett leer (Ferien) und 13 von
+  27 oberhalb der Skalenmitte (t > 0,5) – da die leeren Wochen das
+  Minimum nach unten ziehen, landen echte Vorlesungswochen fast immer in
+  der oberen Hälfte. Mit nur einem Amber-Rot-Segment sahen dadurch fast
+  alle "vollen" Wochen ähnlich rot/bedrohlich aus, obwohl sich die
+  echten Werte klar unterschieden (57 bis 90 Std.) – der eigentliche
+  Nutzen der Farbcodierung ging in genau diesem, am stärksten besetzten
+  Bereich verloren. Neue Zwischenfarben bei t=0,25 (Gelbgrün) und t=0,75
+  (Orange) sind reine RGB-Mittelwerte der bestehenden Endpunkte, keine
+  neuen willkürlichen Töne - Grün/Amber/Rot an 0/0,5/1 bleiben
+  unverändert, "Ruhig"/"Intensiv" behalten ihre Bedeutung. Damit
+  bekommt die obere Hälfte zwei Segmente statt einem, mehr Auflösung
+  genau dort, wo die Wochen sich ballen.
+
+  **Ehrliche Einschätzung, noch nicht entschieden:** Mehr Farbstufen
+  helfen bei der Unterscheidung *innerhalb* der oberen Hälfte, lösen
+  aber nicht, dass diese Hälfte insgesamt weiterhin orange/rot dominiert
+  wirkt – das liegt strukturell daran, dass die Skala Min/Max über *alle*
+  Wochen bildet, inklusive der komplett leeren Ferienwochen, die den
+  unteren Skalenrand künstlich nach unten ziehen. Eine mögliche
+  Weiterentwicklung: Normalisierung robuster gegen Ausreißer machen
+  (z. B. Perzentil-basiert statt reinem Min/Max, sodass einzelne
+  Extremwochen nicht die ganze Skala dominieren) - würde aber die
+  Bedeutung der Farben spürbar verändern und ist bewusst noch nicht
+  umgesetzt, sondern nur als Option hier vermerkt.
+
   **Damit ist die ursprüngliche 9-Etappen-Liste vollständig abgearbeitet.**
   Offen bleibt nur noch Etappe 8 (Praxissemester, absichtlich
   zurückgestellt bis Semester 5 näherrückt) sowie alles, was sich aus der

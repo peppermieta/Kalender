@@ -736,7 +736,7 @@
   .heatmap-legend { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--muted); margin-bottom: 8px; }
   .heatmap-legend-gradient {
     flex: 1; height: 8px; border-radius: 4px;
-    background: linear-gradient(to right, rgb(46,139,87), rgb(196,138,0), rgb(196,26,80));
+    background: linear-gradient(to right, rgb(46,139,87), rgb(121,139,44), rgb(196,138,0), rgb(196,82,40), rgb(196,26,80));
   }
   .heatmap-hint { font-size: 11px; color: var(--muted); margin-bottom: 16px; line-height: 1.4; }
 
@@ -4713,10 +4713,21 @@ heatmapViewOpenBtn.addEventListener('click', () => {
 });
 heatmapViewBack.onclick = () => closeHeatmapView();
 
-// Einfache lineare Interpolation über drei Farbstützpunkte (grün -> amber
-// -> rot), t zwischen 0 (ruhigste Woche des Semesters) und 1 (intensivste).
+// Lineare Interpolation über fünf Farbstützpunkte (grün -> gelbgrün -> amber
+// -> orange -> rot), t zwischen 0 (ruhigste Woche des Semesters) und 1
+// (intensivste). Bewusst 5 statt 3 Stützpunkte (Stand 28.08.2026, nach
+// Rückmeldung): reale Verteilung zeigt oft ~10 komplett leere Ferienwochen
+// UND ~13 von 27 Wochen oberhalb der Skalenmitte (echte Vorlesungswochen
+// landen meist alle in der oberen Hälfte, da die leeren Ferienwochen das
+// Minimum nach unten ziehen) - mit nur einem Amber-Rot-Segment sahen dadurch
+// fast alle "vollen" Wochen ähnlich rot aus, obwohl sich die echten Werte
+// durchaus unterschieden. Zwei zusätzliche Stufen geben genau diesem oberen
+// Bereich mehr Auflösung (zwei Segmente statt einem). Die beiden neuen
+// Zwischenfarben sind schlichte RGB-Mittelwerte der bestehenden Endpunkte,
+// keine neuen willkürlichen Farbtöne - Grün/Amber/Rot bleiben unverändert,
+// damit "Ruhig"/"Intensiv" in der Legende weiterhin dieselbe Bedeutung haben.
 function bwColor(t){
-  const stops = [[46,139,87],[196,138,0],[196,26,80]];
+  const stops = [[46,139,87],[121,139,44],[196,138,0],[196,82,40],[196,26,80]];
   const scaled = Math.max(0, Math.min(1, t)) * (stops.length - 1);
   const i = Math.min(Math.floor(scaled), stops.length - 2);
   const frac = scaled - i;
