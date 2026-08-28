@@ -7,6 +7,14 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.25.1] - 2026-08-28
+
+### Changed
+- **Flammen-Icon im Mini-Band entfernt** – kam nicht gut an. War als
+  eigenes, ggf. eingefärbtes Symbol statt Emoji gedacht, Ausarbeitung
+  auf später verschoben; bis dahin ganz ohne Icon statt einer
+  Zwischenlösung.
+
 ## [3.25.0] - 2026-08-28
 
 ### Changed

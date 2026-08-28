@@ -157,6 +157,10 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   direkt zum zugehörigen Modul im Modulverzeichnis springen.
   **✅ Umgesetzt** (v2.2.0) – Modul-Badge im Termin-Detail verlinkt
   direkt zur passenden Detailkarte im Modulverzeichnis.
+  **Zweite, tiefere Verbindungsebene ergänzt** (v1.12.0/v3.21.0, im
+  Zuge der Belastungs-Heatmap): `workload.json`-Datenbrücke – nicht nur
+  ein Link mehr, sondern echter Datenaustausch (CP/SWS/Workload-
+  Aufteilung fließen direkt in die S_w-Berechnung ein).
 - **Archiv-Konzept für alte Semester** – Frage, wie alte, abgeschlossene
   Semester langfristig gehandhabt werden.
   **✅ Umgesetzt** (v3.0.0) – alles in einer Datei mit Semester-Umschalter
@@ -553,6 +557,18 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   `NaN` (Division durch 0 abgefangen). Visuell bestätigt: deutlich mehr
   grüne Verschnaufpausen zwischen den intensiven Wochen statt eines
   durchgehenden Orange-Rot-Blocks Okt–Jan. Dark Mode geprüft.
+
+  **Vorerst so belassen, geplante Überarbeitung offen (28.08.2026):**
+  Farbskala/Darstellung insgesamt kann sich noch grundlegend ändern –
+  eventuell auch ein komplett neuer visueller Ansatz statt nur weiterer
+  Feinjustierung an der aktuellen Grün-Amber-Rot-Logik. Kein konkreter
+  Plan, nur vorgemerkt für später.
+
+  **Flammen-Icon im Mini-Band wieder entfernt (v3.25.1):** kam nicht gut
+  an. War als eigenes, ggf. eingefärbtes Symbol gedacht (nicht als
+  Emoji) – Ausarbeitung ebenfalls auf später verschoben, Icon bis dahin
+  komplett weg statt einer Zwischenlösung.
+
   **Damit ist die ursprüngliche 9-Etappen-Liste vollständig abgearbeitet.**
   Offen bleibt nur noch Etappe 8 (Praxissemester, absichtlich
   zurückgestellt bis Semester 5 näherrückt) sowie alles, was sich aus der
@@ -701,6 +717,17 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   Verabredungen um die Uni-Zeiten herum zu planen.
 - **Wochenübersicht als dritte Ansicht** – kompakte 7-Tage-Streifenansicht
   zwischen Monat und Einzeltag.
+  **Erneutes, verstärktes Interesse (28.08.2026):** Im Zuge der
+  Belastungs-Heatmap-Arbeit als zunehmend sinnvoll empfunden – noch
+  nicht ausgearbeitet, aber ein konkreter Anwendungsfall steht schon
+  fest: **alle Verlinkungen aus der Heatmap (Balkenband, Mini-Band)
+  landen aktuell in der Tagesansicht beim jeweiligen Wochenmontag** –
+  das wird als unpassend empfunden und sollte stattdessen zu dieser
+  Wochenansicht springen, sobald sie existiert (technisch nur eine
+  Änderung der Zielfunktion im Klick-Handler, `openDayView(monday)` →
+  `openWeekView(monday)` o. ä., kein struktureller Umbau der Heatmap
+  nötig). Wird bei Gelegenheit separat ausgearbeitet, kein aktueller
+  Umsetzungsauftrag.
 - **Modulverzeichnis-Fortschritt sichtbar** – CP-Fortschrittsanzeige aus
   dem Modulverzeichnis als kleiner Indikator im Kalender mitspiegeln.
 - **"Nächstes Semester"-Assistent** – geführter Ablauf für
@@ -712,8 +739,14 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
 
 - **Workload-Transparenz** – eine einfache Statistik ("X Kontaktstunden
   diese Woche"), um die eigene Auslastung über das Semester hinweg im
-  Blick zu behalten. Würde durch die "Prospektive Belastungs-Heatmap"
-  mit abgedeckt, bleibt aber als eigenständiger, kleinerer Punkt stehen.
+  Blick zu behalten.
+  **Faktisch abgedeckt (Stand 28.08.2026):** Genau das zeigt die
+  Wochenübersicht (Beta) im Verwalten-Menü inzwischen direkt an
+  (`computeContactHoursByWeek()`, seit v3.16.0), plus die volle
+  Belastungsübersicht mit Farbcodierung obendrauf – deutlich mehr, als
+  hier ursprünglich vorgesehen war. Bleibt trotzdem als eigener Punkt
+  stehen statt gestrichen zu werden, damit die Herkunft der Idee
+  nachvollziehbar bleibt.
 - **Semester-Rückblick** – eine kleine, automatisch erzeugte
   Zusammenfassung am Semesterende ("X Termine, Y Prüfungen absolviert")
   als kleiner persönlicher Abschluss. Ließe sich komplett aus den
@@ -728,6 +761,10 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   möglich, aktuell aber nur eins mit echten Daten befüllt) – sinnvoll
   umsetzbar vermutlich erst, sobald mindestens ein zweites Semester
   (SoSe 2027) tatsächlich eingetragen ist.
+  **Nicht durch die Belastungs-Heatmap abgedeckt:** deren Farbskala ist
+  bewusst nur relativ zum jeweils aktuellen Semester normalisiert
+  (eigener Hinweistext in der Übersicht: "nicht zwischen Semestern
+  vergleichbar") – ein Semestervergleich bliebe hier explizit offen.
 - **Vorlage für andere Studierende** – Anleitung, wie andere Studierende
   sich diesen Kalender für ihre eigene Modul-/Parallelgruppen-Kombination
   anpassen könnten.

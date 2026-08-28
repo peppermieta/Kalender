@@ -772,7 +772,6 @@
     padding: 8px 14px; background: var(--heatband-bg);
     border-bottom: 1px solid var(--border); cursor: pointer;
   }
-  .heatband-icon { flex-shrink: 0; font-size: 13px; }
   .heatband-label {
     font-size: 11.5px; color: var(--heatband-tx); white-space: nowrap; flex-shrink: 0; font-weight: 600;
   }
@@ -4903,7 +4902,6 @@ function renderHeatBand(){
     heatBand.style.display = 'flex';
     heatBand.onclick = () => openHeatmapView();
     heatBand.innerHTML = `
-      <span class="heatband-icon" aria-hidden="true">🔥</span>
       <span class="heatband-label">Nächste Wochen</span>
       <div class="heatband-ribbon">${bars}</div>
       <span class="heatband-arrow" aria-hidden="true">›</span>`;
