@@ -467,6 +467,40 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   konsistente Farben, bestehende K_w-Regression erneut ohne Abweichung
   geprüft. Dark Mode/Mobile geprüft.
 
+  **Feintuning nach Klarstellung im Gespräch (v3.24.0):** "Wochenansicht"
+  war zweideutig – Pascal meinte die Tagesansicht, nicht das Monatsraster,
+  in dem das Mini-Band sitzt. Drei Anpassungen:
+  - **Mini-Band auf max. 3 Wochen begrenzt** (aktuelle + 2 kommende,
+    `selectUpcomingWeeks()`) statt des ganzen Semesters – bei der
+    winzigen Bandgröße war ein "riesen Verlauf" ohnehin nicht lesbar,
+    relevant ist ohnehin nur, was gerade ansteht. Der volle Verlauf
+    bleibt dem großen Screen vorbehalten. Farbnormalisierung bleibt
+    trotzdem übers ganze Semester (dieselbe Skala wie überall sonst),
+    nur die Anzeige ist eingekürzt. Liegt "heute" außerhalb des
+    Semesters (z. B. vor Vorlesungsbeginn), zeigt das Band die ersten
+    drei Semesterwochen statt sich auszublenden.
+  - **Eigener Blauton fürs Mini-Band** (`--heatband-bg`/`--heatband-tx`,
+    eigene Root-Variablen mit Dark-Mode-Pendant) statt des app-weiten
+    Lila-Akzents – bewusst eine eigene Farbfamilie, damit sich das Band
+    visuell von den übrigen Lila-Akzenten (Notiz-Sync, Aufwandsbewertung
+    …) absetzt. Betrifft nur den Rahmen/die Beschriftung des Bands,
+    NICHT die Balken selbst – die bleiben in der normalen
+    Grün-Amber-Rot-B_w-Skala, sonst wäre die Farbe nicht mehr
+    vergleichbar mit Wochenübersicht/vollem Screen.
+  - **🔥-Icon ergänzt**, vor dem "Nächste Wochen"-Label.
+  - **Neuer Wochen-Chip in der Tagesansicht**: kleiner farbiger Punkt
+    direkt nach der KW-Angabe im Datumskopf, zeigt die B_w-Farbe der
+    angezeigten Woche. Asynchron befüllt (wartet auf die Datenbrücke),
+    mit Schutz gegen schnelles Weiterblättern (`dayView.dataset.
+    currentIso`-Abgleich, verhindert dass eine verspätet ankommende
+    Farbe noch auf einen inzwischen anderen Tag angewendet wird).
+
+  Getestet: Mini-Band zeigt korrekt 3 Wochen ab dem simulierten "heute"
+  bzw. die ersten 3 Semesterwochen vor Vorlesungsbeginn, Tagesansicht-
+  Chip zeigt korrekte Farbe und übersteht schnelles Weiterblättern ohne
+  Fehlfärbung, voller Screen weiterhin unverändert bei allen 27 Wochen.
+  Dark Mode/Mobile geprüft.
+
   **Damit ist die ursprüngliche 9-Etappen-Liste vollständig abgearbeitet.**
   Offen bleibt nur noch Etappe 8 (Praxissemester, absichtlich
   zurückgestellt bis Semester 5 näherrückt) sowie alles, was sich aus der

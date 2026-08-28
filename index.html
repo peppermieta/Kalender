@@ -64,6 +64,10 @@
     --danger-bg: #FCE2E2; --danger-tx: #A11B1B; --danger-bd: #DC2626;
     --warn-bg:   #FDE6D2; --warn-tx:   #9A4A0C; --warn-bd:   #EA580C;
     --success-tx: #1A8C70; --success-bd: #8DD4C2;
+    /* Bewusst eigener Blauton statt --accent (Lila) fürs Belastungs-Mini-
+       Band - eigene Farbfamilie, um es visuell von den übrigen Akzenten
+       (Prüfungen, Notiz-Sync, Aufwandsbewertung, ...) abzusetzen. */
+    --heatband-bg: #E6F1FB; --heatband-tx: #185FA5;
   }
 
   /* ── DARK MODE ──
@@ -88,6 +92,7 @@
     --danger-bg: #3A1518; --danger-tx: #F0A8AC; --danger-bd: #E8555A;
     --warn-bg:   #33220F; --warn-tx:   #E8AD70; --warn-bd:   #F0954A;
     --success-tx: #6FD9B8; --success-bd: #2C5C4C;
+    --heatband-bg: #0C447C; --heatband-tx: #85B7EB;
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -706,6 +711,10 @@
   }
   .day-view-back:hover { background: var(--border); }
   .day-view-date { font-size: 15px; font-weight: 700; letter-spacing: -.2px; text-align: center; }
+  .day-view-week-chip {
+    display: none; width: 9px; height: 9px; border-radius: 3px;
+    margin-left: 4px; vertical-align: 2px;
+  }
   .day-view-copy {
     font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500;
     padding: 6px 10px; border-radius: 7px; border: 1px solid var(--border);
@@ -756,19 +765,20 @@
     white-space: nowrap;
   }
 
-  /* Mini-Band oben im Kalender (komprimiertes Semester, ersetzt/ergänzt
-     die Nächste-Veranstaltung-Leiste) */
+  /* Mini-Band oben im Kalender (nächste Wochen, ersetzt/ergänzt die
+     Nächste-Veranstaltung-Leiste) */
   .heatband {
     display: flex; align-items: center; gap: 10px;
-    padding: 8px 14px; background: var(--accent-soft-bg);
+    padding: 8px 14px; background: var(--heatband-bg);
     border-bottom: 1px solid var(--border); cursor: pointer;
   }
+  .heatband-icon { flex-shrink: 0; font-size: 13px; }
   .heatband-label {
-    font-size: 11.5px; color: var(--accent); white-space: nowrap; flex-shrink: 0; font-weight: 600;
+    font-size: 11.5px; color: var(--heatband-tx); white-space: nowrap; flex-shrink: 0; font-weight: 600;
   }
-  .heatband-ribbon { display: flex; align-items: flex-end; gap: 2px; height: 18px; flex: 1; }
-  .heatband-bar { flex: 1; min-width: 2px; border-radius: 2px 2px 0 0; }
-  .heatband-arrow { color: var(--accent); flex-shrink: 0; font-size: 13px; }
+  .heatband-ribbon { display: flex; align-items: flex-end; gap: 4px; height: 20px; flex: 1; max-width: 140px; }
+  .heatband-bar { flex: 1; border-radius: 3px 3px 0 0; }
+  .heatband-arrow { color: var(--heatband-tx); flex-shrink: 0; font-size: 13px; }
   @media (max-width: 700px) {
     .heatband-label { display: none; } /* auf Mobile reicht das Band selbst, spart Platz wie next-up-label */
   }
@@ -4807,29 +4817,54 @@ async function renderHeatmapView(){
   });
 }
 
-// ─── BELASTUNGS-MINI-BAND (komprimiertes Semester, oben im Kalender) ──────
-// Ersetzt/ergänzt die Nächste-Veranstaltung-Leiste: anders als die
-// Wochenübersicht/Belastungsübersicht bewusst OHNE Beschriftung, reine
-// Formensprache (Höhe+Farbe) - die Details gibt's per Tap auf dem vollen
-// Screen. Rendert sofort mit K_w+P_w, ergänzt S_w asynchron nach (gleiches
-// Muster wie buildWeekOverview()).
+// ─── BELASTUNGS-MINI-BAND (nächste Wochen, oben im Kalender) ──────────────
+// Ersetzt/ergänzt die Nächste-Veranstaltung-Leiste. Bewusst NUR aktuelle +
+// 2 kommende Wochen statt des ganzen Semesters: bei der winzigen Bandgröße
+// bringt ein "riesen Verlauf" nichts zum Lesen, relevant ist ohnehin nur,
+// was gerade ansteht - der volle Verlauf bleibt dem großen Screen
+// vorbehalten (ein Tap öffnet ihn). Rendert sofort mit K_w+P_w, ergänzt
+// S_w asynchron nach (gleiches Muster wie buildWeekOverview()).
 const heatBand = document.getElementById('heatBand');
-function renderHeatBand(){
-  const bwListRaw = computeBwByWeek(currentSemesterId, null);
-  if (!bwListRaw.length) { heatBand.style.display = 'none'; return; }
-  heatBand.style.display = 'flex';
-  heatBand.onclick = () => openHeatmapView();
+const HEATBAND_WEEK_COUNT = 3;
 
+// Aktuelle Woche + die folgenden - liegt "heute" außerhalb des Semesters
+// (z.B. vor Vorlesungsbeginn), ab der ersten Woche mit Montag in der
+// Zukunft. Kein Treffer (Semester bereits vorbei) -> leeres Array, Band
+// wird dann ausgeblendet.
+function selectUpcomingWeeks(bwList, count){
+  const todayKey = isoWeekKey(new Date());
+  let idx = bwList.findIndex(w => w.key === todayKey);
+  if (idx === -1) {
+    const now = new Date();
+    idx = bwList.findIndex(w => w.monday >= now);
+  }
+  if (idx === -1) return [];
+  return bwList.slice(idx, idx + count);
+}
+
+function renderHeatBand(){
   const paint = (workloadData) => {
     const bwList = computeBwByWeek(currentSemesterId, workloadData);
+    const upcoming = selectUpcomingWeeks(bwList, HEATBAND_WEEK_COUNT);
+    if (!upcoming.length) { heatBand.style.display = 'none'; return; }
+
+    // Farbnormalisierung weiterhin übers GANZE Semester (dieselbe Skala wie
+    // Wochenübersicht/voller Screen) - sonst würde von den drei gezeigten
+    // Wochen immer eine "am rötesten" wirken, selbst wenn objektiv alle drei
+    // ruhig sind.
     const values = bwList.map(w => w.bw);
     const min = Math.min(...values), max = Math.max(...values), range = max - min;
-    const bars = bwList.map(w => {
+    const bars = upcoming.map(w => {
       const t = range > 0 ? (w.bw - min) / range : 0;
-      return `<div class="heatband-bar" style="height:${8 + t * 92}%;background:${bwColor(t)}"></div>`;
+      const weekNum = w.key.split('-W')[1];
+      return `<div class="heatband-bar" style="height:${8 + t * 92}%;background:${bwColor(t)}" title="KW ${weekNum}"></div>`;
     }).join('');
+
+    heatBand.style.display = 'flex';
+    heatBand.onclick = () => openHeatmapView();
     heatBand.innerHTML = `
-      <span class="heatband-label">Belastung</span>
+      <span class="heatband-icon" aria-hidden="true">🔥</span>
+      <span class="heatband-label">Nächste Wochen</span>
       <div class="heatband-ribbon">${bars}</div>
       <span class="heatband-arrow" aria-hidden="true">›</span>`;
   };
@@ -5043,7 +5078,20 @@ function renderDayView(iso, {pushHistory=true} = {}){
   const events = (byDate[iso] || []).slice().sort((a,b)=> (a.start||'').localeCompare(b.start||''));
   const [y, mo, d] = iso.split('-').map(Number);
   const dow = new Date(y, mo-1, d).getDay();
-  dayViewDate.textContent = `${WEEKDAY_ABBR[dow]}, ${d}. ${MONTH_NAMES[mo-1]} ${y} · KW ${getISOWeek(new Date(y, mo-1, d))}`;
+  const weekKey = isoWeekKey(new Date(y, mo-1, d));
+  dayViewDate.innerHTML = `${WEEKDAY_ABBR[dow]}, ${d}. ${MONTH_NAMES[mo-1]} ${y} · KW ${getISOWeek(new Date(y, mo-1, d))} <span class="day-view-week-chip" id="dayViewWeekChip" title="Belastung dieser Woche"></span>`;
+  // Merkt sich, für welchen Tag diese Chip-Färbung eigentlich gedacht war -
+  // falls währenddessen (asynchroner Datenbrücken-Abruf) zu einem anderen
+  // Tag weitergeblättert wurde, wird die inzwischen veraltete Farbe NICHT
+  // mehr angewendet (sonst könnte ein zu spät ankommender Chip den falschen
+  // Tag einfärben).
+  dayView.dataset.currentIso = iso;
+  fetchWorkloadData().then(workloadData => {
+    if (dayView.dataset.currentIso !== iso) return;
+    const colors = computeBwColorsByWeek(currentSemesterId, workloadData);
+    const chip = document.getElementById('dayViewWeekChip');
+    if (chip && colors[weekKey]) { chip.style.background = colors[weekKey]; chip.style.display = 'inline-block'; }
+  });
 
   const today = new Date();
   const todayISO = isoDate(today.getFullYear(), today.getMonth(), today.getDate());

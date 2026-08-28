@@ -7,6 +7,25 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.24.0] - 2026-08-28
+
+### Changed
+- **Mini-Band auf max. 3 Wochen begrenzt** (aktuelle + 2 kommende) statt
+  des ganzen Semesters - bei der Bandgröße war ein voller Verlauf nicht
+  lesbar. Farbnormalisierung bleibt übers ganze Semester, nur die Anzeige
+  ist eingekürzt. Liegt "heute" vor Semesterbeginn, zeigt das Band die
+  ersten drei Semesterwochen.
+- **Eigener Blauton fürs Mini-Band** (`--heatband-bg`/`--heatband-tx`)
+  statt des app-weiten Lila-Akzents, eigenes Dark-Mode-Pendant. Betrifft
+  nur Rahmen/Beschriftung, die Balken selbst bleiben in der normalen
+  B_w-Farbskala.
+
+### Added
+- **🔥-Icon** im Mini-Band vor dem "Nächste Wochen"-Label.
+- **Wochen-Chip in der Tagesansicht**: kleiner farbiger Punkt nach der
+  KW-Angabe, zeigt die B_w-Farbe der angezeigten Woche. Asynchron
+  befüllt mit Schutz gegen schnelles Weiterblättern.
+
 ## [3.23.0] - 2026-08-28
 
 ### Changed
