@@ -128,7 +128,8 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   **Nachtrag (v3.7.1):** Dauer bei Terminen mit Uhrzeit wählbar
   (15 Min. bis 4 Std., Voreinstellung 1 Std.) statt fest auf 1 Std.
   – Auswahl blendet sich erst ein, sobald eine Uhrzeit gesetzt ist.
-- **Laufende Semester-Fortschrittsanzeige** – zeigt während des
+- **Laufende Semester-Fortschrittsanzeige** 🎯 **Priorität (28.08.2026,
+  bald angehen)** – zeigt während des
   Semesters die eigene Position im Verlauf, z. B. "Woche 6 von 16" oder
   ein kleiner Fortschrittsbalken. Anders als der bereits geplante
   Semester-Rückblick (der erscheint erst am Ende) wäre das eine laufende
@@ -171,13 +172,15 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   der Tagesansicht genutzt) – ließe sich für eine Erkennung "aktuell in
   den Ferien" wiederverwenden, z. B. ein reduzierter Monatsblick ohne
   leere Zellen oder ein Hinweistext statt des normalen Rasters.
-- **Tag/Woche als Bild teilen** – über die Web-Share-API den
+- **Tag/Woche als Bild teilen** 🎯 **Priorität (28.08.2026, bald
+  angehen)** – über die Web-Share-API den
   Tages-/Wochenplan als Bild verschicken. Technisch am ehesten über ein
   Canvas-Rendering des jeweiligen Ausschnitts lösbar (ähnlich wie beim
   Drucken, nur als Bilddatei statt PDF) und `navigator.share()` mit
   Datei-Anhang; auf Desktop ohne Share-API bräuchte es einen Fallback
   (z. B. Bild-Download).
-- **"Was hab ich verpasst?"** – kurze Zusammenfassung der Lücke, wenn man
+- **"Was hab ich verpasst?"** 🎯 **Priorität (28.08.2026, bald angehen)**
+  – kurze Zusammenfassung der Lücke, wenn man
   ein paar Tage nicht im Kalender war. Ließe sich über einen in
   `localStorage` gespeicherten Zeitstempel "zuletzt geöffnet" umsetzen:
   liegt er mehr als z. B. 2 Tage zurück, eine kompakte Übersicht der
@@ -715,7 +718,8 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
 - **Frei-Zeiten-Radar** – echte freie Blöcke automatisch erkennen und
   hervorheben ("3+ Stunden am Stück frei"), um Schichten/Arzttermine/
   Verabredungen um die Uni-Zeiten herum zu planen.
-- **Wochenübersicht als dritte Ansicht** – kompakte 7-Tage-Streifenansicht
+- **Wochenübersicht als dritte Ansicht** 🎯 **Priorität (28.08.2026,
+  bald angehen)** – kompakte 7-Tage-Streifenansicht
   zwischen Monat und Einzeltag.
   **Erneutes, verstärktes Interesse (28.08.2026):** Im Zuge der
   Belastungs-Heatmap-Arbeit als zunehmend sinnvoll empfunden – noch
@@ -732,7 +736,8 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   dem Modulverzeichnis als kleiner Indikator im Kalender mitspiegeln.
 - **"Nächstes Semester"-Assistent** – geführter Ablauf für
   SEMESTERS-Eintrag, Terminübernahme und Raumdaten beim Semesterwechsel.
-- **Wiederkehrende eigene Termine** – "wiederholt sich wöchentlich"-
+- **Wiederkehrende eigene Termine** 🎯 **Priorität (28.08.2026, bald
+  angehen)** – "wiederholt sich wöchentlich"-
   Option für private Fixpunkte statt Einzelanlage.
 
 ## 💭 Abstrakt — Vision, aber trotzdem nützlich
@@ -765,9 +770,9 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   bewusst nur relativ zum jeweils aktuellen Semester normalisiert
   (eigener Hinweistext in der Übersicht: "nicht zwischen Semestern
   vergleichbar") – ein Semestervergleich bliebe hier explizit offen.
-- **Vorlage für andere Studierende** – Anleitung, wie andere Studierende
-  sich diesen Kalender für ihre eigene Modul-/Parallelgruppen-Kombination
-  anpassen könnten.
+- **Vorlage für andere Studierende** ❌ **Verworfen (28.08.2026)** –
+  Anleitung, wie andere Studierende sich diesen Kalender für ihre eigene
+  Modul-/Parallelgruppen-Kombination anpassen könnten.
 
 ---
 
