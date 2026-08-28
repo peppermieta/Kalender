@@ -7,6 +7,23 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.25.0] - 2026-08-28
+
+### Changed
+- **Perzentil-basierte Farbnormalisierung statt reinem Min/Max**: neue
+  `computeBwNormalizedByWeek()`. Wochen mit 0 Std. (Ferien) werden immer
+  auf t=0 gesetzt; für die übrigen Wochen wird das 10./90. Perzentil
+  dieser aktiven Teilmenge als Bezugsrahmen genutzt statt Min/Max über
+  alle Wochen (inkl. Ferien). Grund: mit reinem Min/Max zogen leere
+  Ferienwochen das Minimum runter, wodurch echte Vorlesungswochen fast
+  alle in der oberen Skalenhälfte landeten und ähnlich rot wirkten. An
+  den echten Semesterdaten geprüft: Wochen mit t>0,5 sanken von 13 auf
+  10 von 27, die vollen Wochen spannen sich jetzt über ein deutlich
+  breiteres t-Intervall (0,39–1,0 statt 0,64–1,0).
+- Drei duplizierte Min/Max-Berechnungen (Belastungsübersicht, Mini-Band,
+  Wochenübersicht-Chip) auf die eine neue gemeinsame Funktion
+  konsolidiert.
+
 ## [3.24.1] - 2026-08-28
 
 ### Changed

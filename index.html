@@ -4742,26 +4742,58 @@ function bwColor(t){
 // die fertige Farbe pro Wochenschlüssel - von der Belastungsübersicht, dem
 // Mini-Band und den Farb-Chips in der Wochenübersicht gemeinsam genutzt,
 // damit alle drei garantiert dieselbe Skala zeigen.
-function computeBwColorsByWeek(semesterId, workloadData){
+// Perzentil einer bereits sortierten Zahlenliste (lineare Interpolation
+// zwischen den beiden nächstliegenden Rängen, gängige "linear"-Methode).
+function percentile(sortedValues, p){
+  if (!sortedValues.length) return 0;
+  const idx = (sortedValues.length - 1) * p;
+  const lo = Math.floor(idx), hi = Math.ceil(idx);
+  if (lo === hi) return sortedValues[lo];
+  return sortedValues[lo] + (sortedValues[hi] - sortedValues[lo]) * (idx - lo);
+}
+
+// Perzentil-basierte Normalisierung statt reinem Min/Max (Stand 28.08.2026,
+// nach Rückmeldung: mit reinem Min/Max zog eine komplett leere Ferienwoche
+// das Minimum runter, wodurch echte Vorlesungswochen alle in der oberen
+// Skalenhälfte landeten und ähnlich "rot" wirkten). Zwei Bausteine:
+// 1) Wochen mit 0 Std. sind eindeutig "ruhig" und werden IMMER auf t=0
+//    gesetzt, unabhängig vom Perzentil - kein Grund, hier zu differenzieren.
+// 2) Für die übrigen ("aktiven") Wochen wird das 10./90. Perzentil DIESER
+//    Teilmenge als Bezugsrahmen genutzt statt dem reinen Min/Max über ALLE
+//    Wochen - robuster gegen einzelne Ausreißer an beiden Enden, gibt der
+//    tatsächlich besetzten Wertespanne mehr Auflösung. Ohne diese Trennung
+//    läge das 10. Perzentil bei ca. 37 % Nullwochen ohnehin noch mitten im
+//    Nullcluster und würde nichts verbessern.
+// Liefert sowohl die 0..1-Werte (auch für Balkenhöhen nutzbar) als auch die
+// fertigen Farben - von Belastungsübersicht, Mini-Band, Wochenübersicht-
+// und Tagesansicht-Chip gemeinsam genutzt, damit alle vier garantiert
+// dieselbe Skala zeigen.
+function computeBwNormalizedByWeek(semesterId, workloadData){
   const bwList = computeBwByWeek(semesterId, workloadData);
-  const values = bwList.map(w => w.bw);
-  const min = Math.min(...values);
-  const max = Math.max(...values);
-  const range = max - min;
+  const active = bwList.map(w => w.bw).filter(v => v > 0).sort((a, b) => a - b);
+  const lo = percentile(active, 0.1);
+  const hi = percentile(active, 0.9);
+  const range = hi - lo;
+  const t = {};
+  bwList.forEach(w => {
+    if (w.bw <= 0) { t[w.key] = 0; return; }
+    t[w.key] = range > 0 ? Math.max(0, Math.min(1, (w.bw - lo) / range)) : 0.5;
+  });
+  return { bwList, t };
+}
+
+function computeBwColorsByWeek(semesterId, workloadData){
+  const { bwList, t } = computeBwNormalizedByWeek(semesterId, workloadData);
   const colors = {};
-  bwList.forEach(w => { colors[w.key] = bwColor(range > 0 ? (w.bw - min) / range : 0); });
+  bwList.forEach(w => { colors[w.key] = bwColor(t[w.key]); });
   return colors;
 }
 
 async function renderHeatmapView(){
   heatmapViewBody.innerHTML = `<div class="heatmap-hint">Wird geladen …</div>`;
   const workloadData = await fetchWorkloadData();
-  const bwList = computeBwByWeek(currentSemesterId, workloadData);
+  const { bwList, t: tByWeek } = computeBwNormalizedByWeek(currentSemesterId, workloadData);
   const paByWeek = countPruefungAbgabeByWeek(currentSemesterId);
-  const values = bwList.map(w => w.bw);
-  const min = Math.min(...values);
-  const max = Math.max(...values);
-  const range = max - min;
 
   // Balkenband (Option B) statt Rasterzellen: Höhe UND Farbe zeigen beide
   // B_w (doppelt kodiert, hilft auch bei Rot-Grün-Schwäche). Bei 27 Wochen
@@ -4769,7 +4801,7 @@ async function renderHeatmapView(){
   // horizontal scrollbar statt umzubrechen, damit das Band eine
   // durchgehende Zeitachse bleibt (der eigentliche Vorteil dieser Ansicht).
   const bars = bwList.map(w => {
-    const t = range > 0 ? (w.bw - min) / range : 0;
+    const t = tByWeek[w.key];
     const color = bwColor(t);
     const weekNum = w.key.split('-W')[1];
     const dateLabel = w.monday.toLocaleDateString('de-DE', {day:'numeric', month:'short'});
@@ -4855,18 +4887,15 @@ function selectUpcomingWeeks(bwList, count){
 
 function renderHeatBand(){
   const paint = (workloadData) => {
-    const bwList = computeBwByWeek(currentSemesterId, workloadData);
+    const { bwList, t: tByWeek } = computeBwNormalizedByWeek(currentSemesterId, workloadData);
     const upcoming = selectUpcomingWeeks(bwList, HEATBAND_WEEK_COUNT);
     if (!upcoming.length) { heatBand.style.display = 'none'; return; }
 
-    // Farbnormalisierung weiterhin übers GANZE Semester (dieselbe Skala wie
-    // Wochenübersicht/voller Screen) - sonst würde von den drei gezeigten
-    // Wochen immer eine "am rötesten" wirken, selbst wenn objektiv alle drei
-    // ruhig sind.
-    const values = bwList.map(w => w.bw);
-    const min = Math.min(...values), max = Math.max(...values), range = max - min;
+    // Dieselbe (jetzt perzentil-basierte) Normalisierung wie Wochenübersicht/
+    // voller Screen - sonst würde von den drei gezeigten Wochen immer eine
+    // "am rötesten" wirken, selbst wenn objektiv alle drei ruhig sind.
     const bars = upcoming.map(w => {
-      const t = range > 0 ? (w.bw - min) / range : 0;
+      const t = tByWeek[w.key];
       const weekNum = w.key.split('-W')[1];
       return `<div class="heatband-bar" style="height:${8 + t * 92}%;background:${bwColor(t)}" title="KW ${weekNum}"></div>`;
     }).join('');

@@ -528,6 +528,31 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   Bedeutung der Farben spürbar verändern und ist bewusst noch nicht
   umgesetzt, sondern nur als Option hier vermerkt.
 
+  **Perzentil-basierte Normalisierung umgesetzt (v3.25.0).** Ersetzt das
+  reine Min/Max aus der obigen Einschätzung. Zwei Bausteine in der neuen
+  `computeBwNormalizedByWeek()`:
+  - Wochen mit 0 Std. (Ferien) werden IMMER auf t=0 gesetzt, unabhängig
+    vom Perzentil - eindeutig "ruhig", keine Differenzierung nötig.
+  - Für die übrigen ("aktiven") Wochen wird das 10./90. Perzentil DIESER
+    Teilmenge als Bezugsrahmen genutzt (`percentile()`, lineare
+    Interpolation) statt dem Min/Max über ALLE Wochen. Ohne die
+    Trennung von Baustein 1 hätte das 10. Perzentil bei ~37 % Nullwochen
+    ohnehin noch mitten im Nullcluster gelegen und nichts verbessert.
+
+  Nebenbei drei duplizierte Min/Max-Berechnungen (Belastungsübersicht,
+  Mini-Band, Wochenübersicht-Chip) auf diese eine gemeinsame Funktion
+  konsolidiert - vorher hatte jede Stelle ihre eigene Kopie der
+  Normalisierungslogik.
+
+  Konkrete Wirkung an den echten Semesterdaten geprüft: Wochen mit
+  t > 0,5 sanken von 13 auf 10 von 27, die tatsächlich vollen Wochen
+  (57–90 Std.) spannen sich jetzt über t=0,39–1,0 statt vorher
+  t=0,64–1,0 – deutlich mehr Auflösung in genau dem Bereich, wo sich die
+  Wochen ballen. Randfälle abgesichert: komplett leeres Semester liefert
+  `lo=hi=0` ohne Fehler, genau eine aktive Woche ergibt `t=0,5` statt
+  `NaN` (Division durch 0 abgefangen). Visuell bestätigt: deutlich mehr
+  grüne Verschnaufpausen zwischen den intensiven Wochen statt eines
+  durchgehenden Orange-Rot-Blocks Okt–Jan. Dark Mode geprüft.
   **Damit ist die ursprüngliche 9-Etappen-Liste vollständig abgearbeitet.**
   Offen bleibt nur noch Etappe 8 (Praxissemester, absichtlich
   zurückgestellt bis Semester 5 näherrückt) sowie alles, was sich aus der
