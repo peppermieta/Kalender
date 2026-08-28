@@ -739,6 +739,30 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
 - **Wiederkehrende eigene Termine** 🎯 **Priorität (28.08.2026, bald
   angehen)** – "wiederholt sich wöchentlich"-
   Option für private Fixpunkte statt Einzelanlage.
+  **✅ Umgesetzt (v3.26.0):** Checkbox im bestehenden "Eigenen Termin
+  hinzufügen"-Formular, bewusst simpel gehalten – keine neue
+  Datenstruktur, beim Speichern werden einfach mehrere normale
+  `personalEvent:`-Einträge (einer pro Woche bis Semesterende) mit
+  gemeinsamer `seriesId` angelegt statt eines "virtuellen" Wiederholungs-
+  Mechanismus. Jedes Vorkommen bleibt dadurch ein ganz normaler, für sich
+  eigenständiger Termin – kein Sonderfall an anderer Stelle im Code
+  nötig. Löschen fragt bei Serienterminen zusätzlich nach: "diesen und
+  alle künftigen" oder "nur diesen einen" (zwei verkettete
+  Bestätigungsdialoge, vergangene Vorkommen bleiben bei Serienlöschung
+  immer erhalten).
+  **Bug beim Testen gefunden und behoben:** das Löschen "ab Datum X"
+  nutzte zunächst eine rückwärtslaufende Index-Schleife direkt über
+  `localStorage`, die währenddessen Einträge entfernte – dabei wurde
+  nachweislich vereinzelt ein Eintrag übersprungen (Index-Verschiebung
+  während der Iteration ist bei `localStorage` nicht robust genug, auch
+  rückwärts nicht). Behoben durch sauberes Trennen: erst alle zu
+  löschenden Schlüssel sammeln, danach erst entfernen.
+  Getestet: 26 Wochentermine korrekt bis Semesterende erzeugt (alle am
+  richtigen Wochentag), "Serie ab Datum X löschen" entfernt exakt die
+  richtige Teilmenge (mit dem oben beschriebenen Bugfix verifiziert),
+  "nur diesen einen löschen" lässt den Rest der Serie unangetastet,
+  einmalige (nicht wiederkehrende) Termine funktionieren unverändert wie
+  zuvor (Regression geprüft).
 
 ## 💭 Abstrakt — Vision, aber trotzdem nützlich
 

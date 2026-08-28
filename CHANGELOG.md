@@ -7,6 +7,27 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.26.0] - 2026-08-28
+
+### Added
+- **Wiederkehrende eigene Termine**: neue Checkbox "Wiederholt sich
+  wöchentlich (bis Semesterende)" im "Eigenen Termin hinzufügen"-
+  Formular. Legt beim Speichern mehrere normale `personalEvent:`-
+  Einträge an (einer pro Woche, gemeinsame `seriesId`) statt eines
+  neuen Wiederholungs-Mechanismus - jedes Vorkommen bleibt ein
+  eigenständiger Termin, kein Sonderfall im restlichen Code nötig.
+  Löschen fragt bei Serienterminen zusätzlich: "diesen und alle
+  künftigen" oder "nur diesen einen" (vergangene Vorkommen bleiben bei
+  Serienlöschung immer erhalten).
+
+### Fixed
+- **Datenverlust-Bug beim Serien-Löschen behoben** (nie live gewesen):
+  `deleteFutureSeriesEvents()` entfernte ursprünglich Einträge direkt
+  während einer rückwärtslaufenden Index-Schleife über `localStorage` -
+  dabei wurde beim Testen nachweislich vereinzelt ein Eintrag
+  übersprungen. Behoben durch zweistufiges Vorgehen: erst alle zu
+  löschenden Schlüssel sammeln, danach erst entfernen.
+
 ## [3.25.1] - 2026-08-28
 
 ### Changed

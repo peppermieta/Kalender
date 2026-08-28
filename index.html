@@ -837,6 +837,11 @@
   .day-add-time-row input[type="time"] { max-width: 140px; }
   .day-add-time-row select { max-width: 110px; cursor: pointer; }
   .day-add-form-hint { font-size: 11.5px; color: var(--muted); margin-top: -4px; }
+  .day-add-recurring-label {
+    display: flex; align-items: center; gap: 6px; font-size: 12.5px;
+    color: var(--text); cursor: pointer; user-select: none;
+  }
+  .day-add-recurring-label input { cursor: pointer; }
   .day-add-form-actions { display: flex; gap: 8px; }
   .day-add-form-actions button {
     font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
@@ -3869,7 +3874,7 @@ function getPersonalEvents(){
         date: data.date, start: data.start || null, end: data.end || null,
         modul: 'EIGEN', lvnr: null, pg: null, title: data.title,
         lehrperson: null, type: 'eigen', raum: null,
-        _personalKey: key,
+        _personalKey: key, seriesId: data.seriesId || null,
       });
     } catch(e) { /* defekter/fremder Eintrag unter diesem Präfix, überspringen */ }
   }
@@ -4594,6 +4599,27 @@ function renderEffortScale(ev){
     : 'Gilt nur für diesen Termin.';
 }
 
+// Löscht alle Serientermine ab (inklusive) dem angegebenen Datum - für
+// "diesen und alle künftigen Termine löschen". Vergangene Vorkommen
+// derselben Serie bleiben bewusst erhalten (kein rückwirkendes Löschen).
+// Sammelt die zu löschenden Schlüssel erst vollständig in einem Array,
+// BEVOR irgendetwas entfernt wird - direktes Löschen mitten in der
+// Index-basierten localStorage-Iteration (auch rückwärts) hat beim Testen
+// nachweislich vereinzelt Einträge übersprungen (localStorage.key(i)-
+// Reihenfolge ist nicht robust gegenüber Mutation während der Iteration).
+function deleteFutureSeriesEvents(seriesId, fromDate){
+  const keysToDelete = [];
+  for (let i = 0; i < localStorage.length; i++){
+    const key = localStorage.key(i);
+    if (!key || !key.startsWith('personalEvent:')) continue;
+    try {
+      const data = JSON.parse(localStorage.getItem(key));
+      if (data.seriesId === seriesId && data.date >= fromDate) keysToDelete.push(key);
+    } catch(e) { /* defekter Eintrag, ignorieren */ }
+  }
+  keysToDelete.forEach(key => localStorage.removeItem(key));
+}
+
 function openModal(ev){
   const m = MODS[ev.modul];
   const isPersonal = ev.type === 'eigen';
@@ -4657,9 +4683,20 @@ function openModal(ev){
   const deleteBtn = document.getElementById('modalDeletePersonal');
   if (isPersonal) {
     deleteBtn.style.display = 'block';
+    deleteBtn.textContent = ev.seriesId ? '🗑️ Termin/Serie löschen' : '🗑️ Eigenen Termin löschen';
     deleteBtn.onclick = () => {
-      if (!confirm(`"${ev.title}" wirklich löschen?`)) return;
-      localStorage.removeItem(ev._personalKey);
+      if (ev.seriesId) {
+        const deleteWholeSeries = confirm(`"${ev.title}" gehört zu einer wöchentlichen Serie.\n\nOK: diesen und alle künftigen Termine der Serie löschen.\nAbbrechen: nur diesen einen Termin löschen (nach Rückfrage).`);
+        if (deleteWholeSeries) {
+          deleteFutureSeriesEvents(ev.seriesId, ev.date);
+        } else {
+          if (!confirm(`Nur diesen einzelnen Termin am ${ev.date} löschen?`)) return;
+          localStorage.removeItem(ev._personalKey);
+        }
+      } else {
+        if (!confirm(`"${ev.title}" wirklich löschen?`)) return;
+        localStorage.removeItem(ev._personalKey);
+      }
       scheduleGistPush();
       closeModal();
       loadPersonalEventsIntoSemesters();
@@ -5207,6 +5244,10 @@ function renderDayView(iso, {pushHistory=true} = {}){
         </select>
       </div>
       <div class="day-add-form-hint">Uhrzeit optional – ohne Angabe erscheint der Termin als ganztägig.</div>
+      <label class="day-add-recurring-label">
+        <input type="checkbox" id="dayAddRecurring" />
+        Wiederholt sich wöchentlich (bis Semesterende)
+      </label>
       <div class="day-add-form-actions">
         <button type="button" id="dayAddSave">Speichern</button>
         <button type="button" id="dayAddCancel">Abbrechen</button>
@@ -5281,18 +5322,47 @@ function addMinutes(hhmm, minutes){
   return `${String(Math.floor(total / 60)).padStart(2,'0')}:${String(total % 60).padStart(2,'0')}`;
 }
 
+// Alle Montags-artigen Wochentermine (gleicher Wochentag wie startIso) im
+// wöchentlichen Abstand bis einschließlich endIso. Genutzt für "wiederholt
+// sich wöchentlich" bei eigenen Terminen.
+function weeklyDatesUntil(startIso, endIso){
+  const dates = [];
+  const cursor = new Date(startIso + 'T00:00:00');
+  const end = new Date(endIso + 'T00:00:00');
+  while (cursor <= end) {
+    dates.push(isoDate(cursor.getFullYear(), cursor.getMonth(), cursor.getDate()));
+    cursor.setDate(cursor.getDate() + 7);
+  }
+  return dates;
+}
+
 function savePersonalEvent(iso){
   const titleEl = document.getElementById('dayAddTitle');
   const timeEl = document.getElementById('dayAddTime');
   const durationEl = document.getElementById('dayAddDuration');
+  const recurEl = document.getElementById('dayAddRecurring');
   const title = titleEl.value.trim();
   if (!title) { titleEl.focus(); return; }
   const start = timeEl.value || null;
-  const duration = start ? parseInt(durationEl.value, 10) : null;
-  const id = (crypto.randomUUID ? crypto.randomUUID() : `p${Date.now()}${Math.random().toString(16).slice(2)}`);
-  localStorage.setItem(`personalEvent:${id}`, JSON.stringify({
-    date: iso, start, end: start ? addMinutes(start, duration) : null, title,
-  }));
+  const end = start ? addMinutes(start, parseInt(durationEl.value, 10)) : null;
+
+  // Wiederkehrend: dieselben Termindaten (Titel/Uhrzeit) einmal pro Woche
+  // bis Semesterende anlegen, alle mit derselben seriesId verknüpft - sonst
+  // exakt derselbe Einzeltermin-Mechanismus wie bisher, keine neue
+  // Datenstruktur nötig. Kein Semester gefunden (sollte nicht vorkommen) ->
+  // sicherheitshalber wie ein einmaliger Termin behandeln.
+  const sem = SEMESTERS.find(s => s.id === currentSemesterId);
+  const isRecurring = recurEl.checked && sem;
+  const dates = isRecurring ? weeklyDatesUntil(iso, sem.end) : [iso];
+  const seriesId = isRecurring ? (crypto.randomUUID ? crypto.randomUUID() : `s${Date.now()}${Math.random().toString(16).slice(2)}`) : null;
+
+  dates.forEach(date => {
+    const id = (crypto.randomUUID ? crypto.randomUUID() : `p${Date.now()}${Math.random().toString(16).slice(2)}`);
+    const payload = { date, start, end, title };
+    if (seriesId) payload.seriesId = seriesId;
+    localStorage.setItem(`personalEvent:${id}`, JSON.stringify(payload));
+  });
+
   scheduleGistPush();
   loadPersonalEventsIntoSemesters();
   loadSemester(currentSemesterId, {resetMonth:false});
