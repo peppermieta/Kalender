@@ -430,6 +430,43 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   Monatswechsel läuft, zählt zum Monat ihres Montags (dieselbe
   Konvention wie überall sonst in der Heatmap/Wochenübersicht).
 
+  **Darstellung auf Balkenband umgestellt + zwei weitere Integrations-
+  ebenen ergänzt (v3.23.0).** Nach weiterem Feedback: Rasterzellen durch
+  ein Balkenband ersetzt (Höhe UND Farbe zeigen B_w, doppelt kodiert -
+  hilft auch bei Rot-Grün-Sehschwäche), horizontal scrollbar auf
+  schmalen Bildschirmen statt umzubrechen, damit das Band eine
+  durchgehende Zeitachse bleibt (der eigentliche Vorteil dieser Form
+  gegenüber dem Raster). **Prüfungs-/Abgabemarker als Icon (📝/📤)
+  oberhalb der Balken statt Farbe** – sonst wäre eine intensive UND eine
+  Prüfungswoche beide "rot" und nicht mehr unterscheidbar gewesen
+  (dasselbe Problem, das schon beim Monatsraster-Chip mit Symbol statt
+  Farbe gelöst wurde).
+
+  Neue, geteilte Funktion `computeBwColorsByWeek()` (Normalisierung +
+  Farbe in einem Schritt) sorgt dafür, dass alle drei folgenden Stellen
+  garantiert dieselbe Skala zeigen:
+  - **Voller Screen** (`renderHeatmapView()`, umgebaut auf Balken)
+  - **Mini-Band im Kalender** (`renderHeatBand()`, neues `#heatBand`
+    zwischen "Nächste Veranstaltung" und Suchleiste): komprimiertes
+    ganzes Semester, bewusst ohne Beschriftung (reine Formensprache),
+    Antippen öffnet den vollen Screen. Rendert sofort mit K_w+P_w,
+    ergänzt S_w asynchron nach (gleiches Muster wie die
+    Wochenübersicht). Damit ist die Belastungsübersicht nicht mehr nur
+    im Verwalten-Menü versteckt, sondern ständig sichtbar.
+  - **Farb-Chip in der Wochenübersicht** (`renderWeekOverviewRow()`
+    erweitert): kleines farbiges Quadrat vor jeder Wochenzeile, gleiche
+    Farblogik, gleiche zweistufige asynchrone Befüllung (erst nur
+    K_w+P_w, dann komplett mit S_w).
+
+  Getestet: komplette Kette Mini-Band-Klick → voller Screen → Balken-
+  Klick → richtige Tagesansicht, Prüfungs-/Abgabemarker unabhängig von
+  der Balkenfarbe erkennbar (synthetischer Testfall, da der echte
+  Datensatz aktuell keine Prüfungen enthält), horizontales Scrollen auf
+  Mobile (nicht alle 27 Wochen passen bei 420px) vs. vollständige
+  Anzeige ohne Scrollen auf Desktop, alle drei Stellen zeigen
+  konsistente Farben, bestehende K_w-Regression erneut ohne Abweichung
+  geprüft. Dark Mode/Mobile geprüft.
+
   **Damit ist die ursprüngliche 9-Etappen-Liste vollständig abgearbeitet.**
   Offen bleibt nur noch Etappe 8 (Praxissemester, absichtlich
   zurückgestellt bis Semester 5 näherrückt) sowie alles, was sich aus der

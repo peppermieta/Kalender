@@ -7,6 +7,26 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.23.0] - 2026-08-28
+
+### Changed
+- **Belastungsübersicht auf Balkenband umgestellt**: Rasterzellen durch
+  ein Balkenband ersetzt, Höhe und Farbe zeigen B_w gemeinsam (doppelt
+  kodiert). Horizontal scrollbar auf schmalen Bildschirmen statt
+  umzubrechen - bleibt dadurch eine durchgehende Zeitachse.
+- **Prüfungs-/Abgabemarker (📝/📤)** oberhalb betroffener Balken statt
+  Farbe - vermeidet Kollision mit dem Rot-Ende der B_w-Farbskala.
+
+### Added
+- **Mini-Band im Kalender** (`#heatBand`, zwischen "Nächste
+  Veranstaltung" und Suchleiste): komprimiertes ganzes Semester, immer
+  sichtbar, Antippen öffnet die volle Belastungsübersicht. Damit nicht
+  mehr nur im Verwalten-Menü versteckt.
+- **Farb-Chip in der Wochenübersicht**: kleines farbiges Quadrat vor
+  jeder Wochenzeile, gleiche Farblogik wie Mini-Band und voller Screen.
+- Neue geteilte Funktion `computeBwColorsByWeek()` sorgt dafür, dass
+  alle drei Stellen garantiert dieselbe Skala zeigen.
+
 ## [3.22.1] - 2026-08-27
 
 ### Changed

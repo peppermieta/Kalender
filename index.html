@@ -304,8 +304,11 @@
   .week-overview-block { border-bottom: 1px solid var(--border); padding: 5px 0; }
   .week-overview-block:last-child { border-bottom: none; }
   .week-overview-row {
-    display: flex; justify-content: space-between; gap: 10px;
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
     font-size: 12.5px;
+  }
+  .week-overview-chip, .week-overview-chip-placeholder {
+    width: 11px; height: 11px; border-radius: 4px; flex-shrink: 0;
   }
   .week-overview-row .mono {
     font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: var(--muted);
@@ -727,20 +730,48 @@
     background: linear-gradient(to right, rgb(46,139,87), rgb(196,138,0), rgb(196,26,80));
   }
   .heatmap-hint { font-size: 11px; color: var(--muted); margin-bottom: 16px; line-height: 1.4; }
-  .heatmap-month-group { margin-bottom: 16px; }
-  .heatmap-month-label {
-    font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 7px;
-    letter-spacing: -.1px;
+
+  /* Balkenband (Option B) statt Rasterzellen - Höhe UND Farbe zeigen B_w,
+     Prüfungs-/Abgabemarker als Icon statt Farbe (Kollision mit dem
+     Rot-Ende der B_w-Skala vermeiden). */
+  .heatmap-ribbon-scroll { overflow-x: auto; padding-bottom: 4px; }
+  .heatmap-ribbon {
+    display: flex; align-items: flex-end; gap: 3px; height: 160px;
+    min-width: min-content; padding-top: 22px; border-bottom: 1px solid var(--border);
   }
-  .heatmap-grid { display: flex; flex-wrap: wrap; gap: 6px; }
-  .heatmap-cell {
-    width: 46px; height: 42px; border-radius: 9px; border: none; cursor: pointer;
-    color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 700;
-    display: flex; align-items: center; justify-content: center;
-    transition: transform .1s; padding: 0;
+  .heatmap-bar-col {
+    flex: 1; min-width: 16px; height: 100%; position: relative;
+    display: flex; align-items: flex-end; background: none; border: none;
+    cursor: pointer; padding: 0;
   }
-  .heatmap-cell:hover { transform: scale(1.08); }
-  .heatmap-cell:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .heatmap-bar { display: block; width: 100%; border-radius: 4px 4px 0 0; transition: filter .1s; }
+  .heatmap-bar-col:hover .heatmap-bar { filter: brightness(1.08); }
+  .heatmap-bar-col:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .heatmap-bar-marker {
+    position: absolute; top: -19px; left: 50%; transform: translateX(-50%); font-size: 11px;
+  }
+  .heatmap-ticks { display: flex; gap: 3px; margin-top: 6px; min-width: min-content; }
+  .heatmap-tick {
+    flex: 1; min-width: 16px; text-align: center; font-size: 10px; color: var(--muted);
+    white-space: nowrap;
+  }
+
+  /* Mini-Band oben im Kalender (komprimiertes Semester, ersetzt/ergänzt
+     die Nächste-Veranstaltung-Leiste) */
+  .heatband {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 14px; background: var(--accent-soft-bg);
+    border-bottom: 1px solid var(--border); cursor: pointer;
+  }
+  .heatband-label {
+    font-size: 11.5px; color: var(--accent); white-space: nowrap; flex-shrink: 0; font-weight: 600;
+  }
+  .heatband-ribbon { display: flex; align-items: flex-end; gap: 2px; height: 18px; flex: 1; }
+  .heatband-bar { flex: 1; min-width: 2px; border-radius: 2px 2px 0 0; }
+  .heatband-arrow { color: var(--accent); flex-shrink: 0; font-size: 13px; }
+  @media (max-width: 700px) {
+    .heatband-label { display: none; } /* auf Mobile reicht das Band selbst, spart Platz wie next-up-label */
+  }
 
   /* Live-Fokus-Status, nur wenn der angezeigte Tag "heute" ist */
   .day-focus {
@@ -1020,6 +1051,9 @@
 
 <!-- NÄCHSTE VERANSTALTUNG -->
 <div class="next-up" id="nextUp"></div>
+
+<!-- BELASTUNGS-MINI-BAND (komprimiertes Semester, springt zur Belastungsübersicht) -->
+<div class="heatband" id="heatBand" style="display:none;"></div>
 
 <!-- SUCHE -->
 <div class="toolbar">
@@ -3932,6 +3966,7 @@ function loadSemester(id, {resetMonth=true} = {}){
   renderLegend();
   renderMonth(currentMonthIdx);
   renderNextUp();
+  renderHeatBand();
   fachsemesterLabel.textContent = `${sem.fachsemester}. Fachsemester`;
   if(semesterSelect.value !== sem.id) semesterSelect.value = sem.id;
 }
@@ -4682,59 +4717,80 @@ function bwColor(t){
   return `rgb(${r},${g},${bch})`;
 }
 
+// Normalisiert B_w-Werte relativ zum Semester (Min-Max) und liefert direkt
+// die fertige Farbe pro Wochenschlüssel - von der Belastungsübersicht, dem
+// Mini-Band und den Farb-Chips in der Wochenübersicht gemeinsam genutzt,
+// damit alle drei garantiert dieselbe Skala zeigen.
+function computeBwColorsByWeek(semesterId, workloadData){
+  const bwList = computeBwByWeek(semesterId, workloadData);
+  const values = bwList.map(w => w.bw);
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const range = max - min;
+  const colors = {};
+  bwList.forEach(w => { colors[w.key] = bwColor(range > 0 ? (w.bw - min) / range : 0); });
+  return colors;
+}
+
 async function renderHeatmapView(){
   heatmapViewBody.innerHTML = `<div class="heatmap-hint">Wird geladen …</div>`;
   const workloadData = await fetchWorkloadData();
   const bwList = computeBwByWeek(currentSemesterId, workloadData);
+  const paByWeek = countPruefungAbgabeByWeek(currentSemesterId);
   const values = bwList.map(w => w.bw);
   const min = Math.min(...values);
   const max = Math.max(...values);
   const range = max - min;
 
-  // Nach Monat des jeweiligen Wochenmontags gruppiert statt einer
-  // undifferenzierten Zahlenreihe - macht den zeitlichen Verlauf auf einen
-  // Blick erkennbar. Eine Woche, die über einen Monatswechsel läuft, zählt
-  // bewusst zum Monat ihres Montags (dieselbe Konvention wie das Datum in
-  // der Wochenübersicht/im Tooltip: "ab [Montag]").
-  const groups = [];
-  let currentGroup = null;
-  bwList.forEach(w => {
-    const monthKey = `${w.monday.getFullYear()}-${w.monday.getMonth()}`;
-    if (!currentGroup || currentGroup.monthKey !== monthKey) {
-      currentGroup = { monthKey, label: `${MONTH_NAMES[w.monday.getMonth()]} ${w.monday.getFullYear()}`, weeks: [] };
-      groups.push(currentGroup);
-    }
-    currentGroup.weeks.push(w);
-  });
+  // Balkenband (Option B) statt Rasterzellen: Höhe UND Farbe zeigen beide
+  // B_w (doppelt kodiert, hilft auch bei Rot-Grün-Schwäche). Bei 27 Wochen
+  // reicht die Breite auf dem Handy nicht für eine feste Zeile - bewusst
+  // horizontal scrollbar statt umzubrechen, damit das Band eine
+  // durchgehende Zeitachse bleibt (der eigentliche Vorteil dieser Ansicht).
+  const bars = bwList.map(w => {
+    const t = range > 0 ? (w.bw - min) / range : 0;
+    const color = bwColor(t);
+    const weekNum = w.key.split('-W')[1];
+    const dateLabel = w.monday.toLocaleDateString('de-DE', {day:'numeric', month:'short'});
+    const mondayIso = isoDate(w.monday.getFullYear(), w.monday.getMonth(), w.monday.getDate());
+    // Prüfungs-/Abgabemarker als Icon statt Farbe: eine intensive Woche UND
+    // eine Prüfungswoche würden sonst beide "rot" konkurrieren und nicht
+    // mehr unterscheidbar sein (gleiches Problem wie beim Monatsraster-Chip
+    // gelöst - Symbol statt Farbcode).
+    const items = paByWeek[w.key] || [];
+    let marker = '';
+    if (items.some(i => i.type === 'pruefung')) marker = '<span class="heatmap-bar-marker" aria-hidden="true">📝</span>';
+    else if (items.some(i => i.type === 'abgabe')) marker = '<span class="heatmap-bar-marker" aria-hidden="true">📤</span>';
+    const barHeightPct = 8 + t * 92; // Mindesthöhe, damit auch ruhigste Wochen als Balken sichtbar bleiben
+    return `<button type="button" class="heatmap-bar-col" data-monday="${mondayIso}" title="KW ${weekNum} · ab ${dateLabel} · B_w ≈ ${w.bw.toFixed(1)} Std.">${marker}<span class="heatmap-bar" style="height:${barHeightPct}%;background:${color}"></span></button>`;
+  }).join('');
 
-  const groupsHtml = groups.map(group => {
-    const cells = group.weeks.map(w => {
-      const t = range > 0 ? (w.bw - min) / range : 0;
-      const color = bwColor(t);
-      const weekNum = w.key.split('-W')[1];
-      const dateLabel = w.monday.toLocaleDateString('de-DE', {day:'numeric', month:'short'});
-      const monday = w.monday;
-      const mondayIso = isoDate(monday.getFullYear(), monday.getMonth(), monday.getDate());
-      // "W" vorangestellt statt nur der Zahl - macht auch ohne Tooltip auf
-      // den ersten Blick klar, dass es sich um Wochen handelt.
-      return `<button type="button" class="heatmap-cell" style="background:${color}" title="KW ${weekNum} · ab ${dateLabel} · B_w ≈ ${w.bw.toFixed(1)} Std." data-monday="${mondayIso}">W${weekNum}</button>`;
-    }).join('');
-    return `<div class="heatmap-month-group"><div class="heatmap-month-label">${group.label}</div><div class="heatmap-grid">${cells}</div></div>`;
+  // Monatsticks unter dem Band, ein Label pro Monatswechsel, sonst leer -
+  // dieselbe Spaltenbreite wie die Balken darüber sorgt für Ausrichtung.
+  let lastMonth = '';
+  const ticks = bwList.map(w => {
+    const monthKey = `${w.monday.getFullYear()}-${w.monday.getMonth()}`;
+    let label = '';
+    if (monthKey !== lastMonth) { label = MONTH_NAMES_SHORT[w.monday.getMonth()]; lastMonth = monthKey; }
+    return `<div class="heatmap-tick">${label}</div>`;
   }).join('');
 
   const statusNote = workloadData ? '' : `<div class="heatmap-hint">Selbststudium-Daten aktuell nicht erreichbar – Farben basieren nur auf Kontaktzeit und Prüfungen/Abgaben.</div>`;
 
   heatmapViewBody.innerHTML = `
     <div class="heatmap-legend"><span>Ruhig</span><div class="heatmap-legend-gradient"></div><span>Intensiv</span></div>
-    <div class="heatmap-hint">Farbe relativ zu diesem Semester, nicht zwischen Semestern vergleichbar. Kombiniert
-    Kontaktzeit, geschätztes Selbststudium und Prüfungen/Abgaben, gewichtet mit deiner Aufwandsbewertung.
-    Jedes Feld ist eine Kalenderwoche, gruppiert nach Monat. Antippen springt zur jeweiligen Woche.</div>
+    <div class="heatmap-hint">Höhe und Farbe zeigen die Belastung relativ zu diesem Semester (Kontaktzeit,
+    geschätztes Selbststudium, Prüfungen/Abgaben, gewichtet mit deiner Aufwandsbewertung). 📝/📤 markieren
+    Prüfungs-/Abgabewochen unabhängig von der Farbe. Antippen springt zur jeweiligen Woche.</div>
     ${statusNote}
-    ${groupsHtml}
+    <div class="heatmap-ribbon-scroll">
+      <div class="heatmap-ribbon">${bars}</div>
+      <div class="heatmap-ticks">${ticks}</div>
+    </div>
   `;
 
-  heatmapViewBody.querySelectorAll('.heatmap-cell').forEach(cell => {
-    cell.addEventListener('click', () => {
+  heatmapViewBody.querySelectorAll('.heatmap-bar-col').forEach(col => {
+    col.addEventListener('click', () => {
       // Bewusst OHNE den history.back()-Umweg über closeHeatmapView(): der
       // würde asynchron feuern und mit dem sofortigen history.pushState()
       // aus openDayView() eine Race Condition erzeugen (erste Version hatte
@@ -4744,11 +4800,42 @@ async function renderHeatmapView(){
       // neuen History-Eintrag für die Tagesansicht pushen. Bewusste
       // Vereinfachung: ein Zurück-Tap aus der Tagesansicht landet wieder
       // beim normalen Kalender, nicht extra bei der Heatmap.
-      const iso = cell.dataset.monday;
+      const iso = col.dataset.monday;
       closeHeatmapView({pushHistory:false});
       openDayView(iso);
     });
   });
+}
+
+// ─── BELASTUNGS-MINI-BAND (komprimiertes Semester, oben im Kalender) ──────
+// Ersetzt/ergänzt die Nächste-Veranstaltung-Leiste: anders als die
+// Wochenübersicht/Belastungsübersicht bewusst OHNE Beschriftung, reine
+// Formensprache (Höhe+Farbe) - die Details gibt's per Tap auf dem vollen
+// Screen. Rendert sofort mit K_w+P_w, ergänzt S_w asynchron nach (gleiches
+// Muster wie buildWeekOverview()).
+const heatBand = document.getElementById('heatBand');
+function renderHeatBand(){
+  const bwListRaw = computeBwByWeek(currentSemesterId, null);
+  if (!bwListRaw.length) { heatBand.style.display = 'none'; return; }
+  heatBand.style.display = 'flex';
+  heatBand.onclick = () => openHeatmapView();
+
+  const paint = (workloadData) => {
+    const bwList = computeBwByWeek(currentSemesterId, workloadData);
+    const values = bwList.map(w => w.bw);
+    const min = Math.min(...values), max = Math.max(...values), range = max - min;
+    const bars = bwList.map(w => {
+      const t = range > 0 ? (w.bw - min) / range : 0;
+      return `<div class="heatband-bar" style="height:${8 + t * 92}%;background:${bwColor(t)}"></div>`;
+    }).join('');
+    heatBand.innerHTML = `
+      <span class="heatband-label">Belastung</span>
+      <div class="heatband-ribbon">${bars}</div>
+      <span class="heatband-arrow" aria-hidden="true">›</span>`;
+  };
+
+  paint(null);
+  fetchWorkloadData().then(workloadData => { if (workloadData) paint(workloadData); });
 }
 
 // ─── NOTIZEN ÜBERTRAGEN (manueller Export/Import zwischen Geräten) ──────────
@@ -5462,11 +5549,17 @@ let weekOverviewBuilt = false;
 // selfStudyByWeek === null bedeutet "noch nicht geladen" (S_w-Zeile fehlt
 // einfach, kein Platzhalter) - undefined/leeres Objekt bedeutet "geladen,
 // aber keine Daten für diese Woche".
-function renderWeekOverviewRow(w, paByWeek, todayKey, selfStudyByWeek){
+function renderWeekOverviewRow(w, paByWeek, todayKey, selfStudyByWeek, chipColor){
   const dateLabel = w.monday.toLocaleDateString('de-DE', {day:'numeric', month:'short'});
   const hoursLabel = w.hours > 0 ? `${w.hours.toFixed(2).replace('.', ',')} Std.` : '–';
   const isCurrent = w.key === todayKey ? ' current-week' : '';
-  const weekRow = `<span class="mono">${w.key}</span><span>ab ${dateLabel}</span><span>${hoursLabel}</span>`;
+  // Derselbe Farbmaßstab wie die Belastungsübersicht/das Mini-Band
+  // (computeBwColorsByWeek()) - Platzhalter statt Chip, solange B_w noch
+  // nicht berechnet ist, damit die Zeile nicht "springt".
+  const chip = chipColor
+    ? `<span class="week-overview-chip" style="background:${chipColor}" title="Belastung dieser Woche"></span>`
+    : `<span class="week-overview-chip-placeholder"></span>`;
+  const weekRow = `${chip}<span class="mono">${w.key}</span><span>ab ${dateLabel}</span><span>${hoursLabel}</span>`;
 
   const items = paByWeek[w.key] || [];
   let paLine = '';
@@ -5497,10 +5590,16 @@ function buildWeekOverview(){
   const paByWeek = countPruefungAbgabeByWeek(currentSemesterId);
   const todayKey = isoWeekKey(new Date());
 
+  // Erste Farbeinschätzung sofort aus K_w+P_w (S_w fehlt noch, workloadData
+  // null) - dieselbe Funktion wie Mini-Band/Belastungsübersicht, damit alle
+  // drei garantiert dieselbe Skala zeigen. Wird nach dem Datenbrücken-Abruf
+  // durch die vollständige, S_w-berücksichtigende Farbe ersetzt.
+  let bwColors = computeBwColorsByWeek(currentSemesterId, null);
+
   // Sofort rendern mit K_w+P_w (keine Netzwerk-Abhängigkeit) - S_w kommt
   // asynchron nach und wird nachträglich in dieselben Zeilen eingefügt,
   // statt die ganze Übersicht auf den Datenbrücken-Abruf warten zu lassen.
-  const rows = weeks.map(w => renderWeekOverviewRow(w, paByWeek, todayKey, null)).join('');
+  const rows = weeks.map(w => renderWeekOverviewRow(w, paByWeek, todayKey, null, bwColors[w.key])).join('');
   weekOverviewWrap.innerHTML = `
     <div class="week-overview-hint">Reine Kontaktzeit pro ISO-Woche, nur Termine mit fester Uhrzeit.
     Ganztägige Prüfungen/Abgaben und eigene Termine zählen nicht mit – erste,
@@ -5516,8 +5615,9 @@ function buildWeekOverview(){
       return;
     }
     const selfStudyByWeek = computeSelfStudyHoursByWeek(currentSemesterId, workloadData);
+    bwColors = computeBwColorsByWeek(currentSemesterId, workloadData);
     const rowsEl = document.getElementById('weekOverviewRows');
-    if (rowsEl) rowsEl.innerHTML = weeks.map(w => renderWeekOverviewRow(w, paByWeek, todayKey, selfStudyByWeek)).join('');
+    if (rowsEl) rowsEl.innerHTML = weeks.map(w => renderWeekOverviewRow(w, paByWeek, todayKey, selfStudyByWeek, bwColors[w.key])).join('');
     if (statusEl) statusEl.remove();
   });
 }
