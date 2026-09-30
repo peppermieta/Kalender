@@ -5296,12 +5296,17 @@ function renderWeek(monday){
     });
   };
 
-  if (anyNowLine) {
-    requestAnimationFrame(() => {
-      const el = weekGridInner.querySelector('.week-now-line');
-      if (el) el.scrollIntoView({block:'center', behavior:'auto'});
-    });
-  }
+  // Jetzt-Scroll (Extra, von Anfang an dabei): enthält die Woche "heute",
+  // wird zur Jetzt-Linie gescrollt; sonst zum ersten Termin der Woche
+  // (erstes .week-event im DOM = chronologisch frühester Termin, da Tage
+  // Mo->So und Termine je Tag bereits sortiert eingefügt werden) - bei
+  // komplett terminfreien Wochen (z.B. Ferien) passiert einfach nichts.
+  requestAnimationFrame(() => {
+    const el = anyNowLine
+      ? weekGridInner.querySelector('.week-now-line')
+      : weekGridInner.querySelector('.week-event');
+    if (el) el.scrollIntoView({block:'center', behavior:'auto'});
+  });
 }
 
 function showWeek(monday, {pushHistory=true} = {}){

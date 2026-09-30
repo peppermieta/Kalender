@@ -718,41 +718,74 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
 - **Frei-Zeiten-Radar** – echte freie Blöcke automatisch erkennen und
   hervorheben ("3+ Stunden am Stück frei"), um Schichten/Arzttermine/
   Verabredungen um die Uni-Zeiten herum zu planen.
-- **Wochenansicht als dritte Ansicht** 🚧 **In Arbeit (ab 30.09.2026)**
-  – echtes Zeit-Raster mit Stundenachse zwischen Monat und Einzeltag.
+- **Wochenansicht als dritte Ansicht** ✅ **Umgesetzt (v3.27.0,
+  30.09.2026)** – echtes Zeit-Raster mit Stundenachse zwischen Monat und
+  Einzeltag.
   **Umbenannt (30.09.2026):** Hieß hier zuvor "Wochenübersicht", das war
   missverständlich gegenüber der bereits bestehenden Wochenübersicht
   (Beta) im Verwalten-Menü (`computeContactHoursByWeek()`, s. o.) – die
-  beiden sind unabhängige Funktionen und sollen es bleiben.
-  **Konzept in mehreren Chats abgestimmt, jetzt entschieden:**
+  beiden sind unabhängige Funktionen und bleiben es.
+  **Umgesetzt wie entschieden:**
   - Echtes Zeit-Raster (Stundenachse, dynamischer Bereich je Woche statt
-    fest 8–20 Uhr), keine Listenansicht, kein schmales Monatsraster.
-  - Vollwertiger dritter Modus mit Umschalter Monat/Woche/Tag, eigene
-    Header-Zeile, die das bisherige Mini-Band ersetzt (nicht nur dessen
-    Klick-Ziel ändert, s. u.).
+    fest 8–20 Uhr, Fallback 8–18 Uhr bei komplett terminfreien Wochen).
+  - Vollwertiger dritter Modus mit Umschalter Monat/Woche/Tag
+    (`#viewSwitcher`), ersetzt das bisherige Mini-Band direkt (nicht nur
+    dessen Klick-Ziel).
   - Notiz-Punkt im Tageskopf bleibt reiner Hinweis, Bearbeitung weiter
     über die Tagesansicht.
-  - B_w-Chip im Kopf zeigt nur den Gesamtwert, keine Aufschlüsselung.
+  - B_w-Chip im Kopf zeigt nur den Gesamtwert (mit Farbpunkt passend zur
+    Belastungsübersicht-Skala), keine Aufschlüsselung.
   - Wochenenden werden leer mit angezeigt, nicht ausgeblendet.
-  - Beim Öffnen wird vertikal zu "jetzt" gescrollt, wenn die Woche heute
-    enthält, sonst zum ersten Termin des Tages.
-  - Teilbarer Link `#YYYY-Www`, analog zu `#YYYY-MM-DD` der Tagesansicht.
+  - Jetzt-Scroll: enthält die Woche heute, wird beim Öffnen zur
+    Jetzt-Linie gescrollt, sonst zum chronologisch ersten Termin der
+    Woche (komplett terminfreie Wochen scrollen gar nicht).
+  - Teilbarer Link `#YYYY-Www`, analog zu `#YYYY-MM-DD` der Tagesansicht,
+    inkl. Kopier-Button, Browser-Verlauf und Deep-Link beim direkten
+    Seitenaufruf.
   - Klick auf einen Tag springt zur Tagesansicht (Bearbeitung, eigene
     Termine, Notizen bleiben dort).
   - Mobile: sieben schmale Spalten nebeneinander, horizontal scrollbar
     (kein Ein-Tag-Wischmodus).
-  - Erste Umsetzung kommt direkt mit allen Extras statt schlankem Start:
-    Klick auf leere Zelle öffnet vorausgefülltes Formular für eigene
-    Termine, freie Zeitblöcke werden anhand der S_w-Verteilungslogik
-    markiert, Modul-Legende zeigt nur im Zeitraum vorkommende Module,
-    bestehender Typ-Filter (Prüfungen/Abgaben) wird wiederverwendet,
-    Raum und Lehrperson stehen im Block sofern Platz reicht, Ferientage
-    werden als schattierte Spalte markiert.
-  **Mini-Band-Ablösung (bestätigt):** Die neue Header-Zeile ersetzt das
-  bisherige Mini-Band direkt, alle Verlinkungen aus der Heatmap
-  (Balkenband, Mini-Band-Nachfolger) springen künftig zur Wochenansicht
-  statt zur Tagesansicht des jeweiligen Wochenmontags (`openDayView`
-  →`openWeekView`, kein struktureller Umbau der Heatmap nötig).
+  - Klick auf eine leere Rasterzelle öffnet die Tagesansicht mit dem
+    bestehenden "Eigenen Termin hinzufügen"-Formular, Uhrzeit aus der
+    Klickposition vorausgefüllt (15-Minuten-Raster) – bewusst kein
+    eigenes Mini-Formular im Raster, sondern Wiederverwendung des bereits
+    getesteten Ablaufs.
+  - Raum steht im Terminblock sofern Platz reicht (Lehrperson bisher
+    nicht, aus Platzgründen – die Blöcke sind auf Mobile oft nur ~100px
+    breit).
+  - Ferientage werden als schattierte Spalte markiert.
+  - Überschneidende Termine am selben Tag werden nebeneinander in
+    Spalten gepackt (Greedy-Verfahren, Spaltenzahl gilt für den ganzen
+    Tag statt pro Cluster – bewusste Vereinfachung, 3+ gleichzeitige
+    Termine kommen im Stundenplan praktisch nicht vor).
+  **Eine bewusste Abweichung vom ursprünglichen Konzept:** "freie
+  Zeitblöcke anhand der S_w-Verteilungslogik markieren" wurde NICHT als
+  farbliche Hervorhebung einzelner Rasterzellen umgesetzt, sondern als
+  reiner Text-Hinweis ("≈X,X Std. Selbststudium empfohlen") neben dem
+  B_w-Chip. Grund: `computeSelfStudyHoursByWeek()` liefert nur
+  Wochensummen, keine Tages-/Stundenauflösung – eine stundengenaue
+  Markierung im Raster hätte eine Präzision vorgetäuscht, die die
+  zugrundeliegenden Daten gar nicht hergeben. Ehrlicher Wochenwert statt
+  erfundener Feinauflösung.
+  **Modul-Legende und Typ-Filter NICHT wochenspezifisch gemacht:** die
+  bestehende Legende oben (zeigt Module des ganzen Semesters) und der
+  Prüfungen/Abgaben-Filter (wirkt nur auf die Sucher­gebnisliste, nicht
+  aufs Raster selbst) blieben unverändert – beides funktioniert für die
+  Wochenansicht genauso gut wie für Monat/Tag, eine Wochen-Filterung
+  hätte nur unnötige Komplexität ohne echten Mehrwert bedeutet.
+  **Mini-Band-Ablösung (umgesetzt):** Die neue Umschalter-Zeile ersetzt
+  das bisherige Mini-Band direkt. Ein Klick auf einen Balken in der
+  vollen Belastungsübersicht springt jetzt zur betroffenen Kalenderwoche
+  in der Wochenansicht statt nur zum Montag als Einzeltag.
+  **Getestet (Playwright):** Umschalter-Zustände (aktiver Tab
+  synchronisiert sich zwischen Monat/Woche/Tag inkl. Tagesansicht-
+  Overlay), 7 Tagesspalten, Hash-Routing (`#YYYY-Www` push/pop/Deep-Link
+  auf ein anderes Semester), Vor/Zurück/Heute-Navigation wochenweise,
+  Klick auf leere Zelle → vorausgefülltes Formular, Spalten-Packing bei
+  drei künstlich überlappenden Terminen, Browser-Zurück-Taste
+  Monat↔Woche, Light/Dark/Mobile-Darstellung per Screenshot. Keine
+  JS-/CSS-Syntaxfehler.
 - **Modulverzeichnis-Fortschritt sichtbar** – CP-Fortschrittsanzeige aus
   dem Modulverzeichnis als kleiner Indikator im Kalender mitspiegeln.
 - **"Nächstes Semester"-Assistent** – geführter Ablauf für
