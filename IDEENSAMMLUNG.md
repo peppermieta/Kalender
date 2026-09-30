@@ -1,7 +1,7 @@
 # Vorlesungskalender – Ideensammlung
 
 Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
-*(Stand: 27. August 2026)*
+*(Stand: 30. September 2026)*
 
 ## ⚡ Schnell — geringer Aufwand
 
@@ -718,20 +718,41 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
 - **Frei-Zeiten-Radar** – echte freie Blöcke automatisch erkennen und
   hervorheben ("3+ Stunden am Stück frei"), um Schichten/Arzttermine/
   Verabredungen um die Uni-Zeiten herum zu planen.
-- **Wochenübersicht als dritte Ansicht** 🎯 **Priorität (28.08.2026,
-  bald angehen)** – kompakte 7-Tage-Streifenansicht
-  zwischen Monat und Einzeltag.
-  **Erneutes, verstärktes Interesse (28.08.2026):** Im Zuge der
-  Belastungs-Heatmap-Arbeit als zunehmend sinnvoll empfunden – noch
-  nicht ausgearbeitet, aber ein konkreter Anwendungsfall steht schon
-  fest: **alle Verlinkungen aus der Heatmap (Balkenband, Mini-Band)
-  landen aktuell in der Tagesansicht beim jeweiligen Wochenmontag** –
-  das wird als unpassend empfunden und sollte stattdessen zu dieser
-  Wochenansicht springen, sobald sie existiert (technisch nur eine
-  Änderung der Zielfunktion im Klick-Handler, `openDayView(monday)` →
-  `openWeekView(monday)` o. ä., kein struktureller Umbau der Heatmap
-  nötig). Wird bei Gelegenheit separat ausgearbeitet, kein aktueller
-  Umsetzungsauftrag.
+- **Wochenansicht als dritte Ansicht** 🚧 **In Arbeit (ab 30.09.2026)**
+  – echtes Zeit-Raster mit Stundenachse zwischen Monat und Einzeltag.
+  **Umbenannt (30.09.2026):** Hieß hier zuvor "Wochenübersicht", das war
+  missverständlich gegenüber der bereits bestehenden Wochenübersicht
+  (Beta) im Verwalten-Menü (`computeContactHoursByWeek()`, s. o.) – die
+  beiden sind unabhängige Funktionen und sollen es bleiben.
+  **Konzept in mehreren Chats abgestimmt, jetzt entschieden:**
+  - Echtes Zeit-Raster (Stundenachse, dynamischer Bereich je Woche statt
+    fest 8–20 Uhr), keine Listenansicht, kein schmales Monatsraster.
+  - Vollwertiger dritter Modus mit Umschalter Monat/Woche/Tag, eigene
+    Header-Zeile, die das bisherige Mini-Band ersetzt (nicht nur dessen
+    Klick-Ziel ändert, s. u.).
+  - Notiz-Punkt im Tageskopf bleibt reiner Hinweis, Bearbeitung weiter
+    über die Tagesansicht.
+  - B_w-Chip im Kopf zeigt nur den Gesamtwert, keine Aufschlüsselung.
+  - Wochenenden werden leer mit angezeigt, nicht ausgeblendet.
+  - Beim Öffnen wird vertikal zu "jetzt" gescrollt, wenn die Woche heute
+    enthält, sonst zum ersten Termin des Tages.
+  - Teilbarer Link `#YYYY-Www`, analog zu `#YYYY-MM-DD` der Tagesansicht.
+  - Klick auf einen Tag springt zur Tagesansicht (Bearbeitung, eigene
+    Termine, Notizen bleiben dort).
+  - Mobile: sieben schmale Spalten nebeneinander, horizontal scrollbar
+    (kein Ein-Tag-Wischmodus).
+  - Erste Umsetzung kommt direkt mit allen Extras statt schlankem Start:
+    Klick auf leere Zelle öffnet vorausgefülltes Formular für eigene
+    Termine, freie Zeitblöcke werden anhand der S_w-Verteilungslogik
+    markiert, Modul-Legende zeigt nur im Zeitraum vorkommende Module,
+    bestehender Typ-Filter (Prüfungen/Abgaben) wird wiederverwendet,
+    Raum und Lehrperson stehen im Block sofern Platz reicht, Ferientage
+    werden als schattierte Spalte markiert.
+  **Mini-Band-Ablösung (bestätigt):** Die neue Header-Zeile ersetzt das
+  bisherige Mini-Band direkt, alle Verlinkungen aus der Heatmap
+  (Balkenband, Mini-Band-Nachfolger) springen künftig zur Wochenansicht
+  statt zur Tagesansicht des jeweiligen Wochenmontags (`openDayView`
+  →`openWeekView`, kein struktureller Umbau der Heatmap nötig).
 - **Modulverzeichnis-Fortschritt sichtbar** – CP-Fortschrittsanzeige aus
   dem Modulverzeichnis als kleiner Indikator im Kalender mitspiegeln.
 - **"Nächstes Semester"-Assistent** – geführter Ablauf für
