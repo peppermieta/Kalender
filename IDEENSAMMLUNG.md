@@ -793,6 +793,15 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   Wochenansicht, sowie eine klickbare "KW N"-Sprungmarke auf der
   Montags-Zelle jeder Zeile im Monatsraster (auch mobil), die direkt in
   die Wochenansicht der jeweiligen Kalenderwoche springt.
+  **Nachbesserung (v3.27.2, 30.09.2026, nach Rückmeldung):** Das
+  "KW N"-Label passte optisch nicht in die Montags-Zelle. Jetzt eine
+  eigene, schmale Gutter-Spalte links vor der ganzen Woche (analog zu
+  Google Kalender), auf Mobile eine vollbreite Trennzeile vor jeder
+  Woche statt einer schmalen Spalte. Dabei einen eigenen, beim Umbau
+  entstandenen Druck-Ausrichtungsfehler gefunden und behoben (leere
+  Platzhalter-Zelle in der Wochentagsleiste fehlte im Druck-Stylesheet
+  bei den ausgeblendeten Elementen, wodurch die Wochentag-Labels um
+  eine Spalte verrutschten).
 - **Modulverzeichnis-Fortschritt sichtbar** – CP-Fortschrittsanzeige aus
   dem Modulverzeichnis als kleiner Indikator im Kalender mitspiegeln.
 - **"Nächstes Semester"-Assistent** – geführter Ablauf für

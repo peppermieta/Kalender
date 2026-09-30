@@ -7,6 +7,26 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.27.2] - 2026-09-30
+
+### Changed
+- **KW-Sprungmarke aus der Montags-Zelle in eine eigene Spalte verschoben**
+  (Rückmeldung nach v3.27.1): das "KW N"-Label passte optisch nicht in
+  die Montags-Zelle hinein. Jetzt eine eigene, schmale Gutter-Spalte
+  links vor der Woche (analog zu Google Kalender), auf Mobile eine
+  vollbreite Trennzeile vor jeder Woche statt einer schmalen Spalte.
+  Funktion unverändert: Klick springt weiterhin direkt in die
+  Wochenansicht der jeweiligen Kalenderwoche.
+
+### Fixed
+- **Ausrichtungsfehler im Druck-Stylesheet behoben** (beim Umsetzen der
+  Gutter-Spalte entdeckt, nie live gewesen): die neue leere
+  Platzhalter-Zelle vor "Mo" in der Wochentagsleiste wurde beim Drucken
+  nicht mit den KW-Elementen zusammen ausgeblendet, wodurch die
+  Wochentag-Labels um eine Spalte verrutschten und "So" in eine neue
+  Zeile umbrach. Platzhalter bekommt jetzt eine eigene Klasse und wird
+  im Druck-Stylesheet mit ausgeblendet.
+
 ## [3.27.1] - 2026-09-30
 
 ### Added
