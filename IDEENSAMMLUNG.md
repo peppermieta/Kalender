@@ -241,13 +241,41 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   **Offen für später:** Tagesansicht als Bild teilen (gleicher Ansatz,
   eigener Folgeschritt), Desktop-Zwischenablage-Kopieren war bewusst
   nicht Teil dieser ersten Fassung.
-- **"Was hab ich verpasst?"** 🎯 **Priorität (28.08.2026, bald angehen)**
-  – kurze Zusammenfassung der Lücke, wenn man
+- **"Was hab ich verpasst?"** – kurze Zusammenfassung der Lücke, wenn man
   ein paar Tage nicht im Kalender war. Ließe sich über einen in
   `localStorage` gespeicherten Zeitstempel "zuletzt geöffnet" umsetzen:
   liegt er mehr als z. B. 2 Tage zurück, eine kompakte Übersicht der
   dazwischenliegenden Termine/Prüfungen anzeigen, danach Zeitstempel
   aktualisieren.
+  **✅ Umgesetzt (v3.30.0, 30.09.2026)** – dezenter, wegklickbarer Banner
+  direkt unter dem Header, oberhalb von "Nächste Veranstaltung": zeigt
+  beim erneuten Öffnen "N Termine seit deinem letzten Besuch (vor X
+  Tagen)" mit einer kompakten Liste (Datum + Titel, Prüfungen/Abgaben mit
+  ihrem bekannten Icon), Klick auf einen Eintrag springt direkt zur
+  Detailansicht.
+  **Vorab-Klärungsrunde:** Anzeigeform Banner (statt Modal/Overlay),
+  Schwelle wie in der Ideensammlung notiert bei 2 Tagen belassen, Inhalt
+  bewusst nur die vergangenen Termine der Lücke (kein Ausblick auf
+  Kommendes – dafür gibt es bereits "Nächste Veranstaltung"), eigene
+  Freitext-Termine (Privat) bewusst ausgeschlossen (analog zu Druck/ICS-
+  Feed), Zeitstempel wird bei jedem Öffnen der Seite aktualisiert (nicht
+  erst beim Wegklicken) – ein ignorierter Banner sammelt beim nächsten
+  Laden sonst immer mehr Termine an, statt einfach zu verschwinden.
+  **Design-Mockup vorab abgestimmt** ("Sieht gut aus"), mit der echten
+  extrahierten CSS der App gebaut statt nur grob skizziert.
+  **Technisch:** nutzt dieselbe `allEventsFlat()`-Hilfsfunktion wie
+  "Nächste Veranstaltung" (semesterübergreifend), keine neue Datenquelle.
+  Bei mehr als 3 gefundenen Terminen ein "+ N weitere"-Hinweis statt einer
+  langen Liste. Erster Besuch überhaupt (kein gespeicherter Zeitstempel)
+  zeigt bewusst keinen Banner, setzt den Zeitstempel aber trotzdem.
+  **Getestet:** mit echten Semesterdaten (nicht nur synthetischen
+  Testterminen) über ein eingefrorenes Datum, Schwellenwert-Grenzfall
+  (1 Tag vs. 2 Tage), erster Besuch, Lücke ohne Termine (z. B. über die
+  Weihnachtsferien) bleibt bannerlos trotz erfüllter Zeitschwelle, Klick
+  auf einen Eintrag öffnet zuverlässig die richtige Detailansicht und
+  schließt dabei den Banner, Dark Mode und Mobile-Ansicht geprüft,
+  bestehende Fortschrittsanzeige/Nächste-Veranstaltung/Monatsraster per
+  Regressionstest erneut ohne Abweichung geprüft.
 - **Exportierbare Kurszusammenfassung** – PDF-Export für ein einzelnes
   Modul statt des ganzen Semesters. Ließe sich am ehesten über eine
   gefilterte Variante des bestehenden Druck-Stylesheets lösen (nur

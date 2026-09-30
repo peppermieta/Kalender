@@ -12,6 +12,7 @@ Privater, passwortgeschützter Vorlesungskalender für das Studium (Bachelor Soz
 - **Farbcodierung nach Modul** – jede Veranstaltung ist ihrem Modul farblich zugeordnet, Legende oben auf der Seite (sortiert M02 → M10, Zusatzangebot am Ende)
 - **Mobile Ansicht** – unter 700px Breite wechselt die Seite automatisch von der 7-Spalten-Rasteransicht zu einer einspaltigen Tagesliste, damit Termine nicht abgeschnitten werden; Modulkürzel werden dort direkt am Termin angezeigt
 - **Termin-Details per Klick/Tap** – Datum, Uhrzeit, Raum (Kurzform in Monats-/Tagesansicht, volle Bezeichnung im Detail), Modul, Dozierende, LV-Nummer und Parallelgruppe
+- **"Was hab ich verpasst?"** – war man mindestens 2 Tage nicht im Kalender und lagen in der Zwischenzeit echte Termine, erscheint beim nächsten Öffnen ein wegklickbarer Hinweis mit einer kompakten Liste dieser Termine; Klick auf einen Eintrag springt direkt zur Detailansicht
 - **Private Notizen** – pro Termin, rein lokal im Browser gespeichert, z. B. "Buch mitbringen"; optional automatischer Sync zwischen Geräten über einen GitHub Gist (Einbahnstraßen-Modell: ein Gerät schreibt, alle anderen lesen mit); ein kleines Symbol in der Tagesansicht zeigt an, ob zu einem Termin eine Notiz existiert
 - **Eigene Freitext-Termine** – persönliche Termine (z. B. Arzttermine) direkt in der Tagesansicht anlegen, rein lokal gespeichert, farblich und mit gestricheltem Rahmen klar von echten Veranstaltungen abgesetzt; nicht im ICS-Feed oder Ausdruck enthalten
 - **Installierbare App (PWA)** – auf Android als App installierbar (eigenes Icon, kein Browser-Rahmen), funktioniert dank Service Worker auch ohne Internetverbindung
@@ -75,7 +76,7 @@ Danach startet der Kalender wie eine normale App (eigenes Icon, kein Browser-Rah
 
 ## Versionshistorie
 
-Alle Änderungen werden in [CHANGELOG.md](CHANGELOG.md) dokumentiert (aktuelle Version: **3.29.0**).
+Alle Änderungen werden in [CHANGELOG.md](CHANGELOG.md) dokumentiert (aktuelle Version: **3.30.0**).
 
 ## Farbpalette
 

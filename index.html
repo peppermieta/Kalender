@@ -219,6 +219,53 @@
   .next-up-sep { opacity: .45; }
   .next-up-title { font-weight: 500; }
 
+  /* ── WAS HAB ICH VERPASST ── */
+  .missed-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 11px 24px;
+    background: var(--accent-soft-bg);
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .missed-banner-icon { font-size: 16px; line-height: 1.3; flex-shrink: 0; }
+  .missed-banner-body { flex: 1; min-width: 0; }
+  .missed-banner-head { font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .missed-banner-head .count { color: var(--accent); }
+  .missed-banner-list { display: flex; flex-direction: column; gap: 3px; }
+  .missed-banner-item {
+    display: flex;
+    align-items: baseline;
+    gap: 7px;
+    cursor: pointer;
+    color: var(--text);
+  }
+  .missed-banner-item:hover .missed-banner-item-title { text-decoration: underline; }
+  .missed-banner-date {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    color: var(--muted);
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .missed-banner-item-title { font-weight: 500; }
+  .missed-banner-more { color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .missed-banner-close {
+    flex-shrink: 0;
+    width: 24px; height: 24px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    line-height: 1;
+  }
+  .missed-banner-close:hover { background: rgba(0,0,0,.06); color: var(--text); }
+  :root[data-theme="dark"] .missed-banner-close:hover { background: rgba(255,255,255,.08); }
+
   /* ── SUCHE + ABO-TOOLBAR ── */
   .toolbar {
     display: flex;
@@ -998,6 +1045,7 @@
     header { padding: 12px; }
     .next-up { padding: 10px 12px; font-size: 12.5px; }
     .next-up-label { display: none; } /* auf Mobile reicht Uhrzeit + Titel, spart Platz */
+    .missed-banner { padding: 10px 12px; font-size: 12.5px; }
     .toolbar { padding: 10px 12px; gap: 8px; }
     .search-wrap { max-width: none; flex: 1 1 auto; }
     .nav-controls { flex-wrap: wrap; justify-content: flex-end; row-gap: 8px; gap: 6px; }
@@ -1203,6 +1251,16 @@
     <button class="nav-btn today-btn" id="todayBtn">Heute</button>
   </div>
 </header>
+
+<!-- WAS HAB ICH VERPASST -->
+<div class="missed-banner" id="missedBanner" style="display:none;">
+  <span class="missed-banner-icon" aria-hidden="true">🔔</span>
+  <div class="missed-banner-body">
+    <div class="missed-banner-head" id="missedBannerHead"></div>
+    <div class="missed-banner-list" id="missedBannerList"></div>
+  </div>
+  <button type="button" class="missed-banner-close" id="missedBannerClose" aria-label="Schließen" title="Schließen">✕</button>
+</div>
 
 <!-- NÄCHSTE VERANSTALTUNG -->
 <div class="next-up" id="nextUp"></div>
@@ -6422,6 +6480,74 @@ function renderNextUp(){
   if (showTypeRow) el.querySelector('.next-up-type-row').onclick = () => openModal(nextTypeEv);
 }
 
+// ─── WAS HAB ICH VERPASST? ──────────────────────────────────────────────────
+// Dezenter, wegklickbarer Banner direkt unter dem Header: zeigt beim erneuten
+// Öffnen der Seite die echten Termine, die seit dem letzten Besuch
+// stattgefunden haben, sofern die Lücke mind. 2 Tage betrug. Rein
+// clientseitig über einen "letzter Besuch"-Zeitstempel in localStorage, kein
+// neuer Datenbedarf (nutzt wie renderNextUp() oben allEventsFlat()). Eigene
+// Freitext-Termine (Privat) bewusst ausgeschlossen, analog zu Druck/ICS-Feed.
+const LAST_VISIT_KEY = 'lastVisit';
+const missedBanner = document.getElementById('missedBanner');
+const missedBannerHead = document.getElementById('missedBannerHead');
+const missedBannerList = document.getElementById('missedBannerList');
+const missedBannerClose = document.getElementById('missedBannerClose');
+const MISSED_MAX_SHOWN = 3;
+
+function renderMissedBanner(missed, daysSince){
+  const count = missed.length;
+  missedBannerHead.innerHTML = `<span class="count">${count} Termin${count === 1 ? '' : 'e'}</span> seit deinem letzten Besuch (vor ${daysSince} Tagen)`;
+
+  const shown = missed.slice(0, MISSED_MAX_SHOWN);
+  missedBannerList.innerHTML = shown.map((ev, i) => {
+    const dObj = new Date(ev.date + 'T12:00:00Z');
+    const dateLabel = `${WEEKDAY_ABBR[dObj.getUTCDay()]}, ${dObj.getUTCDate()}. ${MONTH_NAMES_SHORT[dObj.getUTCMonth()]}.`;
+    const icon = (ev.type === 'pruefung' || ev.type === 'abgabe') ? `${TYPE_ICON[ev.type]} ` : '';
+    return `<div class="missed-banner-item" data-idx="${i}"><span class="missed-banner-date">${dateLabel}</span><span class="missed-banner-item-title">${icon}${escapeHtml(ev.title)}</span></div>`;
+  }).join('');
+
+  if (count > MISSED_MAX_SHOWN) {
+    const rest = count - MISSED_MAX_SHOWN;
+    missedBannerList.insertAdjacentHTML('beforeend',
+      `<div class="missed-banner-more">+ ${rest} weiterer Termin${rest === 1 ? '' : 'e'}</div>`);
+  }
+
+  missedBannerList.querySelectorAll('.missed-banner-item').forEach(el => {
+    el.onclick = () => {
+      missedBanner.style.display = 'none';
+      jumpToEvent(shown[Number(el.dataset.idx)]);
+    };
+  });
+
+  missedBanner.style.display = 'flex';
+}
+
+// Zeitstempel wird IMMER aktualisiert, auch ohne Banner-Anzeige - "besucht"
+// gilt schon mit dem reinen Öffnen der Seite, nicht erst mit dem Wegklicken
+// des Banners (sonst würde ein Banner, das man ignoriert/nicht schließt,
+// beim nächsten Laden erneut mit noch mehr Terminen erscheinen).
+function checkMissedEvents(){
+  const now = new Date();
+  const todayIso = isoDate(now.getFullYear(), now.getMonth(), now.getDate());
+  const lastVisitIso = localStorage.getItem(LAST_VISIT_KEY);
+  localStorage.setItem(LAST_VISIT_KEY, todayIso);
+
+  if (!lastVisitIso) return; // erster Besuch überhaupt: nichts zum Vergleichen da
+
+  const msPerDay = 86400000;
+  const daysSince = Math.round((new Date(todayIso) - new Date(lastVisitIso)) / msPerDay);
+  if (daysSince < 2) return;
+
+  const missed = allEventsFlat()
+    .filter(ev => ev.type !== 'eigen' && ev.date > lastVisitIso && ev.date < todayIso)
+    .sort((a, b) => (a.date + (a.start || '')).localeCompare(b.date + (b.start || '')));
+
+  if (missed.length === 0) return;
+  renderMissedBanner(missed, daysSince);
+}
+
+missedBannerClose.onclick = () => { missedBanner.style.display = 'none'; };
+
 // ─── SUCHE ───────────────────────────────────────────────────────────────────
 // Durchsucht Titel + Modulname. ev.lehrperson könnte hier künftig ergänzt
 // werden, sobald eine Dozierenden-Suche wieder gewünscht ist (Datenfeld ist
@@ -6727,6 +6853,8 @@ async function refreshFeedStatus(){
     renderMonth(currentMonthIdx); // Hintergrund-Monat synchron halten, wie bei der Tagesansicht
     showWeek(initialMonday, {pushHistory:false});
   }
+
+  checkMissedEvents();
 })();
 </script>
 <style>

@@ -7,6 +7,26 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.30.0] - 2026-09-30
+
+### Added
+- **"Was hab ich verpasst?"-Banner** – dezenter, wegklickbarer Hinweis
+  direkt unter dem Header, oberhalb von "Nächste Veranstaltung": zeigt
+  beim erneuten Öffnen der Seite "N Termine seit deinem letzten Besuch
+  (vor X Tagen)" mit einer kompakten Liste (Datum + Titel, Prüfungen/
+  Abgaben mit ihrem bekannten Icon 📝/📤), Klick auf einen Eintrag
+  springt direkt zur Detailansicht und schließt den Banner. Bei mehr als
+  3 gefundenen Terminen ein "+ N weitere"-Hinweis statt einer langen
+  Liste.
+- Erscheint nur, wenn die Lücke seit dem letzten Besuch mind. 2 Tage
+  beträgt UND in dieser Lücke tatsächlich Termine stattfanden – rein
+  clientseitig über einen `lastVisit`-Zeitstempel in `localStorage`,
+  aktualisiert bei jedem Öffnen der Seite (nicht erst beim Wegklicken).
+  Eigene Freitext-Termine (Privat) bewusst ausgeschlossen, analog zu
+  Druck/ICS-Feed. Erster Besuch überhaupt zeigt bewusst keinen Banner.
+- Nutzt dieselbe `allEventsFlat()`-Hilfsfunktion wie "Nächste
+  Veranstaltung" (semesterübergreifend), keine neue Datenquelle.
+
 ## [3.29.0] - 2026-09-30
 
 ### Added
