@@ -3,6 +3,15 @@
 Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
 *(Stand: 30. September 2026)*
 
+> **Durchsicht der offenen Punkte (30.09.2026, Vorabend Vorlesungsbeginn):**
+> Aktuell priorisiert sind nur zwei Punkte, beide mit 🎯 markiert:
+> **Belastungsübersicht neu denken** (Form der Darstellung und
+> Aussagekraft der Zahlen) sowie **Eigene Kategorien für private
+> Termine**. Push-Benachrichtigungen bewusst später. Countdown und
+> Rückwärtsplanung warten auf die ersten echten Prüfungs-/Abgabetermine
+> (noch keine bekannt). Alle übrigen offenen Punkte bleiben unverändert
+> offen, nichts wurde verworfen.
+
 ## ⚡ Schnell — geringer Aufwand
 
 - **Notiz zum ganzen Tag** – Notizen hingen bisher zwingend an einem
@@ -60,6 +69,8 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   Überblick, welche Räume am häufigsten vorkommen.
 - **Countdown zur nächsten Prüfung** – dauerhaft sichtbarer, dezenter
   Countdown statt nur der Next-Up-Zeile.
+  **Durchsicht 30.09.2026:** wartet auf echte Prüfungstermine, vorher
+  ohne sichtbaren Nutzen.
 - **Feed-Aktualität anzeigen** – ein kleiner Hinweis im Verwalten-Menü
   ("Feed zuletzt aktualisiert am …").
   **✅ Umgesetzt** (v3.4.0) – liest eine eigene
@@ -100,6 +111,8 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   Termin eine Push-Benachrichtigung aufs Handy, über einen kostenlosen
   Dienst und einen GitHub-Actions-Workflow, ohne eigenen Server. Konzept
   bereits besprochen, nur noch nicht gebaut.
+  **Durchsicht 30.09.2026:** bewusst nicht zum Semesterstart, bleibt für
+  später offen.
 - **Next-Up-Leiste um Prüfungen/Abgaben erweitern** – Damit Prüfungs- und
   Abgabetermine zwischen den normalen Terminen nicht untergehen.
   **✅ Umgesetzt** (v3.6.0) – zweite Zeile mit der nächsten Prüfung/Abgabe,
@@ -199,8 +212,7 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   der Tagesansicht genutzt) – ließe sich für eine Erkennung "aktuell in
   den Ferien" wiederverwenden, z. B. ein reduzierter Monatsblick ohne
   leere Zellen oder ein Hinweistext statt des normalen Rasters.
-- **Tag/Woche als Bild teilen** 🎯 **Priorität (28.08.2026, bald
-  angehen)** – über die Web-Share-API den
+- **Tag/Woche als Bild teilen** – über die Web-Share-API den
   Tages-/Wochenplan als Bild verschicken. Technisch am ehesten über ein
   Canvas-Rendering des jeweiligen Ausschnitts lösbar (ähnlich wie beim
   Drucken, nur als Bilddatei statt PDF) und `navigator.share()` mit
@@ -240,7 +252,8 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   Modi).
   **Offen für später:** Tagesansicht als Bild teilen (gleicher Ansatz,
   eigener Folgeschritt), Desktop-Zwischenablage-Kopieren war bewusst
-  nicht Teil dieser ersten Fassung.
+  nicht Teil dieser ersten Fassung. Bei der Durchsicht am 30.09.2026
+  nicht priorisiert, bleibt offen.
 - **"Was hab ich verpasst?"** – kurze Zusammenfassung der Lücke, wenn man
   ein paar Tage nicht im Kalender war. Ließe sich über einen in
   `localStorage` gespeicherten Zeitstempel "zuletzt geöffnet" umsetzen:
@@ -289,11 +302,18 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   externer Drittanbieter-Abhängigkeit zur Laufzeit – müsste entsprechend
   defensiv eingebaut werden (z. B. stiller Fehlschlag statt kaputter
   Anzeige, falls die API mal nicht erreichbar ist).
-- **Eigene Kategorien für private Termine** – kleine, wählbare
+- **Eigene Kategorien für private Termine** 🎯 **Priorität (30.09.2026)**
+  – kleine, wählbare
   Unterkategorie statt nur "Privat". Ließe sich als zusätzliches Feld am
   `personalEvent:`-Objekt ergänzen (z. B. eine kurze Liste vordefinierter
-  Kategorien mit je eigener Akzentfarbe innerhalb von Bubblegum Pink),
-  ohne das bestehende Zwei-Schicht-Prinzip der Modulfarben anzutasten.
+  Kategorien mit je eigener Akzentfarbe innerhalb der Privat-Farbfamilie,
+  seit v3.13.0 Blau `#ACC8E5`/`#112A46` statt des ursprünglichen
+  Bubblegum Pink), ohne das bestehende Zwei-Schicht-Prinzip der
+  Modulfarben anzutasten.
+  **Vor der Umsetzung zu klären:** welche Kategorien konkret gebraucht
+  werden und wie sie sich farblich voneinander und vom bisherigen
+  "Privat" abheben (Varianten per Mockup vergleichen, wie üblich vor dem
+  Code).
 - **Semesterübergreifende Notiz-Suche** – bestehende Suche um
   Notiz-Inhalte erweitern, nicht nur Termine. Da Notizen nur als
   `note:`-Schlüssel in `localStorage` liegen (nicht in
@@ -304,6 +324,8 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
 - **Prüfungsvorbereitungs-Rückwärtsplanung** – zu jedem Prüfungstermin
   automatisch eine empfohlene Vorbereitungszeit davor markieren,
   abgeleitet aus dem CP-Gewicht.
+  **Durchsicht 30.09.2026:** wartet wie der Countdown auf echte
+  Prüfungstermine.
 
 ## 🏗 Größer — größere technische Themen
 
@@ -325,7 +347,8 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   cachte Gist-API-Antworten fälschlich statt sie frisch zu holen).
   Die inzwischen überflüssige manuelle Copy-Paste-Übertragung wieder
   entfernt, Notiz-Indikator in der Tagesansicht ergänzt (v3.10.0).
-- **Prospektive Belastungs-Heatmap** – eine farbcodierte Semesterkurve,
+- **Prospektive Belastungs-Heatmap** 🎯 **Priorität: Neuansatz
+  (30.09.2026, s. u.)** – eine farbcodierte Semesterkurve,
   die zeigt, wie stark jede Woche des Semesters belastet ist
   (Kontaktzeit + Prüfungsnähe). Als konkretes Vorhaben eingestuft, nicht
   nur Vision. Technisch anspruchsvollster Punkt der Liste – hier
@@ -657,6 +680,18 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   Feinjustierung an der aktuellen Grün-Amber-Rot-Logik. Kein konkreter
   Plan, nur vorgemerkt für später.
 
+  **🎯 Priorität (Durchsicht 30.09.2026): Belastungsübersicht neu
+  denken.** Aus dem Vormerk-Punkt oben ist ein echter Neuansatz
+  geworden, kein weiteres Feintuning. Zwei Kritikpunkte: die **Form der
+  Darstellung** (Balkenband) und die **Aussagekraft der Zahlen** (Werte
+  fühlen sich nicht wie echte Belastung an). Die Farbskala selbst wurde
+  dabei ausdrücklich nicht als Hauptproblem genannt. Vorgeschlagene
+  Reihenfolge: zuerst die Aussagekraft klären (welche Wochen sich im
+  Vergleich zur Anzeige falsch anfühlen), erst danach die Darstellung,
+  da eine neue Form wenig bringt, solange die Werte nicht stimmen. Ein
+  sinnvoller Abgleich mit echten, erlebten Vorlesungswochen ist ab etwa
+  Mitte Oktober möglich.
+
   **Flammen-Icon im Mini-Band wieder entfernt (v3.25.1):** kam nicht gut
   an. War als eigenes, ggf. eingefärbtes Symbol gedacht (nicht als
   Emoji) – Ausarbeitung ebenfalls auf später verschoben, Icon bis dahin
@@ -779,9 +814,8 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   mit dem Konflikt-Icon (beide gleichzeitig sichtbar, keine
   Überlappung), Dark Mode/Mobile geprüft.
 
-  **Verrechnung konzeptionell entschieden, Umsetzung steht mit Etappe 7
-  aus** (s. o., Multiplikator-Skala 0.7–1.6) – aktuell wird nur erfasst,
-  noch nicht ausgewertet.
+  **Verrechnung** (Multiplikator-Skala 0.7–1.6, s. o.) inzwischen mit
+  Etappe 7 umgesetzt (v3.22.0), die Bewertung fließt seitdem in B_w ein.
 - **UI-Neuordnung: Buttons & Funktionen konsolidieren** – Bedienelemente
   waren über Header, Toolbar, Footer, Tagesansicht und Notiz-Sync-Overlay
   verteilt, gewachsen Feature für Feature ohne übergreifendes Konzept.
@@ -896,8 +930,7 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   dem Modulverzeichnis als kleiner Indikator im Kalender mitspiegeln.
 - **"Nächstes Semester"-Assistent** – geführter Ablauf für
   SEMESTERS-Eintrag, Terminübernahme und Raumdaten beim Semesterwechsel.
-- **Wiederkehrende eigene Termine** 🎯 **Priorität (28.08.2026, bald
-  angehen)** – "wiederholt sich wöchentlich"-
+- **Wiederkehrende eigene Termine** – "wiederholt sich wöchentlich"-
   Option für private Fixpunkte statt Einzelanlage.
   **✅ Umgesetzt (v3.26.0):** Checkbox im bestehenden "Eigenen Termin
   hinzufügen"-Formular, bewusst simpel gehalten – keine neue
