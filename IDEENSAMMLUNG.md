@@ -786,6 +786,13 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   drei künstlich überlappenden Terminen, Browser-Zurück-Taste
   Monat↔Woche, Light/Dark/Mobile-Darstellung per Screenshot. Keine
   JS-/CSS-Syntaxfehler.
+  **Nachbesserung (v3.27.1, 30.09.2026, nach Rückmeldung):** Die
+  wochenweise Navigation über die globalen Header-Pfeile war zwar von
+  Anfang an da, aber schlecht erkennbar (Monatsname im Header ändert
+  sich dabei meist nicht). Ergänzt: eigene ‹/›-Buttons direkt in der
+  Wochenansicht, sowie eine klickbare "KW N"-Sprungmarke auf der
+  Montags-Zelle jeder Zeile im Monatsraster (auch mobil), die direkt in
+  die Wochenansicht der jeweiligen Kalenderwoche springt.
 - **Modulverzeichnis-Fortschritt sichtbar** – CP-Fortschrittsanzeige aus
   dem Modulverzeichnis als kleiner Indikator im Kalender mitspiegeln.
 - **"Nächstes Semester"-Assistent** – geführter Ablauf für

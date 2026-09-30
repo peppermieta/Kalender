@@ -7,6 +7,21 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.27.1] - 2026-09-30
+
+### Added
+- **Direktere Wochennavigation** (Rückmeldung nach v3.27.0): die
+  globalen Vor/Zurück-Pfeile im Header blätterten in der Wochenansicht
+  zwar bereits wochenweise, das war aber schwer zu erkennen, da der
+  Monatsname im Header dabei meist unverändert stehen blieb. Neue,
+  direkt sichtbare ‹/›-Buttons in der Wochenansicht selbst (neben dem
+  KW-Titel) lösen das, ohne die globalen Pfeile/Pfeiltasten zu
+  ersetzen.
+- **KW-Sprungmarke im Monatsraster**: jede Zeile zeigt jetzt oben rechts
+  auf ihrer Montags-Zelle ein kleines "KW N"-Label, das per Klick direkt
+  in die Wochenansicht der jeweiligen Kalenderwoche springt (auch auf
+  Mobile). Bleibt beim Drucken ausgeblendet.
+
 ## [3.27.0] - 2026-09-30
 
 ### Added

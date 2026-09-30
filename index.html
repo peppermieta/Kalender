@@ -411,6 +411,18 @@
     );
   }
 
+  /* KW-Badge auf der Montags-Zelle jeder Zeile (Extra, 30.09.2026 nach
+     Rückmeldung ergänzt) - springt per Klick direkt zur Wochenansicht
+     dieser Kalenderwoche, ohne den bestehenden Tagesansicht-Klick der
+     Zelle selbst zu berühren (e.stopPropagation() im JS). */
+  .cal-week-badge {
+    position: absolute; top: 6px; right: 6px; z-index: 1;
+    font: inherit; font-size: 9.5px; font-weight: 700; line-height: 1.4;
+    background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+    padding: 1px 6px; cursor: pointer; color: var(--muted);
+  }
+  .cal-week-badge:hover { color: var(--accent); border-color: var(--accent); }
+
   .day-num {
     font-size: 13px;
     font-weight: 600;
@@ -801,6 +813,14 @@
     padding: 10px 24px; background: var(--surface);
   }
   .week-title { font-size: 13.5px; font-weight: 600; flex: 1; }
+  .week-nav-btns { display: flex; gap: 4px; flex-shrink: 0; }
+  .week-nav-btn {
+    font: inherit; font-size: 15px; font-weight: 700; line-height: 1;
+    background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
+    width: 26px; height: 26px; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--text); padding: 0;
+  }
+  .week-nav-btn:hover { border-color: var(--accent); color: var(--accent); }
   .week-bw-chip {
     font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px;
     background: var(--switch-active-bg); color: var(--switch-active-tx); white-space: nowrap;
@@ -1066,6 +1086,7 @@
     .modal-overlay,
     .day-view,
     .nav-btn,
+    .cal-week-badge,
     header p {
       display: none !important;
     }
@@ -1193,6 +1214,10 @@
 <!-- WOCHENANSICHT (Zeit-Raster, dritter Modus) -->
 <div class="week-wrap" id="weekWrap" style="display:none;">
   <div class="week-title-row">
+    <div class="week-nav-btns">
+      <button type="button" class="week-nav-btn" id="weekPrevBtn" aria-label="Vorherige Woche" title="Vorherige Woche">‹</button>
+      <button type="button" class="week-nav-btn" id="weekNextBtn" aria-label="Nächste Woche" title="Nächste Woche">›</button>
+    </div>
     <span class="week-title" id="weekTitle"></span>
     <span class="week-sw-hint" id="weekSwHint" style="display:none;"></span>
     <span class="week-bw-chip" id="weekBwChip" style="display:none;" title="Belastung dieser Woche (B_w)"></span>
@@ -4367,6 +4392,24 @@ function renderMonth(idx){
 
     if(!otherMonth) cell.addEventListener('click', () => openDayView(iso));
 
+    // KW-Badge auf der Montags-Zelle jeder Zeile (Extra, 30.09.2026 nach
+    // Rückmeldung ergänzt) - Spalte 0 ist im Raster immer Montag (s.
+    // startDow-Berechnung oben), springt direkt zur Wochenansicht dieser
+    // Kalenderwoche. Auch auf Zeilen mit Vormonats-Überlauf gezeigt (i.e.
+    // otherMonth): die Kalenderwoche selbst ist trotzdem real und ein
+    // gültiges Sprungziel, unabhängig davon, welchem Monat ihr Montag
+    // optisch zugeordnet ist.
+    if (i % 7 === 0) {
+      const monday = new Date(cellYear, cellMonth, dayNum);
+      const weekBadge = document.createElement('button');
+      weekBadge.type = 'button';
+      weekBadge.className = 'cal-week-badge';
+      weekBadge.textContent = `KW ${isoWeekKey(monday).split('-W')[1]}`;
+      weekBadge.title = 'Zur Wochenansicht dieser Woche springen';
+      weekBadge.onclick = (e) => { e.stopPropagation(); showWeek(monday); };
+      cell.appendChild(weekBadge);
+    }
+
     grid.appendChild(cell);
   }
   updateDots();
@@ -5324,6 +5367,16 @@ function goToWeek(deltaWeeks){
   const next = new Date(base); next.setDate(base.getDate() + deltaWeeks*7);
   showWeek(next);
 }
+
+// Eigene Vor/Zurück-Buttons direkt in der Wochenansicht (Extra, 30.09.2026
+// nach Rückmeldung ergänzt): die globalen Pfeile oben im Header navigieren
+// zwar bereits wochenweise, sobald currentView==='week' ist (s.u. sowie
+// Pfeiltasten ←/→) - das ist aber schwer zu erkennen, da der Monatsname
+// im Header dabei meist unverändert stehen bleibt. Diese Buttons machen
+// die Wochennavigation direkt sichtbar, ohne die globalen Pfeile/Tasten
+// zu ersetzen (beide Wege bleiben nutzbar).
+document.getElementById('weekPrevBtn').onclick = () => goToWeek(-1);
+document.getElementById('weekNextBtn').onclick = () => goToWeek(1);
 
 updateViewSwitcherActive('month');
 document.querySelectorAll('.view-switcher-tab').forEach(tab => {
