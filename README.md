@@ -7,6 +7,7 @@ Privater, passwortgeschützter Vorlesungskalender für das Studium (Bachelor Soz
 ## Funktionen
 
 - **Monatsansicht** mit Navigation über Pfeile, Tastatur (←/→), Wisch­geste auf Touch-Geräten oder direktem Sprung zum aktuellen Monat über den "Heute"-Button
+- **Wochenansicht** – dritter Ansichtsmodus (Umschalter Monat/Woche/Tag oben im Kalender) mit echtem Zeit-Raster, dynamisch je Woche auf den tatsächlichen Terminbereich zugeschnitten; zeigt Belastung (B_w) und geschätztes Selbststudium (S_w) pro Woche, Notiz-Hinweise, springt per Klick auf einen Tag zur Tagesansicht und per Klick auf eine leere Zelle direkt ins Formular für eigene Termine (vorausgefüllte Uhrzeit); teilbar über einen eigenen Link (`#YYYY-Www`)
 - **Mehrere Semester** – Auswahl im Header (bleibt beim Scrollen sichtbar); beim Laden automatisch das zum heutigen Datum passende Semester vorausgewählt, manuelles Umschalten (auch auf noch nicht laufende Semester) jederzeit möglich. Suche und "Nächste Veranstaltung" laufen dabei semesterübergreifend.
 - **Farbcodierung nach Modul** – jede Veranstaltung ist ihrem Modul farblich zugeordnet, Legende oben auf der Seite (sortiert M02 → M10, Zusatzangebot am Ende)
 - **Mobile Ansicht** – unter 700px Breite wechselt die Seite automatisch von der 7-Spalten-Rasteransicht zu einer einspaltigen Tagesliste, damit Termine nicht abgeschnitten werden; Modulkürzel werden dort direkt am Termin angezeigt
@@ -74,7 +75,7 @@ Danach startet der Kalender wie eine normale App (eigenes Icon, kein Browser-Rah
 
 ## Versionshistorie
 
-Alle Änderungen werden in [CHANGELOG.md](CHANGELOG.md) dokumentiert (aktuelle Version: **3.15.0**).
+Alle Änderungen werden in [CHANGELOG.md](CHANGELOG.md) dokumentiert (aktuelle Version: **3.27.0**).
 
 ## Farbpalette
 

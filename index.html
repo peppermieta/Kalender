@@ -64,10 +64,12 @@
     --danger-bg: #FCE2E2; --danger-tx: #A11B1B; --danger-bd: #DC2626;
     --warn-bg:   #FDE6D2; --warn-tx:   #9A4A0C; --warn-bd:   #EA580C;
     --success-tx: #1A8C70; --success-bd: #8DD4C2;
-    /* Bewusst eigener Blauton statt --accent (Lila) fürs Belastungs-Mini-
-       Band - eigene Farbfamilie, um es visuell von den übrigen Akzenten
-       (Prüfungen, Notiz-Sync, Aufwandsbewertung, ...) abzusetzen. */
-    --heatband-bg: #E6F1FB; --heatband-tx: #185FA5;
+    /* Bewusst eigener Blauton statt --accent (Lila) - eigene Farbfamilie,
+       um sie visuell von den übrigen Akzenten (Prüfungen, Notiz-Sync,
+       Aufwandsbewertung, ...) abzusetzen. War ursprünglich fürs Belastungs-
+       Mini-Band, wird jetzt vom Ansichts-Umschalter (aktiver Tab) und der
+       Jetzt-Linie/dem B_w-Chip der Wochenansicht weiterverwendet. */
+    --switch-active-bg: #E6F1FB; --switch-active-tx: #185FA5;
   }
 
   /* ── DARK MODE ──
@@ -92,7 +94,7 @@
     --danger-bg: #3A1518; --danger-tx: #F0A8AC; --danger-bd: #E8555A;
     --warn-bg:   #33220F; --warn-tx:   #E8AD70; --warn-bd:   #F0954A;
     --success-tx: #6FD9B8; --success-bd: #2C5C4C;
-    --heatband-bg: #0C447C; --heatband-tx: #85B7EB;
+    --switch-active-bg: #0C447C; --switch-active-tx: #85B7EB;
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -765,21 +767,107 @@
     white-space: nowrap;
   }
 
-  /* Mini-Band oben im Kalender (nächste Wochen, ersetzt/ergänzt die
-     Nächste-Veranstaltung-Leiste) */
-  .heatband {
+  /* Ansichts-Umschalter (Monat/Woche/Tag), ersetzt das frühere Belastungs-
+     Mini-Band an genau dieser Stelle. Dessen Sprungfunktion (Klick -> volle
+     Belastungsübersicht) lebt als direktes "zur Wochenansicht springen"
+     weiter, s. JS-Abschnitt "ANSICHTS-UMSCHALTER & WOCHENANSICHT". */
+  .view-switcher {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 14px; background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .view-switcher-tabs {
+    display: inline-flex; background: var(--bg); border: 1px solid var(--border);
+    border-radius: 8px; overflow: hidden;
+  }
+  .view-switcher-tab {
+    font: inherit; font-size: 12.5px; font-weight: 600; color: var(--muted);
+    background: none; border: none; padding: 6px 16px; cursor: pointer;
+  }
+  .view-switcher-tab + .view-switcher-tab { border-left: 1px solid var(--border); }
+  .view-switcher-tab.active { background: var(--switch-active-bg); color: var(--switch-active-tx); }
+  .view-switcher-tab:hover:not(.active) { color: var(--text); }
+
+  /* ── WOCHENANSICHT ──
+     Echtes Zeit-Raster (Stundenachse, Bereich dynamisch je Woche), dritter
+     Modus neben Monat/Tag. Termin-Blöcke werden absolut innerhalb ihrer
+     Tagesspalte positioniert (Top/Höhe in px aus der Uhrzeit berechnet,
+     s. JS), das Stundenraster selbst kommt aus einem sich wiederholenden
+     Hintergrund-Gradient statt echter Grid-Zeilen - genau wie beim
+     abgestimmten Mockup. */
+  .week-wrap { border-bottom: 1px solid var(--border); }
+  .week-title-row {
     display: flex; align-items: center; gap: 10px;
-    padding: 8px 14px; background: var(--heatband-bg);
-    border-bottom: 1px solid var(--border); cursor: pointer;
+    padding: 10px 24px; background: var(--surface);
   }
-  .heatband-label {
-    font-size: 11.5px; color: var(--heatband-tx); white-space: nowrap; flex-shrink: 0; font-weight: 600;
+  .week-title { font-size: 13.5px; font-weight: 600; flex: 1; }
+  .week-bw-chip {
+    font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px;
+    background: var(--switch-active-bg); color: var(--switch-active-tx); white-space: nowrap;
   }
-  .heatband-ribbon { display: flex; align-items: flex-end; gap: 4px; height: 20px; flex: 1; max-width: 140px; }
-  .heatband-bar { flex: 1; border-radius: 3px 3px 0 0; }
-  .heatband-arrow { color: var(--heatband-tx); flex-shrink: 0; font-size: 13px; }
+  .week-sw-hint { font-size: 11px; color: var(--muted); white-space: nowrap; }
+  .week-copy-link {
+    font: inherit; font-size: 12px; background: var(--bg); border: 1px solid var(--border);
+    border-radius: 6px; padding: 4px 8px; cursor: pointer; color: var(--muted); flex-shrink: 0;
+  }
+  .week-copy-link:hover { color: var(--text); border-color: var(--accent); }
+  .week-copy-link.copied { color: var(--success-tx); border-color: var(--success-bd); }
+
+  .week-grid-scroll { overflow-x: auto; padding: 0 24px 20px; }
+  .week-grid-inner { min-width: 760px; }
+
+  .week-header-row, .week-allday-row { display: grid; grid-template-columns: 44px repeat(7, minmax(100px, 1fr)); gap: 2px; }
+  .week-day-header {
+    text-align: center; font-size: 11.5px; color: var(--muted);
+    padding: 6px 2px; cursor: pointer; border-radius: 6px 6px 0 0;
+  }
+  .week-day-header:hover { background: var(--bg); }
+  .week-day-header.today { background: var(--accent-soft-bg); color: var(--accent); font-weight: 700; }
+  .week-day-header .week-day-date { display: block; font-size: 13px; margin-top: 1px; }
+  .week-day-note-dot {
+    display: inline-block; width: 5px; height: 5px; border-radius: 50%;
+    background: var(--muted); margin-left: 3px; vertical-align: middle;
+  }
+
+  .week-allday-row { min-height: 6px; margin-bottom: 4px; }
+  .week-allday-cell { padding: 1px; display: flex; flex-direction: column; gap: 2px; }
+  .week-allday-chip {
+    font-size: 10px; font-weight: 600; padding: 2px 5px; border-radius: 5px;
+    border: 1px solid; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer;
+  }
+
+  .week-hours-body { display: grid; grid-template-columns: 44px repeat(7, minmax(100px, 1fr)); gap: 2px; position: relative; }
+  .week-hour-axis { position: relative; }
+  .week-hour-label {
+    position: absolute; right: 6px; transform: translateY(-50%);
+    font-size: 10px; color: var(--muted);
+  }
+  .week-day-col {
+    position: relative; border-left: 1px solid var(--border);
+    background-image: repeating-linear-gradient(to bottom, var(--border) 0, var(--border) 1px, transparent 1px, transparent var(--week-hour-px));
+    cursor: pointer;
+  }
+  .week-day-col.ferien { background-color: var(--accent-soft-bg); }
+  .week-day-col.today { background-color: color-mix(in srgb, var(--accent-soft-bg) 45%, transparent); }
+
+  .week-event {
+    position: absolute; border-radius: 5px; border: 1px solid; border-left-width: 3px;
+    padding: 2px 5px; font-size: 10.5px; line-height: 1.3; overflow: hidden;
+    cursor: pointer; box-sizing: border-box;
+  }
+  .week-event-title { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .week-event-meta { font-size: 9.5px; opacity: .8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .week-now-line { position: absolute; left: 44px; right: 0; border-top: 2px solid var(--switch-active-tx); z-index: 5; pointer-events: none; }
+  .week-now-dot { position: absolute; left: -4px; top: -4px; width: 8px; height: 8px; border-radius: 50%; background: var(--switch-active-tx); }
+
   @media (max-width: 700px) {
-    .heatband-label { display: none; } /* auf Mobile reicht das Band selbst, spart Platz wie next-up-label */
+    .week-grid-scroll { padding: 0 12px 16px; }
+    .week-title-row { padding: 10px 12px; flex-wrap: wrap; }
+  }
+
+  @media print {
+    .view-switcher, .week-wrap { display: none !important; }
   }
 
   /* Live-Fokus-Status, nur wenn der angezeigte Tag "heute" ist */
@@ -1066,8 +1154,14 @@
 <!-- NÄCHSTE VERANSTALTUNG -->
 <div class="next-up" id="nextUp"></div>
 
-<!-- BELASTUNGS-MINI-BAND (komprimiertes Semester, springt zur Belastungsübersicht) -->
-<div class="heatband" id="heatBand" style="display:none;"></div>
+<!-- ANSICHTS-UMSCHALTER (ersetzt das frühere Belastungs-Mini-Band) -->
+<div class="view-switcher" id="viewSwitcher">
+  <div class="view-switcher-tabs">
+    <button type="button" class="view-switcher-tab" data-view="month">Monat</button>
+    <button type="button" class="view-switcher-tab" data-view="week">Woche</button>
+    <button type="button" class="view-switcher-tab" data-view="day">Tag</button>
+  </div>
+</div>
 
 <!-- SUCHE -->
 <div class="toolbar">
@@ -1088,13 +1182,27 @@
 <div class="legend" id="legend"></div>
 
 <!-- CALENDAR -->
-<div class="calendar-wrap">
+<div class="calendar-wrap" id="calendarWrap">
   <div class="weekday-header">
     <div>Mo</div><div>Di</div><div>Mi</div><div>Do</div><div>Fr</div><div>Sa</div><div>So</div>
   </div>
   <div class="cal-grid" id="calGrid"></div>
   <div class="month-dots" id="monthDots"></div>
 </div>
+
+<!-- WOCHENANSICHT (Zeit-Raster, dritter Modus) -->
+<div class="week-wrap" id="weekWrap" style="display:none;">
+  <div class="week-title-row">
+    <span class="week-title" id="weekTitle"></span>
+    <span class="week-sw-hint" id="weekSwHint" style="display:none;"></span>
+    <span class="week-bw-chip" id="weekBwChip" style="display:none;" title="Belastung dieser Woche (B_w)"></span>
+    <button type="button" class="week-copy-link" id="weekCopyLink" title="Link zu dieser Woche kopieren">🔗</button>
+  </div>
+  <div class="week-grid-scroll">
+    <div class="week-grid-inner" id="weekGridInner"></div>
+  </div>
+</div>
+
 
 <!-- KALENDER VERWALTEN (bündelt Abo, Drucken und Notizen-Sync an einer
      Stelle statt verstreut über Toolbar/Footer – s. Ideensammlung
@@ -3980,7 +4088,14 @@ function loadSemester(id, {resetMonth=true} = {}){
   renderLegend();
   renderMonth(currentMonthIdx);
   renderNextUp();
-  renderHeatBand();
+  // Wochenansicht läuft parallel zum Monatsraster mit - bei Semesterwechsel
+  // während sie aktiv ist, dieselben Wochentermine mit den neu geladenen
+  // Semesterdaten neu rendern (currentView/currentWeekMonday werden erst
+  // weiter unten im Skript deklariert, sind zur Laufzeit aber immer
+  // initialisiert, da loadSemester() nie während des Top-Level-Parsens
+  // aufgerufen wird, sondern erst durch Nutzeraktionen bzw. die Init-IIFE
+  // ganz am Ende der Datei).
+  if (currentView === 'week' && currentWeekMonday) renderWeek(currentWeekMonday);
   fachsemesterLabel.textContent = `${sem.fachsemester}. Fachsemester`;
   if(semesterSelect.value !== sem.id) semesterSelect.value = sem.id;
 }
@@ -4279,9 +4394,12 @@ function goToToday(){
   goTo(idx);
 }
 
-document.getElementById('prevBtn').onclick=()=>goTo(currentMonthIdx-1);
-document.getElementById('nextBtn').onclick=()=>goTo(currentMonthIdx+1);
-document.getElementById('todayBtn').onclick=goToToday;
+// Ansichts-abhängig: in der Wochenansicht blättern Vor/Zurück/Heute wochen-
+// statt monatsweise (currentView wird erst weiter unten im Skript
+// deklariert, ist bei Klick/Tastendruck zur Laufzeit aber immer initialisiert).
+document.getElementById('prevBtn').onclick=()=>{ if(currentView==='week') goToWeek(-1); else goTo(currentMonthIdx-1); };
+document.getElementById('nextBtn').onclick=()=>{ if(currentView==='week') goToWeek(1); else goTo(currentMonthIdx+1); };
+document.getElementById('todayBtn').onclick=()=>{ if(currentView==='week') showWeek(mondayOf(new Date())); else goToToday(); };
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){
     if(overlay.classList.contains('open')){ closeModal(); return; }
@@ -4292,9 +4410,9 @@ document.addEventListener('keydown',e=>{
     searchInput.blur();
     return;
   }
-  if(dayView.classList.contains('open')) return; // Monatsnavigation pausiert während die Tagesansicht offen ist
-  if(e.key==='ArrowLeft') goTo(currentMonthIdx-1);
-  if(e.key==='ArrowRight') goTo(currentMonthIdx+1);
+  if(dayView.classList.contains('open')) return; // Monats-/Wochennavigation pausiert während die Tagesansicht offen ist
+  if(e.key==='ArrowLeft'){ if(currentView==='week') goToWeek(-1); else goTo(currentMonthIdx-1); }
+  if(e.key==='ArrowRight'){ if(currentView==='week') goToWeek(1); else goTo(currentMonthIdx+1); }
 });
 
 // ─── MODAL ───────────────────────────────────────────────────────────────────
@@ -4882,71 +5000,349 @@ async function renderHeatmapView(){
     col.addEventListener('click', () => {
       // Bewusst OHNE den history.back()-Umweg über closeHeatmapView(): der
       // würde asynchron feuern und mit dem sofortigen history.pushState()
-      // aus openDayView() eine Race Condition erzeugen (erste Version hatte
-      // genau diesen Bug - closeHeatmapView() entfernt die 'open'-Klasse
-      // synchron, der zugehörige popstate mit dem Aufräumen kommt aber
-      // asynchron danach). Stattdessen: visuell schließen, direkt einen
-      // neuen History-Eintrag für die Tagesansicht pushen. Bewusste
-      // Vereinfachung: ein Zurück-Tap aus der Tagesansicht landet wieder
-      // beim normalen Kalender, nicht extra bei der Heatmap.
-      const iso = col.dataset.monday;
+      // aus showWeek() eine Race Condition erzeugen (erste Version hatte
+      // genau diesen Bug bei der Tagesansicht - closeHeatmapView() entfernt
+      // die 'open'-Klasse synchron, der zugehörige popstate mit dem
+      // Aufräumen kommt aber asynchron danach). Stattdessen: visuell
+      // schließen, direkt einen neuen History-Eintrag für die Zielansicht
+      // pushen. Springt seit der Wochenansicht zur betroffenen KW statt nur
+      // zum Montag als Einzeltag - der Balken zeigt ohnehin eine ganze
+      // Woche, nicht nur ihren ersten Tag. Bewusste Vereinfachung: ein
+      // Zurück-Tap aus der Wochenansicht landet wieder beim normalen
+      // Kalender, nicht extra bei der Heatmap.
+      const monday = new Date(col.dataset.monday + 'T00:00:00');
       closeHeatmapView({pushHistory:false});
-      openDayView(iso);
+      showWeek(monday);
     });
   });
 }
 
-// ─── BELASTUNGS-MINI-BAND (nächste Wochen, oben im Kalender) ──────────────
-// Ersetzt/ergänzt die Nächste-Veranstaltung-Leiste. Bewusst NUR aktuelle +
-// 2 kommende Wochen statt des ganzen Semesters: bei der winzigen Bandgröße
-// bringt ein "riesen Verlauf" nichts zum Lesen, relevant ist ohnehin nur,
-// was gerade ansteht - der volle Verlauf bleibt dem großen Screen
-// vorbehalten (ein Tap öffnet ihn). Rendert sofort mit K_w+P_w, ergänzt
-// S_w asynchron nach (gleiches Muster wie buildWeekOverview()).
-const heatBand = document.getElementById('heatBand');
-const HEATBAND_WEEK_COUNT = 3;
+// ─── ANSICHTS-UMSCHALTER & WOCHENANSICHT ──────────────────────────────────
+// Dritter Kalendermodus neben Monat/Tag: echtes Zeit-Raster mit dynamischem
+// Stundenbereich je Woche. Ersetzt das frühere Belastungs-Mini-Band (dessen
+// "Sprung zur vollen Belastungsübersicht" lebt jetzt direkt als "zur
+// Wochenansicht springen" beim Klick auf einen Heatmap-Balken weiter, s.u.
+// bei renderHeatmapView()). Teilbar per #YYYY-Www-Link, s. IDEENSAMMLUNG.md
+// ("Wochenansicht als dritte Ansicht", Stand 30.09.2026).
+let currentView = 'month'; // 'month' | 'week' - Tag ist ein Overlay, kein Basis-Modus
+let currentWeekMonday = null; // Date-Objekt (lokale Zeit), immer ein Montag
 
-// Aktuelle Woche + die folgenden - liegt "heute" außerhalb des Semesters
-// (z.B. vor Vorlesungsbeginn), ab der ersten Woche mit Montag in der
-// Zukunft. Kein Treffer (Semester bereits vorbei) -> leeres Array, Band
-// wird dann ausgeblendet.
-function selectUpcomingWeeks(bwList, count){
-  const todayKey = isoWeekKey(new Date());
-  let idx = bwList.findIndex(w => w.key === todayKey);
-  if (idx === -1) {
-    const now = new Date();
-    idx = bwList.findIndex(w => w.monday >= now);
-  }
-  if (idx === -1) return [];
-  return bwList.slice(idx, idx + count);
+function updateViewSwitcherActive(view){
+  document.querySelectorAll('.view-switcher-tab').forEach(t =>
+    t.classList.toggle('active', t.dataset.view === view));
 }
 
-function renderHeatBand(){
-  const paint = (workloadData) => {
-    const { bwList, t: tByWeek } = computeBwNormalizedByWeek(currentSemesterId, workloadData);
-    const upcoming = selectUpcomingWeeks(bwList, HEATBAND_WEEK_COUNT);
-    if (!upcoming.length) { heatBand.style.display = 'none'; return; }
+function todayIso(){
+  const t = new Date();
+  return isoDate(t.getFullYear(), t.getMonth(), t.getDate());
+}
 
-    // Dieselbe (jetzt perzentil-basierte) Normalisierung wie Wochenübersicht/
-    // voller Screen - sonst würde von den drei gezeigten Wochen immer eine
-    // "am rötesten" wirken, selbst wenn objektiv alle drei ruhig sind.
-    const bars = upcoming.map(w => {
-      const t = tByWeek[w.key];
-      const weekNum = w.key.split('-W')[1];
-      return `<div class="heatband-bar" style="height:${8 + t * 92}%;background:${bwColor(t)}" title="KW ${weekNum}"></div>`;
+// Montag derselben Woche wie das übergebene Datum (lokale Zeit, Mo=Wochenstart).
+function mondayOf(date){
+  const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const dow = d.getDay() || 7; // Sonntag=0 -> als 7 zählen
+  d.setDate(d.getDate() - (dow - 1));
+  return d;
+}
+
+function weekDatesFromMonday(monday){
+  return Array.from({length:7}, (_,i) => {
+    const d = new Date(monday); d.setDate(monday.getDate() + i); return d;
+  });
+}
+
+function weekKeyFromMonday(monday){ return isoWeekKey(monday); }
+
+// Umkehrung von isoWeekKey(): Montag der KW anhand des ISO-8601-Ankers
+// (4. Januar liegt immer in KW 1) - Standardalgorithmus, symmetrisch zur
+// bereits bestehenden getISOWeek()/getISOYear()-Logik.
+function mondayFromWeekKey(key){
+  const [yStr, wStr] = key.split('-W');
+  const y = Number(yStr), w = Number(wStr);
+  const jan4 = new Date(y, 0, 4);
+  const jan4Dow = jan4.getDay() || 7;
+  const week1Monday = new Date(y, 0, 4 - (jan4Dow - 1));
+  const monday = new Date(week1Monday);
+  monday.setDate(week1Monday.getDate() + (w - 1) * 7);
+  return monday;
+}
+
+function weekKeyFromHash(){
+  const h = location.hash.slice(1);
+  return /^\d{4}-W\d{2}$/.test(h) ? h : null;
+}
+
+// Analog zu findSemesterForIso(), aber über den Semesterzeitraum (start/end)
+// statt über vorhandene Termine - eine Woche kann komplett terminfrei sein
+// (Ferien) und wäre über reine Terminsuche nicht zuordenbar.
+function findSemesterForWeek(monday){
+  const mondayIso = isoDate(monday.getFullYear(), monday.getMonth(), monday.getDate());
+  const sunday = new Date(monday); sunday.setDate(sunday.getDate() + 6);
+  const sundayIso = isoDate(sunday.getFullYear(), sunday.getMonth(), sunday.getDate());
+  return SEMESTERS.find(s => sundayIso >= s.start && mondayIso <= s.end);
+}
+
+function clearViewHash(){
+  if (location.hash) history.pushState(null, '', location.pathname + location.search);
+}
+
+function showMonth({pushHistory=true} = {}){
+  currentView = 'month';
+  calendarWrap.style.display = '';
+  weekWrap.style.display = 'none';
+  updateViewSwitcherActive('month');
+  if (pushHistory) clearViewHash();
+}
+
+// Dynamischer Stundenbereich (Extra, von Anfang an dabei): zeigt genau den
+// Bereich, in dem diese Woche tatsächlich Termine mit fester Uhrzeit hat,
+// statt eines starren 8-20-Uhr-Rasters, das an ruhigen Wochen viel Leerraum
+// verschwendet und an langen Tagen zu knapp wäre. Fallback 8-18 Uhr für
+// komplett terminfreie Wochen (z.B. Ferien).
+function computeWeekHourRange(timedEventsPerDay){
+  let minMin = Infinity, maxMin = -Infinity;
+  timedEventsPerDay.flat().forEach(ev => {
+    const [sh, sm] = ev.start.split(':').map(Number);
+    const [eh, em] = ev.end.split(':').map(Number);
+    minMin = Math.min(minMin, sh * 60 + sm);
+    maxMin = Math.max(maxMin, eh * 60 + em);
+  });
+  if (minMin === Infinity) return { startHour: 8, endHour: 18 };
+  const startHour = Math.max(0, Math.floor(minMin / 60));
+  const endHour = Math.min(24, Math.ceil(maxMin / 60));
+  return { startHour, endHour: Math.max(endHour, startHour + 1) };
+}
+
+// Spalten-Packing für sich überschneidende Termine an einem Tag (Standard-
+// Greedy-Verfahren, wie bei Google-Calendar-artigen Zeitrastern üblich).
+// Bewusste Vereinfachung: nutzt die maximale Überlappung des GANZEN Tages
+// für die Spaltenzahl aller seiner Termine, statt pro zusammenhängendem
+// Überlappungs-Cluster einzeln zu rechnen - bei Pascals Stundenplan kommen
+// 3+ gleichzeitige Termine ohnehin praktisch nie vor, s. IDEENSAMMLUNG.md.
+function layoutDayEvents(items){
+  const sorted = items.slice().sort((a,b) => a.startMin - b.startMin || a.endMin - b.endMin);
+  const columns = [];
+  const placed = sorted.map(item => {
+    let col = columns.findIndex(end => end <= item.startMin);
+    if (col === -1) { col = columns.length; columns.push(item.endMin); }
+    else columns[col] = item.endMin;
+    return { ...item, col };
+  });
+  const totalCols = columns.length || 1;
+  return placed.map(p => ({ ...p, totalCols }));
+}
+
+const weekTitle = document.getElementById('weekTitle');
+const weekSwHint = document.getElementById('weekSwHint');
+const weekBwChip = document.getElementById('weekBwChip');
+const weekCopyLink = document.getElementById('weekCopyLink');
+const weekGridInner = document.getElementById('weekGridInner');
+const WEEK_HOUR_PX = 52;
+
+function renderWeek(monday){
+  // Geteilter Link/Heatmap-Sprung kann auf ein anderes Semester zeigen als
+  // das gerade geladene - analog zum Tagesansicht-Verhalten bei #YYYY-MM-DD.
+  const owner = findSemesterForWeek(monday);
+  if (owner && owner.id !== currentSemesterId) loadSemester(owner.id, {resetMonth:false});
+
+  const dates = weekDatesFromMonday(monday);
+  const isos = dates.map(d => isoDate(d.getFullYear(), d.getMonth(), d.getDate()));
+  const weekKey = weekKeyFromMonday(monday);
+  const todayI = todayIso();
+
+  const eventsByIso = isos.map(iso => (byDate[iso] || []).slice().sort((a,b) => (a.start||'').localeCompare(b.start||'')));
+  const timedByIso = eventsByIso.map(evs => evs.filter(e => e.start && e.end));
+  const alldayByIso = eventsByIso.map(evs => evs.filter(e => !e.start));
+
+  const { startHour, endHour } = computeWeekHourRange(timedByIso);
+  const bodyHeight = (endHour - startHour) * WEEK_HOUR_PX;
+
+  const firstLabel = dates[0].toLocaleDateString('de-DE', {day:'numeric', month:'short'});
+  const lastLabel = dates[6].toLocaleDateString('de-DE', {day:'numeric', month:'short', year:'numeric'});
+  weekTitle.textContent = `KW ${weekKey.split('-W')[1]} · ${firstLabel} – ${lastLabel}`;
+
+  const headerCells = dates.map((d,i) => {
+    const iso = isos[i];
+    const isToday = iso === todayI;
+    const hasNote = !!(localStorage.getItem(`dayNote:${iso}`) || '').trim();
+    // Notiz-Hinweis bewusst nur als Punkt (Extra, von Anfang an dabei) -
+    // ein Vorschautext würde die Kopfzeile je nach Länge unterschiedlich
+    // hoch machen, s. gleiches Prinzip bei der Tagesansicht.
+    const noteDot = hasNote ? `<span class="week-day-note-dot" title="Notiz zum Tag vorhanden"></span>` : '';
+    return `<button type="button" class="week-day-header${isToday?' today':''}" data-iso="${iso}">${WEEKDAY_ABBR[d.getDay()]}<span class="week-day-date">${d.getDate()}.${d.getMonth()+1}.</span>${noteDot}</button>`;
+  }).join('');
+
+  const alldayCells = alldayByIso.map((evs, i) => {
+    const iso = isos[i];
+    if (!evs.length) return `<div class="week-allday-cell" data-iso="${iso}"></div>`;
+    const chips = evs.map(ev => {
+      const m = MODS[ev.modul];
+      const typeIcon = TYPE_ICON[ev.type] ? `${TYPE_ICON[ev.type]} ` : '';
+      const idx = eventsByIso[i].indexOf(ev);
+      return `<span class="week-allday-chip" data-iso="${iso}" data-ev-idx="${idx}" style="background:${m.bg};color:${m.tx};border-color:${m.bd}">${typeIcon}${escapeHtml(ev.title)}</span>`;
+    }).join('');
+    return `<div class="week-allday-cell" data-iso="${iso}">${chips}</div>`;
+  }).join('');
+
+  let axisLabels = '';
+  for(let h = startHour; h <= endHour; h++){
+    axisLabels += `<span class="week-hour-label" style="top:${(h-startHour)*WEEK_HOUR_PX}px">${h}:00</span>`;
+  }
+
+  let anyNowLine = false;
+  const dayCols = eventsByIso.map((evs, i) => {
+    const iso = isos[i];
+    const isToday = iso === todayI;
+    const isFerien = FERIEN.has(iso);
+    const timed = timedByIso[i].map(ev => {
+      const [sh, sm] = ev.start.split(':').map(Number);
+      const [eh, em] = ev.end.split(':').map(Number);
+      return { ev, startMin: sh*60+sm, endMin: eh*60+em };
+    });
+    const blocks = layoutDayEvents(timed).map(({ev, startMin, endMin, col, totalCols}) => {
+      const m = MODS[ev.modul];
+      const top = ((startMin - startHour*60) / 60) * WEEK_HOUR_PX;
+      const height = Math.max(16, ((endMin - startMin) / 60) * WEEK_HOUR_PX - 2);
+      const widthPct = 100 / totalCols;
+      const typeCls = ev.type ? ` event-type-${ev.type}` : '';
+      const roomLabel = (ev.type !== 'abgabe' && ev.type !== 'eigen' && ev.raum) ? shortRoom(ev.raum) : '';
+      const metaBits = [ev.start, roomLabel].filter(Boolean).join(' · ');
+      const idx = eventsByIso[i].indexOf(ev);
+      return `<div class="week-event${typeCls}" data-iso="${iso}" data-ev-idx="${idx}" style="top:${top}px;height:${height}px;left:calc(${col*widthPct}% + 1px);width:calc(${widthPct}% - 2px);background:${m.bg};color:${m.tx};border-color:${m.bd}"><div class="week-event-title">${TYPE_ICON[ev.type] ? TYPE_ICON[ev.type]+' ' : ''}${escapeHtml(ev.title)}</div><div class="week-event-meta">${metaBits}</div></div>`;
     }).join('');
 
-    heatBand.style.display = 'flex';
-    heatBand.onclick = () => openHeatmapView();
-    heatBand.innerHTML = `
-      <span class="heatband-label">Nächste Wochen</span>
-      <div class="heatband-ribbon">${bars}</div>
-      <span class="heatband-arrow" aria-hidden="true">›</span>`;
+    // "Jetzt"-Linie (Extra, von Anfang an dabei) - wird unten per
+    // scrollIntoView() automatisch in den sichtbaren Bereich gescrollt.
+    let nowLine = '';
+    if (isToday) {
+      const now = new Date();
+      const nowMin = now.getHours()*60 + now.getMinutes();
+      if (nowMin >= startHour*60 && nowMin <= endHour*60) {
+        nowLine = `<div class="week-now-line" style="top:${((nowMin - startHour*60)/60)*WEEK_HOUR_PX}px"><span class="week-now-dot"></span></div>`;
+        anyNowLine = true;
+      }
+    }
+
+    return `<div class="week-day-col${isFerien?' ferien':''}${isToday?' today':''}" data-iso="${iso}" style="height:${bodyHeight}px">${blocks}${nowLine}</div>`;
+  }).join('');
+
+  weekGridInner.innerHTML = `
+    <div class="week-header-row"><div></div>${headerCells}</div>
+    <div class="week-allday-row"><div></div>${alldayCells}</div>
+    <div class="week-hours-body" style="--week-hour-px:${WEEK_HOUR_PX}px;height:${bodyHeight}px">
+      <div class="week-hour-axis" style="height:${bodyHeight}px">${axisLabels}</div>
+      ${dayCols}
+    </div>`;
+
+  weekGridInner.querySelectorAll('.week-day-header').forEach(el => {
+    el.addEventListener('click', () => openDayView(el.dataset.iso));
+  });
+  weekGridInner.querySelectorAll('.week-event, .week-allday-chip').forEach(el => {
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const ev = (byDate[el.dataset.iso] || [])[Number(el.dataset.evIdx)];
+      if (ev) openModal(ev);
+    });
+  });
+  weekGridInner.querySelectorAll('.week-day-col').forEach((col, i) => {
+    col.addEventListener('click', (e) => {
+      if (e.target.closest('.week-event')) return;
+      // Klick-Position in eine Uhrzeit umrechnen (Extra, von Anfang an
+      // dabei), auf 15-Minuten-Raster gerundet, und als Vorausfüllung ins
+      // bereits bestehende Tagesansicht-Formular "Eigenen Termin
+      // hinzufügen" reichen - bewusst kein eigenes Mini-Formular im
+      // Wochenraster, um den bereits getesteten Ablauf wiederzuverwenden.
+      const rect = col.getBoundingClientRect();
+      const offsetY = e.clientY - rect.top;
+      const rawMin = startHour*60 + Math.round((offsetY/WEEK_HOUR_PX)*60/15)*15;
+      const clamped = Math.max(startHour*60, Math.min((endHour*60)-15, rawMin));
+      const hh = String(Math.floor(clamped/60)).padStart(2,'0');
+      const mm = String(clamped%60).padStart(2,'0');
+      openDayView(isos[i], { prefillTime: `${hh}:${mm}` });
+    });
+  });
+
+  // B_w-Chip nur als Aggregat (Extra, von Anfang an dabei, statt einer
+  // stundengenauen Färbung im Raster - so ehrlich wie möglich, s.
+  // IDEENSAMMLUNG.md): rendert sofort ohne Wert, ergänzt nach dem
+  // asynchronen Datenbrücken-Abruf. S_w-Hinweis rein als Wochensumme, da
+  // computeSelfStudyHoursByWeek() keine Tages-/Stundenauflösung liefert.
+  weekBwChip.style.display = 'none';
+  weekSwHint.style.display = 'none';
+  fetchWorkloadData().then(workloadData => {
+    // Inzwischen zu einer anderen Woche/Ansicht weitergeblättert -> veraltete
+    // Antwort verwerfen (gleiches Muster wie bei der Tagesansicht-Chip-Farbe).
+    if (currentView !== 'week' || !currentWeekMonday || weekKeyFromMonday(currentWeekMonday) !== weekKey) return;
+    const { bwList, t } = computeBwNormalizedByWeek(currentSemesterId, workloadData);
+    const wk = bwList.find(w => w.key === weekKey);
+    if (wk) {
+      const dot = `<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${bwColor(t[weekKey])};margin-right:5px;vertical-align:1px;"></span>`;
+      weekBwChip.innerHTML = `${dot}B_w ≈ ${wk.bw.toFixed(1)} Std.`;
+      weekBwChip.style.display = '';
+    }
+    const sHours = computeSelfStudyHoursByWeek(currentSemesterId, workloadData)[weekKey];
+    if (sHours) {
+      weekSwHint.textContent = `≈ ${sHours.toFixed(1)} Std. Selbststudium empfohlen`;
+      weekSwHint.style.display = '';
+    }
+  });
+
+  weekCopyLink.onclick = () => {
+    const url = `${location.origin}${location.pathname}#${weekKey}`;
+    navigator.clipboard.writeText(url).then(() => {
+      weekCopyLink.textContent = '✓';
+      weekCopyLink.classList.add('copied');
+      setTimeout(() => { weekCopyLink.textContent = '🔗'; weekCopyLink.classList.remove('copied'); }, 2000);
+    });
   };
 
-  paint(null);
-  fetchWorkloadData().then(workloadData => { if (workloadData) paint(workloadData); });
+  if (anyNowLine) {
+    requestAnimationFrame(() => {
+      const el = weekGridInner.querySelector('.week-now-line');
+      if (el) el.scrollIntoView({block:'center', behavior:'auto'});
+    });
+  }
 }
+
+function showWeek(monday, {pushHistory=true} = {}){
+  currentView = 'week';
+  currentWeekMonday = monday;
+  calendarWrap.style.display = 'none';
+  weekWrap.style.display = '';
+  updateViewSwitcherActive('week');
+  renderWeek(monday);
+  if (pushHistory) history.pushState({weekView: weekKeyFromMonday(monday)}, '', `#${weekKeyFromMonday(monday)}`);
+}
+
+function goToWeek(deltaWeeks){
+  const base = currentWeekMonday || mondayOf(new Date());
+  const next = new Date(base); next.setDate(base.getDate() + deltaWeeks*7);
+  showWeek(next);
+}
+
+updateViewSwitcherActive('month');
+document.querySelectorAll('.view-switcher-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const view = tab.dataset.view;
+    if (view === 'month') {
+      if (dayView.classList.contains('open')) closeDayView();
+      showMonth();
+    } else if (view === 'week') {
+      let monday = currentWeekMonday;
+      if (!monday) monday = currentDayIso ? mondayOf(new Date(currentDayIso + 'T00:00:00')) : mondayOf(new Date());
+      if (dayView.classList.contains('open')) closeDayView({pushHistory:false});
+      showWeek(monday);
+    } else if (view === 'day') {
+      let iso = currentDayIso;
+      if (!iso && currentView === 'week' && currentWeekMonday) {
+        const todayI = todayIso();
+        const weekIsos = weekDatesFromMonday(currentWeekMonday).map(d => isoDate(d.getFullYear(), d.getMonth(), d.getDate()));
+        iso = weekIsos.includes(todayI) ? todayI : weekIsos[0];
+      }
+      openDayView(iso || todayIso());
+    }
+  });
+});
 
 // ─── NOTIZEN ÜBERTRAGEN (manueller Export/Import zwischen Geräten) ──────────
 // getAllNotes() sammelt Notizen UND eigene Freitext-Termine – wird vom
@@ -5149,7 +5545,7 @@ function updateDayFocus(events){
 
 // pushHistory=false wird beim Laden per Link/Zurück-Taste genutzt, um keinen
 // neuen (redundanten) History-Eintrag zu erzeugen
-function renderDayView(iso, {pushHistory=true} = {}){
+function renderDayView(iso, {pushHistory=true, prefillTime=null} = {}){
   const events = (byDate[iso] || []).slice().sort((a,b)=> (a.start||'').localeCompare(b.start||''));
   const [y, mo, d] = iso.split('-').map(Number);
   const dow = new Date(y, mo-1, d).getDay();
@@ -5299,7 +5695,20 @@ function renderDayView(iso, {pushHistory=true} = {}){
   document.getElementById('dayAddSave').onclick = () => savePersonalEvent(iso);
   addTitle.addEventListener('keydown', e => { if (e.key === 'Enter') savePersonalEvent(iso); });
 
+  // Klick auf eine leere Zelle in der Wochenansicht (Extra, von Anfang an
+  // dabei) reicht die abgelesene Uhrzeit hierher durch, statt ein eigenes
+  // Mini-Formular im Wochenraster zu bauen - nutzt den bereits bestehenden,
+  // getesteten "Eigenen Termin hinzufügen"-Ablauf direkt vorausgefüllt.
+  if (prefillTime) {
+    addRow.style.display = 'none';
+    addForm.style.display = 'flex';
+    addTime.value = prefillTime;
+    addDuration.style.display = 'block';
+    addTitle.focus();
+  }
+
   dayView.classList.add('open');
+  updateViewSwitcherActive('day');
   currentDayIso = iso;
   if(pushHistory) history.pushState({dayView:iso}, '', `#${iso}`);
 
@@ -5369,13 +5778,14 @@ function savePersonalEvent(iso){
   renderDayView(iso, {pushHistory:false});
 }
 
-function openDayView(iso){ renderDayView(iso, {pushHistory:true}); }
+function openDayView(iso, opts={}){ renderDayView(iso, {pushHistory:true, ...opts}); }
 
 function closeDayView({pushHistory=true} = {}){
   dayView.classList.remove('open');
   clearInterval(dayFocusTimer);
   dayFocusTimer = null;
   currentDayIso = null;
+  updateViewSwitcherActive(currentView);
   if(pushHistory && location.hash) history.pushState(null, '', location.pathname + location.search);
 }
 
@@ -5420,13 +5830,22 @@ window.addEventListener('popstate', () => {
     return;
   }
   const iso = isoFromHash();
+  const weekKey = iso ? null : weekKeyFromHash();
   if(iso){
     const owner = findSemesterForIso(iso);
     if(owner && owner.id !== currentSemesterId) loadSemester(owner.id, {resetMonth:false});
     syncMonthToIso(iso);
     renderDayView(iso, {pushHistory:false});
+  } else if (weekKey) {
+    if(dayView.classList.contains('open')) closeDayView({pushHistory:false});
+    const monday = mondayFromWeekKey(weekKey);
+    const owner = findSemesterForWeek(monday);
+    if(owner && owner.id !== currentSemesterId) loadSemester(owner.id, {resetMonth:false});
+    showWeek(monday, {pushHistory:false});
+  } else {
+    if(dayView.classList.contains('open')) closeDayView({pushHistory:false});
+    if(currentView === 'week') showMonth({pushHistory:false});
   }
-  else closeDayView({pushHistory:false});
 });
 
 // ─── TOUCH SWIPE (Monatsnavigation auf Mobile/Touch-Geräten) ────────────────
@@ -5813,12 +6232,18 @@ async function refreshFeedStatus(){
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 (function(){
   const initialIso = isoFromHash();
-  // Zeigt geteilter Link auf ein Datum in einem bestimmten Semester, startet
-  // direkt dort; sonst wird das Semester anhand des heutigen Datums ermittelt.
-  const owner = initialIso ? findSemesterForIso(initialIso) : null;
+  const initialWeekKey = initialIso ? null : weekKeyFromHash();
+  const initialMonday = initialWeekKey ? mondayFromWeekKey(initialWeekKey) : null;
+
+  // Zeigt geteilter Link auf ein Datum/eine Woche in einem bestimmten
+  // Semester, startet direkt dort; sonst wird das Semester anhand des
+  // heutigen Datums ermittelt.
+  const owner = initialIso ? findSemesterForIso(initialIso)
+              : initialMonday ? findSemesterForWeek(initialMonday)
+              : null;
   const targetSemesterId = owner ? owner.id : detectCurrentSemesterId();
 
-  loadSemester(targetSemesterId, {resetMonth: !initialIso});
+  loadSemester(targetSemesterId, {resetMonth: !initialIso && !initialMonday});
 
   if(initialIso){
     const [y, m] = initialIso.split('-').map(Number);
@@ -5826,6 +6251,11 @@ async function refreshFeedStatus(){
     currentMonthIdx = idx !== -1 ? idx : 0;
     renderMonth(currentMonthIdx);
     renderDayView(initialIso, {pushHistory:false});
+  } else if (initialMonday) {
+    const idx = MONTHS.findIndex(mo => mo.year===initialMonday.getFullYear() && mo.month===initialMonday.getMonth());
+    currentMonthIdx = idx !== -1 ? idx : 0;
+    renderMonth(currentMonthIdx); // Hintergrund-Monat synchron halten, wie bei der Tagesansicht
+    showWeek(initialMonday, {pushHistory:false});
   }
 })();
 </script>

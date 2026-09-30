@@ -7,6 +7,52 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.27.0] - 2026-09-30
+
+### Added
+- **Wochenansicht als dritter Ansichtsmodus** (Monat/Woche/Tag): neuer
+  Ansichts-Umschalter oben im Kalender ersetzt das frühere Belastungs-
+  Mini-Band. Die Wochenansicht zeigt ein echtes Zeit-Raster mit
+  Stundenachse, deren Bereich sich dynamisch nach den tatsächlichen
+  Terminen der jeweils angezeigten Woche richtet (Fallback 8-18 Uhr
+  bei komplett terminfreien Wochen). Von Anfang an mit an Bord:
+  - **B_w-Chip** (Aggregat-Wert der Woche, farblich passend zur
+    Belastungsübersicht) und ein reiner **S_w-Text-Hinweis**
+    ("≈X,X Std. Selbststudium empfohlen") - bewusst nur als
+    Wochensumme, da `computeSelfStudyHoursByWeek()` keine Tages-/
+    Stundenauflösung liefert und eine vorgetäuschte Genauigkeit im
+    Raster irreführend wäre.
+  - **Notiz-Punkt** im Tages-Header, wenn zu diesem Tag eine Notiz
+    existiert (reiner Hinweis, kein Vorschautext).
+  - **Klick auf einen Tages-Header** springt zur Tagesansicht; **Klick
+    auf eine leere Rasterzelle** öffnet die Tagesansicht mit dem
+    bestehenden "Eigenen Termin hinzufügen"-Formular, Uhrzeit aus der
+    Klickposition vorausgefüllt (auf 15-Minuten-Raster gerundet).
+  - **"Jetzt"-Linie** für den heutigen Tag, scrollt beim Öffnen
+    automatisch in den sichtbaren Bereich.
+  - **Teilbarer Link** im Format `#YYYY-Www` (ISO-Kalenderwoche,
+    analog zum bestehenden `#YYYY-MM-DD`-Format der Tagesansicht),
+    inkl. Kopier-Button, Browser-Verlauf (Zurück-Taste) und
+    Deep-Link-Unterstützung beim direkten Seitenaufruf.
+  - Wochenenden werden immer als eigene (meist leere) Spalten
+    mitgerendert statt ausgeblendet.
+  - Überschneidende Termine am selben Tag werden nebeneinander in
+    Spalten gepackt (Standard-Greedy-Verfahren); bewusste
+    Vereinfachung: die Spaltenzahl gilt für den ganzen Tag statt pro
+    einzelnem Überlappungs-Cluster, da 3+ gleichzeitige Termine im
+    Stundenplan praktisch nicht vorkommen.
+  - Vor/Zurück/Heute-Buttons sowie die Pfeiltasten (←/→) blättern in
+    der Wochenansicht wochen- statt monatsweise.
+  - Ein Klick auf einen Balken in der vollen Belastungsübersicht
+    springt jetzt zur betroffenen Kalenderwoche in der Wochenansicht
+    statt nur zum Montag als Einzeltag.
+
+### Changed
+- Das bisherige Belastungs-Mini-Band ("Nächste Wochen") ist entfallen
+  - sein einziger Zweck (schneller Überblick + Sprung zur vollen
+    Belastungsübersicht) lebt jetzt direkt über die Wochenansicht und
+    den neuen Ansichts-Umschalter weiter.
+
 ## [3.26.0] - 2026-08-28
 
 ### Added
