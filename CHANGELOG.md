@@ -7,6 +7,38 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.28.0] - 2026-09-30
+
+### Added
+- **Wochenansicht als Bild teilen** – neuer Button (📤) direkt neben dem
+  bestehenden Link-Kopieren-Button in der Wochenansicht. Rendert die
+  angezeigte Woche als eigenständiges PNG-Bild und öffnet, wo verfügbar,
+  die Web-Share-API (z. B. direkt an WhatsApp/Signal weiterreichen);
+  Desktop-Fallback ist ein einfacher Bild-Download.
+- Eigenes Canvas-Rendering statt einer Fremdbibliothek (DOM-Snapshot):
+  baut auf den bestehenden Layout-Funktionen der Wochenansicht auf
+  (`layoutDayEvents()`, `computeWeekHourRange()`), zeichnet aber
+  unabhängig und deutlich größer skaliert (190px Spaltenbreite, 90px pro
+  Stunde statt 52px auf dem Bildschirm) mit Zeilenumbruch statt Ellipsis-
+  Kürzung, damit auch lange Veranstaltungstitel vollständig lesbar
+  bleiben. Blockhöhen wachsen bei Bedarf über die reine Zeitproportion
+  hinaus, aber nie über den nächsten Termin derselben Spalte hinaus.
+  Bewusst immer im hellen Farbschema (analog zur Druck-Konvention),
+  unabhängig vom aktuell eingestellten Dark Mode.
+- Bewusst enthalten: "Eigene Termine" (Privat, anders als bei Druck/ICS-
+  Feed – anderer Zweck). Bewusst ausgeschlossen: Tagesnotizen, B_w-Chip/
+  S_w-Hinweis, persönliche Aufwandsbewertungs-Badges (subjektive/
+  analytische Zusatzinfos, kein reiner Termininhalt).
+- Vorab mehrere Design-Runden mit Mockups: erste Fassung nutzte noch die
+  Bildschirm-Skalierung mit Titel-Kürzung, nach Rückmeldung auf
+  großzügigere Skalierung mit vollständigen (umgebrochenen) Titeln
+  umgestellt.
+- Bug beim Testen gefunden und behoben: einzelne, zusammenhängende Wörter
+  ohne Leerzeichen (z. B. "Workshop/Methodikseminar") ragten bei der
+  eigenen Zeilenumbruch-Funktion über den Terminblock hinaus, da nur an
+  Leerzeichen umgebrochen wurde. Zeichenweiser Fallback für diesen Fall
+  ergänzt.
+
 ## [3.27.2] - 2026-09-30
 
 ### Changed

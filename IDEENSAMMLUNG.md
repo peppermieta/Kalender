@@ -179,6 +179,41 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   Drucken, nur als Bilddatei statt PDF) und `navigator.share()` mit
   Datei-Anhang; auf Desktop ohne Share-API bräuchte es einen Fallback
   (z. B. Bild-Download).
+  **✅ Woche umgesetzt (v3.28.0, 30.09.2026)** – Tag als eigener
+  Folgeschritt bewusst noch offen (s. u.).
+  **Vorab-Klärungsrunde (mehrere offene Fragen bewusst vor dem Bauen
+  geklärt statt anzunehmen):** Umfang zuerst nur Woche (Tag später),
+  eigenes Canvas-Zeichnen statt Fremdbibliothek (html2canvas o. ä. hat
+  bekannte Lücken bei modernem CSS wie Grid/Custom Properties, die diese
+  App nutzt – und ein Großteil der eigentlichen Layout-Arbeit lag durch
+  `layoutDayEvents()`/`computeWeekHourRange()` ohnehin schon vor),
+  "Eigene Termine" (Privat) bewusst enthalten (anders als bei Druck/ICS-
+  Feed – anderer Zweck: das Bild zeigt die eigene Perspektive), Button
+  direkt neben dem Kopieren-Button, Desktop-Fallback nur Download (kein
+  Zwischenablage-Pfad), Tagesnotizen und persönliche
+  Aufwandsbewertungs-Badges bewusst ausgeschlossen.
+  **Design-Iteration per Mockup (vor jedem Code-Schritt, wie sonst auch):**
+  erste Fassung übernahm einfach die Bildschirm-Darstellung (Ellipsis-
+  Kürzung bei langen Titeln) – nach Rückmeldung ("Titel komplett
+  ersichtlich") auf eine eigene, deutlich großzügigere Skalierung für das
+  Bild umgestellt (190px Spaltenbreite, 90px/Std. statt 52px auf dem
+  Bildschirm) mit echtem Zeilenumbruch statt Kürzung. Blockhöhen wachsen
+  bei Bedarf über die reine Zeitproportion hinaus, aber nie über den
+  Start des nächsten Termins derselben Spalte hinaus (verhindert
+  Überlappung), sonst reine Anzeigefläche unterhalb.
+  **Bug beim Testen gefunden und behoben:** einzelne, zusammenhängende
+  Wörter ohne Leerzeichen (z. B. "Workshop/Methodikseminar") ragten bei
+  der ersten Fassung der Zeilenumbruch-Funktion über den Terminblock
+  hinaus, da nur an Leerzeichen umgebrochen wurde. Zeichenweiser
+  Fallback für diesen Fall ergänzt, mit echten Semesterdaten erneut
+  geprüft.
+  **Bewusst immer im hellen Farbschema** (MODS_LIGHT statt der aktuell
+  aktiven MODS-Bindung), analog zur bestehenden Konvention beim Drucken,
+  unabhängig vom Dark-Mode-Zustand geprüft (Bild identisch in beiden
+  Modi).
+  **Offen für später:** Tagesansicht als Bild teilen (gleicher Ansatz,
+  eigener Folgeschritt), Desktop-Zwischenablage-Kopieren war bewusst
+  nicht Teil dieser ersten Fassung.
 - **"Was hab ich verpasst?"** 🎯 **Priorität (28.08.2026, bald angehen)**
   – kurze Zusammenfassung der Lücke, wenn man
   ein paar Tage nicht im Kalender war. Ließe sich über einen in

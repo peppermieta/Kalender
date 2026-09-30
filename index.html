@@ -832,6 +832,7 @@
   }
   .week-copy-link:hover { color: var(--text); border-color: var(--accent); }
   .week-copy-link.copied { color: var(--success-tx); border-color: var(--success-bd); }
+  .week-copy-link svg { display: block; }
 
   .week-grid-scroll { overflow-x: auto; padding: 0 24px 20px; }
   .week-grid-inner { min-width: 760px; }
@@ -1236,6 +1237,11 @@
     <span class="week-sw-hint" id="weekSwHint" style="display:none;"></span>
     <span class="week-bw-chip" id="weekBwChip" style="display:none;" title="Belastung dieser Woche (B_w)"></span>
     <button type="button" class="week-copy-link" id="weekCopyLink" title="Link zu dieser Woche kopieren">🔗</button>
+    <button type="button" class="week-copy-link" id="weekShareImgBtn" title="Woche als Bild teilen">
+      <svg viewBox="0 0 24 24" width="14" height="14" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path fill="currentColor" fill-rule="evenodd" d="M12 3l4.5 4.5-1.4 1.4L13 6.8V15h-2V6.8L8.9 8.9 7.5 7.5 12 3zM5 17h2v2a1 1 0 001 1h8a1 1 0 001-1v-2h2v2a3 3 0 01-3 3H8a3 3 0 01-3-3v-2z"/>
+      </svg>
+    </button>
   </div>
   <div class="week-grid-scroll">
     <div class="week-grid-inner" id="weekGridInner"></div>
@@ -5192,6 +5198,7 @@ const weekTitle = document.getElementById('weekTitle');
 const weekSwHint = document.getElementById('weekSwHint');
 const weekBwChip = document.getElementById('weekBwChip');
 const weekCopyLink = document.getElementById('weekCopyLink');
+const weekShareImgBtn = document.getElementById('weekShareImgBtn');
 const weekGridInner = document.getElementById('weekGridInner');
 const WEEK_HOUR_PX = 52;
 
@@ -5352,6 +5359,11 @@ function renderWeek(monday){
     });
   };
 
+  weekShareImgBtn.onclick = () => {
+    weekShareImgBtn.disabled = true;
+    shareWeekImage(monday).finally(() => { weekShareImgBtn.disabled = false; });
+  };
+
   // Jetzt-Scroll (Extra, von Anfang an dabei): enthält die Woche "heute",
   // wird zur Jetzt-Linie gescrollt; sonst zum ersten Termin der Woche
   // (erstes .week-event im DOM = chronologisch frühester Termin, da Tage
@@ -5362,6 +5374,338 @@ function renderWeek(monday){
       ? weekGridInner.querySelector('.week-now-line')
       : weekGridInner.querySelector('.week-event');
     if (el) el.scrollIntoView({block:'center', behavior:'auto'});
+  });
+}
+
+// ─── WOCHE ALS BILD TEILEN (Extra, 30.09.2026 nach Rückmeldung ergänzt,
+// s. IDEENSAMMLUNG.md "Tag/Woche als Bild teilen") ──────────────────────
+// Eigenes Canvas-Rendering statt einer Fremdbibliothek (DOM-Snapshot) -
+// baut auf denselben Layout-Funktionen wie die Wochenansicht selbst auf
+// (layoutDayEvents(), computeWeekHourRange()), zeichnet aber unabhängig
+// und deutlich größer skaliert (mehr Pixel pro Stunde, breitere Spalten
+// als auf dem Bildschirm), damit auch lange Veranstaltungstitel
+// vollständig lesbar bleiben statt wie in der Live-Ansicht per Ellipsis
+// gekürzt zu werden (s. Design-Absprache/Mockup-Runde). Bewusst immer im
+// hellen Farbschema (MODS_LIGHT statt der aktuell aktiven MODS-Bindung),
+// analog zur bestehenden Konvention beim Drucken. Bewusst OHNE
+// B_w-Chip/S_w-Hinweis, Tagesnotiz-Punkt und Aufwandsbewertungs-Badges -
+// subjektive/analytische Zusatzinfos, kein reiner Termininhalt. "Eigene
+// Termine" (Privat) sind dagegen bewusst enthalten (anders als bei
+// Druck/ICS-Feed) - anderer Zweck, s. Absprache.
+const SHARE_COL_W = 190, SHARE_HOUR_PX = 90, SHARE_GUTTER_W = 52, SHARE_GAP = 2, SHARE_PAD = 24;
+const SHARE_COLORS = {
+  cardBg: '#FFFFFF', text: '#1A1A18', muted: '#7A7870', border: '#E2E0D8',
+  dayBg: '#FAFAF8', ferienBg: '#EDE8FF', ferienHeaderBg: '#EDE8FF',
+  headerBg: '#F1F1EE', danger: '#DC2626', warn: '#EA580C',
+};
+
+function shareCanvasRoundRect(ctx, x, y, w, h, r){
+  const rr = Math.max(0, Math.min(r, w/2, h/2));
+  ctx.beginPath();
+  ctx.moveTo(x+rr, y);
+  ctx.arcTo(x+w, y, x+w, y+h, rr);
+  ctx.arcTo(x+w, y+h, x, y+h, rr);
+  ctx.arcTo(x, y+h, x, y, rr);
+  ctx.arcTo(x, y, x+w, y, rr);
+  ctx.closePath();
+}
+
+// Zeilenumbruch-Hilfsfunktion (Canvas hat dafür nichts Eingebautes) -
+// bricht wortweise um, keine Silbentrennung nötig bei den vorkommenden
+// Titeln. ctx.font muss vor dem Aufruf bereits gesetzt sein.
+function shareWrapText(ctx, text, maxWidth){
+  const words = text.split(' ');
+  const lines = [];
+  let line = '';
+  words.forEach(word => {
+    // Normalfall: Wort passt für sich allein in maxWidth.
+    if (ctx.measureText(word).width <= maxWidth) {
+      const test = line ? `${line} ${word}` : word;
+      if (ctx.measureText(test).width > maxWidth && line) {
+        lines.push(line);
+        line = word;
+      } else {
+        line = test;
+      }
+      return;
+    }
+    // Einzelnes Wort ist für sich schon zu breit (z.B. lange Komposita
+    // ohne Leerzeichen wie "Workshop/Methodikseminar") - zeichenweise
+    // umbrechen statt unbeschnitten über den Block hinausragen zu lassen.
+    if (line) { lines.push(line); line = ''; }
+    let chunk = '';
+    for (const ch of word) {
+      const test = chunk + ch;
+      if (ctx.measureText(test).width > maxWidth && chunk) {
+        lines.push(chunk);
+        chunk = ch;
+      } else {
+        chunk = test;
+      }
+    }
+    line = chunk;
+  });
+  if (line) lines.push(line);
+  return lines;
+}
+
+// Baut das fertige Bild als <canvas>. Zwei Durchgänge: erst alle
+// Textlängen/Zeilenumbrüche mit einem freistehenden Mess-Context
+// bestimmen (damit Zeilenanzahl und damit Höhen VOR dem Zeichnen
+// feststehen - sonst müsste die Canvas-Größe nachträglich korrigiert
+// werden), danach das eigentliche Zeichnen auf dem final bemessenen
+// Canvas.
+function buildWeekShareCanvas(monday){
+  const dates = weekDatesFromMonday(monday);
+  const isos = dates.map(d => isoDate(d.getFullYear(), d.getMonth(), d.getDate()));
+  const weekKey = weekKeyFromMonday(monday);
+  const eventsByIso = isos.map(iso => (byDate[iso] || []).slice().sort((a,b) => (a.start||'').localeCompare(b.start||'')));
+  const timedByIso = eventsByIso.map(evs => evs.filter(e => e.start && e.end));
+  const alldayByIso = eventsByIso.map(evs => evs.filter(e => !e.start));
+  const { startHour, endHour } = computeWeekHourRange(timedByIso);
+
+  const firstLabel = dates[0].toLocaleDateString('de-DE', {day:'numeric', month:'short'});
+  const lastLabel = dates[6].toLocaleDateString('de-DE', {day:'numeric', month:'short', year:'numeric'});
+  const title = `KW ${weekKey.split('-W')[1]} · ${firstLabel} – ${lastLabel}`;
+
+  // Spaltenlayout je Tag inkl. Spalten-Packing bei Überschneidungen
+  // (dieselbe Funktion wie die Wochenansicht selbst).
+  const dayBlocks = timedByIso.map(evs => {
+    const timed = evs.map(ev => {
+      const [sh, sm] = ev.start.split(':').map(Number);
+      const [eh, em] = ev.end.split(':').map(Number);
+      return { ev, startMin: sh*60+sm, endMin: eh*60+em };
+    });
+    return layoutDayEvents(timed);
+  });
+
+  // Maximal verfügbare Höhe je Block: bis zum nächsten Termin derselben
+  // Spalte (falls vorhanden), sonst bis zum Rasterende - verhindert, dass
+  // ein wegen langem Titel gewachsener Block einen späteren Termin
+  // überdeckt (s. Design-Absprache/Mockup-Runde).
+  dayBlocks.forEach(blocks => {
+    const byCol = {};
+    blocks.forEach(b => { (byCol[b.col] = byCol[b.col] || []).push(b); });
+    Object.values(byCol).forEach(list => {
+      list.sort((a,b) => a.startMin - b.startMin);
+      list.forEach((b, i) => {
+        b.maxBottomMin = i < list.length - 1 ? list[i+1].startMin : endHour*60;
+      });
+    });
+  });
+
+  const measureCtx = document.createElement('canvas').getContext('2d');
+
+  // Ganztägig-Zeile: Zeilenumbrüche je Chip vorab bestimmen, damit die
+  // Zeilenhöhe VOR dem Zeichnen feststeht statt hinterher zu überlaufen.
+  const hasAllday = alldayByIso.some(evs => evs.length);
+  let alldayLayout = [];
+  let alldayRowH = 0;
+  if (hasAllday) {
+    measureCtx.font = '600 11.5px Inter, system-ui, sans-serif';
+    alldayLayout = alldayByIso.map(evs => {
+      let stackH = 0;
+      const chips = evs.map(ev => {
+        const icon = TYPE_ICON[ev.type] ? `${TYPE_ICON[ev.type]} ` : '';
+        const lines = shareWrapText(measureCtx, `${icon}${ev.title}`, SHARE_COL_W - 12);
+        const chipH = lines.length * 14 + 6;
+        stackH += chipH + 3;
+        return { ev, lines, chipH };
+      });
+      return { chips, stackH };
+    });
+    alldayRowH = Math.max(0, ...alldayLayout.map(d => d.stackH));
+  }
+
+  // Block-Höhen: Zeilenumbrüche je Termin vorab bestimmen (gleicher Grund
+  // wie oben).
+  dayBlocks.forEach(blocks => {
+    blocks.forEach(b => {
+      const widthPx = (SHARE_COL_W / b.totalCols) - 2;
+      const icon = TYPE_ICON[b.ev.type] ? `${TYPE_ICON[b.ev.type]} ` : '';
+      measureCtx.font = '700 12.5px Inter, system-ui, sans-serif';
+      b.titleLines = shareWrapText(measureCtx, `${icon}${b.ev.title}`, widthPx - 12);
+      const roomLabel = (b.ev.type !== 'abgabe' && b.ev.type !== 'eigen' && b.ev.raum) ? shortRoom(b.ev.raum) : '';
+      b.metaText = [b.ev.start, roomLabel].filter(Boolean).join(' · ');
+      const naturalH = Math.max(20, ((b.endMin - b.startMin) / 60) * SHARE_HOUR_PX - 2);
+      const neededH = 8 + b.titleLines.length*16 + (b.metaText ? 14 : 0);
+      const maxH = Math.max(naturalH, ((b.maxBottomMin - b.startMin) / 60) * SHARE_HOUR_PX - 3);
+      b.blockH = Math.min(Math.max(naturalH, neededH), maxH);
+    });
+  });
+
+  // --- Größen berechnen ---
+  const dayXs = [];
+  let xCursor = SHARE_PAD + SHARE_GUTTER_W + SHARE_GAP;
+  for (let i = 0; i < 7; i++) { dayXs.push(xCursor); xCursor += SHARE_COL_W + SHARE_GAP; }
+  const cardWidth = xCursor - SHARE_GAP + SHARE_PAD;
+
+  const TITLE_H = 34, HEADER_H = 40;
+  let y = SHARE_PAD;
+  const titleBaselineY = y + 20; y += TITLE_H;
+  const headerY = y; y += HEADER_H + SHARE_GAP;
+  if (hasAllday) y += alldayRowH + SHARE_GAP;
+  const bodyY = y;
+  const bodyHeight = (endHour - startHour) * SHARE_HOUR_PX;
+  y += bodyHeight;
+  const cardHeight = y + SHARE_PAD;
+
+  const SCALE = Math.max(2, Math.min(3, window.devicePixelRatio || 1));
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.ceil(cardWidth * SCALE);
+  canvas.height = Math.ceil(cardHeight * SCALE);
+  const ctx = canvas.getContext('2d');
+  ctx.scale(SCALE, SCALE);
+  ctx.textBaseline = 'alphabetic';
+
+  // Karten-Hintergrund
+  ctx.fillStyle = SHARE_COLORS.cardBg;
+  shareCanvasRoundRect(ctx, 0, 0, cardWidth, cardHeight, 14);
+  ctx.fill();
+
+  // Titelzeile
+  ctx.fillStyle = SHARE_COLORS.text;
+  ctx.font = '700 18px Inter, system-ui, sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText(title, SHARE_PAD, titleBaselineY);
+  ctx.fillStyle = SHARE_COLORS.muted;
+  ctx.font = '600 11px Inter, system-ui, sans-serif';
+  ctx.textAlign = 'right';
+  ctx.fillText('Vorlesungskalender', cardWidth - SHARE_PAD, titleBaselineY - 4);
+  ctx.textAlign = 'left';
+
+  // Tages-Köpfe
+  dates.forEach((d, i) => {
+    const iso = isos[i];
+    const ferien = FERIEN.has(iso);
+    ctx.fillStyle = ferien ? SHARE_COLORS.ferienHeaderBg : SHARE_COLORS.headerBg;
+    shareCanvasRoundRect(ctx, dayXs[i], headerY, SHARE_COL_W, HEADER_H, 8);
+    ctx.fill();
+    ctx.strokeStyle = SHARE_COLORS.border;
+    ctx.lineWidth = 1;
+    shareCanvasRoundRect(ctx, dayXs[i]+0.5, headerY+0.5, SHARE_COL_W-1, HEADER_H-1, 8);
+    ctx.stroke();
+    ctx.fillStyle = SHARE_COLORS.muted;
+    ctx.font = '600 12.5px Inter, system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(WEEKDAY_ABBR[d.getDay()], dayXs[i] + SHARE_COL_W/2, headerY + 16);
+    ctx.fillStyle = SHARE_COLORS.text;
+    ctx.font = '600 14px Inter, system-ui, sans-serif';
+    ctx.fillText(`${d.getDate()}.${d.getMonth()+1}.`, dayXs[i] + SHARE_COL_W/2, headerY + 33);
+    ctx.textAlign = 'left';
+  });
+
+  // Ganztägig-Zeile
+  if (hasAllday) {
+    alldayLayout.forEach((day, i) => {
+      let chipY = headerY + HEADER_H + SHARE_GAP;
+      day.chips.forEach(({ev, lines, chipH}) => {
+        const m = MODS_LIGHT[ev.modul];
+        ctx.fillStyle = m.bg;
+        shareCanvasRoundRect(ctx, dayXs[i], chipY, SHARE_COL_W, chipH, 6);
+        ctx.fill();
+        ctx.strokeStyle = m.bd; ctx.lineWidth = 1;
+        shareCanvasRoundRect(ctx, dayXs[i]+0.5, chipY+0.5, SHARE_COL_W-1, chipH-1, 6);
+        ctx.stroke();
+        ctx.fillStyle = m.tx;
+        ctx.font = '600 11.5px Inter, system-ui, sans-serif';
+        lines.forEach((line, li) => ctx.fillText(line, dayXs[i] + 6, chipY + 13 + li*14));
+        chipY += chipH + 3;
+      });
+    });
+  }
+
+  // Stundenachse + horizontale Rasterlinien
+  ctx.font = '400 11px Inter, system-ui, sans-serif';
+  for (let h = startHour; h <= endHour; h++) {
+    const ly = bodyY + (h - startHour) * SHARE_HOUR_PX;
+    ctx.fillStyle = SHARE_COLORS.muted;
+    ctx.textAlign = 'right';
+    ctx.fillText(`${h}:00`, dayXs[0] - SHARE_GAP - 8, ly + 4);
+    ctx.strokeStyle = SHARE_COLORS.border;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(dayXs[0], ly);
+    ctx.lineTo(cardWidth - SHARE_PAD, ly);
+    ctx.stroke();
+  }
+  ctx.textAlign = 'left';
+
+  // Tagesspalten-Hintergrund
+  isos.forEach((iso, i) => {
+    ctx.fillStyle = FERIEN.has(iso) ? SHARE_COLORS.ferienBg : SHARE_COLORS.dayBg;
+    ctx.fillRect(dayXs[i], bodyY, SHARE_COL_W, bodyHeight);
+  });
+
+  // Termin-Blöcke
+  dayBlocks.forEach((blocks, i) => {
+    blocks.forEach(({ev, startMin, col, totalCols, titleLines, metaText, blockH}) => {
+      const m = MODS_LIGHT[ev.modul];
+      const widthPx = (SHARE_COL_W / totalCols) - 2;
+      const blockX = dayXs[i] + col * (SHARE_COL_W / totalCols) + 1;
+      const blockTop = bodyY + ((startMin - startHour*60) / 60) * SHARE_HOUR_PX;
+
+      ctx.save();
+      shareCanvasRoundRect(ctx, blockX, blockTop, widthPx, blockH, 7);
+      ctx.clip();
+      ctx.fillStyle = m.bg;
+      ctx.fillRect(blockX, blockTop, widthPx, blockH);
+      ctx.strokeStyle = m.bd;
+      ctx.lineWidth = 1.2;
+      if (ev.type === 'eigen') ctx.setLineDash([4,3]);
+      shareCanvasRoundRect(ctx, blockX+0.6, blockTop+0.6, widthPx-1.2, blockH-1.2, 7);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      if (ev.type === 'pruefung' || ev.type === 'abgabe') {
+        ctx.fillStyle = ev.type === 'pruefung' ? SHARE_COLORS.danger : SHARE_COLORS.warn;
+        ctx.fillRect(blockX, blockTop, 3, blockH);
+      }
+      ctx.fillStyle = m.tx;
+      ctx.font = '700 12.5px Inter, system-ui, sans-serif';
+      ctx.textAlign = 'left';
+      titleLines.forEach((line, li) => ctx.fillText(line, blockX + 7, blockTop + 15 + li*16));
+      if (metaText) {
+        ctx.font = '400 10.5px Inter, system-ui, sans-serif';
+        ctx.globalAlpha = 0.8;
+        ctx.fillText(metaText, blockX + 7, blockTop + 15 + titleLines.length*16 + 10);
+        ctx.globalAlpha = 1;
+      }
+      ctx.restore();
+    });
+  });
+
+  return canvas;
+}
+
+function shareDownloadBlob(blob, filename){
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+
+// Web-Share-API mit Bild-Anhang, wo verfügbar (v.a. mobil - der eigentliche
+// Anwendungsfall). Desktop-Fallback bewusst nur Download, kein zusätzlicher
+// Zwischenablage-Pfad (s. Absprache).
+function shareWeekImage(monday){
+  return new Promise((resolve) => {
+    const canvas = buildWeekShareCanvas(monday);
+    const filename = `Woche_${weekKeyFromMonday(monday)}.png`;
+    canvas.toBlob(async (blob) => {
+      if (!blob) { resolve(); return; }
+      const file = new File([blob], filename, {type: 'image/png'});
+      if (navigator.canShare && navigator.canShare({files: [file]})) {
+        try {
+          await navigator.share({files: [file], title: filename});
+        } catch (err) {
+          if (err && err.name !== 'AbortError') shareDownloadBlob(blob, filename);
+        }
+      } else {
+        shareDownloadBlob(blob, filename);
+      }
+      resolve();
+    }, 'image/png');
   });
 }
 
