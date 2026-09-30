@@ -128,14 +128,41 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   **Nachtrag (v3.7.1):** Dauer bei Terminen mit Uhrzeit wählbar
   (15 Min. bis 4 Std., Voreinstellung 1 Std.) statt fest auf 1 Std.
   – Auswahl blendet sich erst ein, sobald eine Uhrzeit gesetzt ist.
-- **Laufende Semester-Fortschrittsanzeige** 🎯 **Priorität (28.08.2026,
-  bald angehen)** – zeigt während des
+- **Laufende Semester-Fortschrittsanzeige** – zeigt während des
   Semesters die eigene Position im Verlauf, z. B. "Woche 6 von 16" oder
   ein kleiner Fortschrittsbalken. Anders als der bereits geplante
   Semester-Rückblick (der erscheint erst am Ende) wäre das eine laufende
   Orientierung während des Semesters – ließe sich aus den
   `SEMESTERS`-Metadaten (Start-/Enddatum) berechnen, kein neuer
   Datenbedarf.
+  **✅ Umgesetzt (v3.29.0, 30.09.2026)** – als kleiner Fortschrittsbalken
+  (nicht Ring) unter der Breadcrumb-Zeile im Header, auf Wunsch am
+  visuellen Vorbild des CP-Fortschrittsrings aus dem Modulverzeichnis
+  orientiert (Akzentfarbe, kompaktes Fett+Gedämpft-Label-Muster), aber
+  als Balken statt Ring umgesetzt.
+  **Design-Entscheidungen vorab geklärt:** Platzierung per Zwei-Varianten-
+  Mockup (eigene Zeile vs. inline neben der Breadcrumb) verglichen –
+  Variante A (eigene Zeile) gewählt, da die Breadcrumb sonst auf
+  schmalen Bildschirmen zu schnell umgebrochen wäre. Wochenzählbasis:
+  bewusst die bereits vorhandenen `sem.months` (nur die tatsächlich
+  vorlesungstragenden Monate, treiben schon die Monats-Navigationspunkte
+  an) statt der rohen `start`/`end`-Felder verwendet – bei WS2026/27 endet
+  `end` erst am 31.03.2027, `months` aber schon im Februar, da März
+  vorlesungsfrei ist. Mit `start`/`end` hätte der Balken die
+  vorlesungsfreie Zeit am Semesterende fälschlich mit eingerechnet.
+  **Berechnung:** Zeitraum = erster bis letzter Tag der `months`-Liste,
+  Wochenzahl = `Math.ceil(Tage / 7)`, aktuelle Woche und Füllstand aus
+  den seit Zeitraumbeginn vergangenen Tagen. Balken bleibt komplett
+  ausgeblendet, wenn "heute" außerhalb dieses aktiven Zeitraums liegt
+  (vor Vorlesungsbeginn oder in der vorlesungsfreien Zeit danach) – kein
+  irreführender Balken außerhalb des eigentlichen Semesterbetriebs.
+  **Getestet** (Playwright mit eingefrorenem Datum, da der reale
+  Sandbox-Tag einen Tag vor Vorlesungsbeginn lag): korrekte Anzeige
+  "Woche 7 von 22" bei 29,8 % Füllstand mitten im Semester, Ausblenden
+  sowohl vor Semesterbeginn als auch nach Ende der aktiven Monate
+  bestätigt, Dark Mode und Mobile-Ansicht geprüft (keine Überlappung mit
+  der Header-Navigation), bestehende Wochenansicht/Bild-Teilen-Funktion
+  per Regressionstest erneut ohne Abweichung geprüft.
 - **Räume und Lehrpersonen anzeigen** – Lehrpersonen-Daten sind bereits
   vollständig gepflegt (`lehrperson`-Feld an praktisch jedem Termin),
   werden aber nirgendwo angezeigt – im Termin-Detail als weitere

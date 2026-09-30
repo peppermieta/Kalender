@@ -142,6 +142,19 @@
     padding: 1px 5px; cursor: pointer; margin-right: 2px;
   }
   .semester-select:hover { border-color: var(--accent); }
+
+  /* Läuft während des Semesters mit (Extra, 30.09.2026 nach Rückmeldung
+     ergänzt, s. IDEENSAMMLUNG.md "Laufende Semester-Fortschrittsanzeige"):
+     kleiner Balken statt des ursprünglich als Referenz genannten CP-Rings
+     aus dem Modulverzeichnis - Farbe/Stil bewusst angelehnt (--accent-
+     Verlauf, kompakte Beschriftung fett+gedämpft), aber als Balken statt
+     Ring umgesetzt. Nur sichtbar, wenn "heute" innerhalb der aktiven
+     Monate des GERADE ANGEZEIGTEN Semesters liegt (s. updateSemProgress()). */
+  .sem-progress { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+  .sem-progress-track { width: 80px; height: 6px; border-radius: 3px; background: var(--border); overflow: hidden; flex-shrink: 0; }
+  .sem-progress-fill { height: 100%; border-radius: 3px; background: var(--accent); transition: width .3s; }
+  .sem-progress-label { font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+  .sem-progress-label strong { color: var(--text); font-weight: 700; }
   .nav-controls {
     display: flex;
     align-items: center;
@@ -1177,6 +1190,10 @@
       · Bachelor Soziale Arbeit · <span id="fachsemesterLabel"></span> ·
       <a href="https://module.xn--peppermita-lnb.de/" class="module-link" target="_blank">Modulverzeichnis →</a>
     </p>
+    <div class="sem-progress" id="semProgress" style="display:none;">
+      <div class="sem-progress-track"><div class="sem-progress-fill" id="semProgressFill" style="width:0%"></div></div>
+      <span class="sem-progress-label" id="semProgressLabel"></span>
+    </div>
   </div>
   <div class="nav-controls">
     <button class="nav-btn manage-btn" id="manageMenuBtn" type="button" aria-label="Verwalten" title="Verwalten">⋮</button>
@@ -4088,11 +4105,48 @@ function renderLegend(){
 // ─── SEMESTERAUSWAHL ─────────────────────────────────────────────────────────
 const semesterSelect = document.getElementById('semesterSelect');
 const fachsemesterLabel = document.getElementById('fachsemesterLabel');
+const semProgress = document.getElementById('semProgress');
+const semProgressFill = document.getElementById('semProgressFill');
+const semProgressLabel = document.getElementById('semProgressLabel');
 SEMESTERS.forEach(sem => {
   const opt = document.createElement('option');
   opt.value = sem.id; opt.textContent = sem.label;
   semesterSelect.appendChild(opt);
 });
+
+// Laufende Semester-Fortschrittsanzeige (Extra, 30.09.2026 nach Rückmeldung
+// ergänzt, s. IDEENSAMMLUNG.md): Bezugszeitraum sind bewusst die "aktiven
+// Monate" aus sem.months statt des rohen start/end-Felds - end reicht bei
+// diesem Semester z.B. bis 31.03., aber März taucht in months gar nicht
+// mehr auf (keine Vorlesungswochen mehr) und würde die Woche-X-von-Y-Zahl
+// verfälschen. Nur sichtbar, wenn "heute" in diesen aktiven Monaten des
+// GERADE ANGEZEIGTEN Semesters liegt (ausgewähltes vergangenes/zukünftiges
+// Semester oder aktuell in den Semesterferien -> ausgeblendet statt eine
+// bedeutungslose Zahl zu zeigen).
+function updateSemProgress(sem){
+  const months = sem.months;
+  const rangeStart = new Date(months[0].year, months[0].month, 1);
+  const last = months[months.length - 1];
+  const rangeEnd = new Date(last.year, last.month + 1, 0); // letzter Tag des letzten aktiven Monats
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  if (today < rangeStart || today > rangeEnd) {
+    semProgress.style.display = 'none';
+    return;
+  }
+
+  const msPerDay = 86400000;
+  const totalDays = Math.round((rangeEnd - rangeStart) / msPerDay) + 1;
+  const totalWeeks = Math.ceil(totalDays / 7);
+  const elapsedDays = Math.round((today - rangeStart) / msPerDay);
+  const currentWeek = Math.min(totalWeeks, Math.floor(elapsedDays / 7) + 1);
+  const pct = Math.min(100, Math.max(0, (elapsedDays / totalDays) * 100));
+
+  semProgressFill.style.width = `${pct.toFixed(1)}%`;
+  semProgressLabel.innerHTML = `<strong>Woche ${currentWeek}</strong> von ${totalWeeks}`;
+  semProgress.title = `Fortschritt im laufenden Semester: Woche ${currentWeek} von ${totalWeeks} (${Math.round(pct)}%)`;
+  semProgress.style.display = '';
+}
 
 const dotsEl = document.getElementById('monthDots');
 
@@ -4142,6 +4196,7 @@ function loadSemester(id, {resetMonth=true} = {}){
   // ganz am Ende der Datei).
   if (currentView === 'week' && currentWeekMonday) renderWeek(currentWeekMonday);
   fachsemesterLabel.textContent = `${sem.fachsemester}. Fachsemester`;
+  updateSemProgress(sem);
   if(semesterSelect.value !== sem.id) semesterSelect.value = sem.id;
 }
 

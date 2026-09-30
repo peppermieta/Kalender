@@ -7,6 +7,26 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.29.0] - 2026-09-30
+
+### Added
+- **Laufende Semester-Fortschrittsanzeige** – kleiner Fortschrittsbalken
+  im Header, direkt unter der Breadcrumb-Zeile ("Woche 7 von 22" mit
+  gefülltem Balken in Akzentfarbe). Zeigt während des Semesters die
+  eigene Position im Verlauf; visuell am CP-Fortschrittsring aus dem
+  Modulverzeichnis orientiert (Akzentfarbe, kompaktes Fett+Gedämpft-
+  Label-Muster), aber bewusst als Balken statt Ring umgesetzt.
+- Wochenzählung basiert auf den bereits vorhandenen `sem.months`
+  (tatsächlich vorlesungstragende Monate, treiben schon die Monats-
+  Navigationspunkte an) statt der rohen `start`/`end`-Semesterfelder –
+  letztere schließen bei WS2026/27 die vorlesungsfreie Zeit im März mit
+  ein und hätten den Balken verfälscht.
+- Balken blendet sich automatisch aus, sobald "heute" außerhalb des
+  aktiven Zeitraums liegt (vor Vorlesungsbeginn oder nach Ende der
+  aktiven Monate), statt einen irreführenden Wert anzuzeigen.
+- Platzierung ("eigene Zeile" statt "inline neben der Breadcrumb") vorab
+  per Zwei-Varianten-Mockup abgestimmt.
+
 ## [3.28.0] - 2026-09-30
 
 ### Added
