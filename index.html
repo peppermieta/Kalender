@@ -219,6 +219,26 @@
   .next-up-sep { opacity: .45; }
   .next-up-title { font-weight: 500; }
 
+  /* ── TERMIN-STATUS (Entfällt / Nur E-Learning / Änderung) ──
+     Rein optisch, keine Auswirkung auf Berechnungen. Sitzt als Zusatzklasse
+     am jeweiligen Termin-Element (Monat, Woche, Tag). */
+  .status-entfaellt { opacity: .55; }
+  .status-entfaellt .chip-title, .status-entfaellt .week-event-title, .status-entfaellt .day-event-title,
+  .status-entfaellt.week-allday-chip, .status-entfaellt.event-chip { text-decoration: line-through; }
+  .status-elearning { opacity: .6; filter: grayscale(.7); }
+  .status-aenderung { outline: 1.5px dashed var(--warn-bd); outline-offset: -1.5px; }
+  .day-event-status {
+    display: inline-block; margin-left: 6px; font-size: 10.5px; font-weight: 600;
+    padding: 1px 7px; border-radius: 20px; vertical-align: 1px; text-decoration: none;
+    background: var(--bg); color: var(--muted); border: 1px solid var(--border);
+  }
+  .day-event-status.st-aenderung { background: var(--warn-bg); color: var(--warn-tx); border-color: var(--warn-bd); }
+  .modal-status-bar { display: flex; align-items: center; gap: 8px; margin: 14px 0 12px; font-size: 12px; color: var(--muted); }
+  .modal-status-select {
+    font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 500; color: var(--text);
+    border: 1px solid var(--border); border-radius: 7px; padding: 5px 8px; background: var(--bg); cursor: pointer;
+  }
+
   /* ── WAS HAB ICH VERPASST ── */
   .missed-banner {
     display: flex;
@@ -1401,6 +1421,15 @@
       <div class="modal-divider"></div>
       <div class="modal-conflict-hint" id="modalConflictHint" style="display:none;"></div>
       <div class="info-grid" id="modalInfo"></div>
+      <div class="modal-status-bar">
+        <label for="modalStatus">Status:</label>
+        <select id="modalStatus" class="modal-status-select">
+          <option value="">Normal</option>
+          <option value="entfaellt">Entfällt</option>
+          <option value="elearning">Nur E-Learning/Online</option>
+          <option value="aenderung">Änderung</option>
+        </select>
+      </div>
       <div class="note-section">
         <label class="note-label" for="modalNote">Notiz</label>
         <textarea id="modalNote" class="note-textarea" placeholder="z. B. Buch mitbringen, Raum prüfen …" rows="2"></textarea>
@@ -4507,7 +4536,7 @@ function renderMonth(idx){
       const chip = document.createElement('span');
       const conflicts = findConflicts(ev);
       const typeCls = ev.type ? ` event-type-${ev.type}` : '';
-      chip.className = `event-chip chip-${ev.modul}${typeCls}${conflicts.length ? ' has-conflict' : ''}`;
+      chip.className = `event-chip chip-${ev.modul}${typeCls}${statusCls(ev)}${conflicts.length ? ' has-conflict' : ''}`;
       const modLabel = ev.type === 'eigen' ? 'Privat' : ev.modul;
       const typeIcon = TYPE_ICON[ev.type] ? `${TYPE_ICON[ev.type]} ` : '';
       const timeLabel = ev.start ? ev.start : 'Ganztägig';
@@ -4602,6 +4631,32 @@ const modalClose = document.getElementById('modalClose');
 // echte lvnr) bleibt der Schlüssel unverändert, bestehende Notizen bleiben
 // also gültig.
 function noteKeyFor(ev){ return `note:${ev.date}_${ev.start || 'allday'}_${ev.lvnr || (ev.modul + '_' + ev.title)}`; }
+
+// ─── TERMIN-STATUS ───────────────────────────────────────────────────────────
+// Persönlicher Status je Einzeltermin (Entfällt / Nur E-Learning / Änderung),
+// lokal im 'journal:'-Namensraum gespeichert, dadurch läuft er automatisch
+// über den Gist-Sync mit. Bewusst nur optisch: Belastung, "Nächste
+// Veranstaltung", Konflikterkennung und Verpasst-Banner rechnen unverändert
+// weiter. Nicht im ICS-Feed (der wird aus dem Repo gebaut, sieht localStorage nie).
+const STATUS_LABELS = {entfaellt: 'Entfällt', elearning: 'E-Learning', aenderung: 'Änderung'};
+function statusKeyFor(ev){ return `journal:status:event:${ev.date}_${ev.start || 'allday'}_${ev.lvnr || (ev.modul + '_' + ev.title)}`; }
+function eventStatus(ev){ const v = localStorage.getItem(statusKeyFor(ev)); return STATUS_LABELS[v] ? v : ''; }
+function statusCls(ev){ const st = eventStatus(ev); return st ? ` status-${st}` : ''; }
+function statusBadgeHtml(ev){ const st = eventStatus(ev); return st ? `<span class="day-event-status st-${st}">${STATUS_LABELS[st]}</span>` : ''; }
+
+const modalStatusEl = document.getElementById('modalStatus');
+modalStatusEl.addEventListener('change', () => {
+  if (!currentModalEvent) return;
+  const key = statusKeyFor(currentModalEvent);
+  if (modalStatusEl.value) localStorage.setItem(key, modalStatusEl.value);
+  else localStorage.removeItem(key);
+  scheduleGistPush();
+  // Sichtbare Ansichten neu aufbauen
+  renderMonth(currentMonthIdx);
+  if (currentView === 'week' && currentWeekMonday) renderWeek(currentWeekMonday);
+  if (dayView.classList.contains('open') && currentDayIso) renderDayView(currentDayIso, {pushHistory:false});
+  renderNextUp();
+});
 
 // ─── AUFWANDSBEWERTUNG (subjektive Belastung, 5-stufig) ────────────────────
 // Gemischte Granularität: reguläre, über das Semester verteilte Kursreihen
@@ -4969,6 +5024,7 @@ function openModal(ev){
 
   currentModalEvent = ev;
   modalNoteEl.value = localStorage.getItem(noteKeyFor(ev)) || '';
+  modalStatusEl.value = eventStatus(ev);
   noteSavedEl.style.display = 'none';
   renderEffortScale(ev);
 
@@ -5355,7 +5411,7 @@ function renderWeek(monday){
       const m = MODS[ev.modul];
       const typeIcon = TYPE_ICON[ev.type] ? `${TYPE_ICON[ev.type]} ` : '';
       const idx = eventsByIso[i].indexOf(ev);
-      return `<span class="week-allday-chip" data-iso="${iso}" data-ev-idx="${idx}" style="background:${m.bg};color:${m.tx};border-color:${m.bd}">${typeIcon}${escapeHtml(ev.title)}</span>`;
+      return `<span class="week-allday-chip${statusCls(ev)}" data-iso="${iso}" data-ev-idx="${idx}" style="background:${m.bg};color:${m.tx};border-color:${m.bd}">${typeIcon}${escapeHtml(ev.title)}</span>`;
     }).join('');
     return `<div class="week-allday-cell" data-iso="${iso}">${chips}</div>`;
   }).join('');
@@ -5384,7 +5440,7 @@ function renderWeek(monday){
       const roomLabel = (ev.type !== 'abgabe' && ev.type !== 'eigen' && ev.raum) ? shortRoom(ev.raum) : '';
       const metaBits = [ev.start, roomLabel].filter(Boolean).join(' · ');
       const idx = eventsByIso[i].indexOf(ev);
-      return `<div class="week-event${typeCls}" data-iso="${iso}" data-ev-idx="${idx}" style="top:${top}px;height:${height}px;left:calc(${col*widthPct}% + 1px);width:calc(${widthPct}% - 2px);background:${m.bg};color:${m.tx};border-color:${m.bd}"><div class="week-event-title">${TYPE_ICON[ev.type] ? TYPE_ICON[ev.type]+' ' : ''}${escapeHtml(ev.title)}</div><div class="week-event-meta">${metaBits}</div></div>`;
+      return `<div class="week-event${typeCls}${statusCls(ev)}" data-iso="${iso}" data-ev-idx="${idx}" style="top:${top}px;height:${height}px;left:calc(${col*widthPct}% + 1px);width:calc(${widthPct}% - 2px);background:${m.bg};color:${m.tx};border-color:${m.bd}"><div class="week-event-title">${TYPE_ICON[ev.type] ? TYPE_ICON[ev.type]+' ' : ''}${escapeHtml(ev.title)}</div><div class="week-event-meta">${metaBits}</div></div>`;
     }).join('');
 
     // "Jetzt"-Linie (Extra, von Anfang an dabei) - wird unten per
@@ -6128,12 +6184,12 @@ function renderDayView(iso, {pushHistory=true, prefillTime=null} = {}){
         ? `<span class="day-event-effort-badge" title="Aufwand: Stufe ${effortLevel} von 5">${effortLevel}</span>`
         : '';
       return `
-        <div class="day-event${typeCls}">
+        <div class="day-event${typeCls}${statusCls(ev)}">
           ${effortBadge}
           <div class="day-event-time">${timeLabel}</div>
           <div class="day-event-main">
             <span class="day-event-badge" style="background:${m.bg};color:${m.tx};border-color:${m.bd}">${ev.type === 'eigen' ? 'Privat' : ev.modul}</span>
-            <div class="day-event-title">${typeIcon}${escapeHtml(ev.title)}${noteIcon}${conflictIcon}</div>
+            <div class="day-event-title">${typeIcon}${escapeHtml(ev.title)}${noteIcon}${conflictIcon}${statusBadgeHtml(ev)}</div>
             ${roomLine}
           </div>
         </div>`;
