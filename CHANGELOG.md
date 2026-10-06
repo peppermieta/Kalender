@@ -7,6 +7,17 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.30.1] - 2026-10-06
+
+### Fixed
+- **Monatsname im Header blieb in der Wochenansicht stehen**: Beim
+  Blättern mit den Pfeilen in eine Woche des nächsten Monats zeigte der
+  Header weiterhin den Ausgangsmonat (und das Monatsraster im Hintergrund
+  blieb darauf stehen). Eine Woche zählt jetzt zum Monat ihres Montags
+  (gleiche Konvention wie in Heatmap/Wochenübersicht), Header und
+  Hintergrund-Monat ziehen entsprechend mit. Liegt eine Woche außerhalb
+  der Semestermonate, bleibt die bisherige Anzeige unverändert.
+
 ## [3.30.0] - 2026-09-30
 
 ### Added

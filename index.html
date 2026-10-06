@@ -5828,6 +5828,12 @@ function showWeek(monday, {pushHistory=true} = {}){
   calendarWrap.style.display = 'none';
   weekWrap.style.display = '';
   updateViewSwitcherActive('week');
+  // Monatsname im Header (und das Monatsraster im Hintergrund) mitführen:
+  // eine Woche zählt zum Monat ihres Montags (gleiche Konvention wie in
+  // Heatmap/Wochenübersicht). Liegt die Woche außerhalb der Semestermonate,
+  // bleibt die bisherige Anzeige unverändert stehen.
+  const mIdx = MONTHS.findIndex(mo => mo.year === monday.getFullYear() && mo.month === monday.getMonth());
+  if (mIdx !== -1 && mIdx !== currentMonthIdx) { currentMonthIdx = mIdx; renderMonth(mIdx); }
   renderWeek(monday);
   if (pushHistory) history.pushState({weekView: weekKeyFromMonday(monday)}, '', `#${weekKeyFromMonday(monday)}`);
 }
