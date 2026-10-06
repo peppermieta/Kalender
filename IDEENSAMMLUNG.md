@@ -254,6 +254,17 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   eigener Folgeschritt), Desktop-Zwischenablage-Kopieren war bewusst
   nicht Teil dieser ersten Fassung. Bei der Durchsicht am 30.09.2026
   nicht priorisiert, bleibt offen.
+- **Termin-Status** (Idee 06.10.2026, aus der Nutzung) – einzelne Termine
+  als *Entfällt*, *Nur E-Learning/Online* oder *Änderung* markieren.
+  **✅ Umgesetzt (v3.31.0, 06.10.2026)** – Dropdown im Termin-Detail nach
+  dem Vorbild des "Mein Status" im Modulverzeichnis. Vorab geklärt: lokal
+  pro Einzeltermin statt im Quellcode (dann nicht im ICS-Feed), rein
+  optisch ohne Einfluss auf Berechnungen, Gist-Sync ja (läuft über den
+  `journal:`-Namensraum ohne Änderung am Sync). Das ursprünglich
+  vorgeschlagene "Raumwechsel" heißt bewusst nur *Änderung*, weil es auch
+  spontane Praxisbesuche zur selben Uhrzeit abdecken soll. Darstellung
+  per Screenshot abgenommen. Bekannt: auf Lesegeräten (ohne Token)
+  überschreibt der Gist-Abgleich lokal gesetzte Status, wie bei Notizen.
 - **"Was hab ich verpasst?"** – kurze Zusammenfassung der Lücke, wenn man
   ein paar Tage nicht im Kalender war. Ließe sich über einen in
   `localStorage` gespeicherten Zeitstempel "zuletzt geöffnet" umsetzen:

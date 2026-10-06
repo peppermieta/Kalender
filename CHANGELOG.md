@@ -7,6 +7,24 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.31.0] - 2026-10-06
+
+### Added
+- **Termin-Status** – im Termin-Detail gibt es ein Dropdown "Status" mit
+  *Normal*, *Entfällt*, *Nur E-Learning/Online* und *Änderung*
+  (Auswahlfeld nach dem Vorbild des "Mein Status" im Modulverzeichnis).
+  *Entfällt* wird durchgestrichen und blasser dargestellt, *E-Learning*
+  grau abgeblendet, *Änderung* mit gestricheltem orangem Rahmen
+  markiert (z. B. spontaner Praxisbesuch zur gleichen Uhrzeit). Wirkt in
+  Monats-, Wochen- und Tagesansicht, in der Tagesansicht zusätzlich als
+  kleines Label am Titel.
+- Gilt nur für den einzelnen Termin, nicht für die ganze Kursreihe.
+  Rein optisch: Belastung, "Nächste Veranstaltung", Konflikterkennung
+  und Verpasst-Banner rechnen unverändert weiter. Nicht im Kalender-Abo
+  (ICS), da der Feed aus dem Repo gebaut wird.
+- Lokal gespeichert im `journal:`-Namensraum (`journal:status:event:…`),
+  dadurch läuft der Status automatisch über den bestehenden Gist-Sync mit.
+
 ## [3.30.1] - 2026-10-06
 
 ### Fixed
