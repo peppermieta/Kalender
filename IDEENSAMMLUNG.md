@@ -1070,6 +1070,6 @@ später doch so weit kommt.
   ergänzen, sobald ein Seminarplan vorliegt.
 - **Nachtrag (v3.34.1):** Dasselbe Muster jetzt auch für das Seminar
   Forschungsmethoden (Possinger) nach deren Seminarplan angewendet.
-  Offen: Abgabetermin der 5 Prüfungsbausteine am 04.03.2027 (Moodle) ist
-  noch nicht als Abgabe-Termin im Kalender angelegt.
+  Der Abgabetermin der 5 Prüfungsbausteine (04.03.2027, Moodle) ist seit
+  v3.35.0 als Abgabe angelegt, inkl. März als Monat. Raum seit v3.35.0 C10.
 

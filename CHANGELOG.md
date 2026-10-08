@@ -7,6 +7,21 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.35.0] - 2026-10-08
+
+### Added
+- **Abgabetermin 04.03.2027** (ganztägig, M10): Abgabe der 5 Prüfungsbausteine
+  des Seminars Empirische Forschungsmethoden in Moodle (laut Seminarplan).
+- **März 2027 als Monat im WS 2026/27**, damit die Abgabe im Monatsraster
+  erscheint. Der Monat ist mit `noProgress` markiert und zählt nicht zum
+  Semesterfortschritt (bleibt "Woche X von 22").
+
+### Changed
+- **Raum Forschungsmethoden (M10, Possinger):** Raum C10 im Gebäude C statt
+  Seminarraum A2, laut E-Mail von Prof. Possinger (HISinOne zeigt
+  widersprüchlich zwei Räume). Gilt für alle Präsenztermine dieses Seminars.
+- ICS-Feed neu erzeugt (120 Termine).
+
 ## [3.34.1] - 2026-10-08
 
 ### Changed

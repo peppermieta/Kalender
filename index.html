@@ -3914,6 +3914,7 @@ const SEMESTERS = [
       {year:2026,month:11}, // Dec
       {year:2027,month:0},  // Jan
       {year:2027,month:1},  // Feb
+      {year:2027,month:2, noProgress:true},  // Mär (nur Abgabe M10; zählt nicht zum Semesterfortschritt)
     ],
     ferien: [
       "2026-12-21","2026-12-22","2026-12-23","2026-12-24","2026-12-25","2026-12-26","2026-12-27",
@@ -4081,6 +4082,8 @@ const EVENTS_BY_SEMESTER = {
   {date:"2027-01-16",start:"10:00",end:"17:15",modul:"M02",lvnr:"1-1-0007-1-12340-202202202202000",pg:"5",title:"Übungen zu Gesprächsführung und Kommunikationskompetenzen",lehrperson:"–"},
   {date:"2027-01-22",start:"14:00",end:"18:15",modul:"M02",lvnr:"1-1-0007-1-12340-202202202202000",pg:"5",title:"Übungen zu Gesprächsführung und Kommunikationskompetenzen",lehrperson:"–"},
   {date:"2027-01-23",start:"10:00",end:"17:15",modul:"M02",lvnr:"1-1-0007-1-12340-202202202202000",pg:"5",title:"Übungen zu Gesprächsführung und Kommunikationskompetenzen",lehrperson:"–"},
+  // Prüfungen & Abgaben
+  {date:"2027-03-04",start:null,end:null,modul:"M10",lvnr:null,pg:null,title:"Abgabe der 5 Prüfungsbausteine (Moodle), Seminar Empirische Forschungsmethoden",lehrperson:null,type:"abgabe"},
   // Zusatzangebot
   {date:"2026-11-23",start:"17:30",end:"19:00",modul:"ZA",lvnr:"–",pg:"1",title:"Aus der Ohnmacht ins Handeln kommen – Für eine Politisierung Sozialer Arbeit",lehrperson:"Andreas Foitzik",raum:"Seminarraum C8"},
   {date:"2026-12-12",start:"10:00",end:"17:00",modul:"ZA",lvnr:"–",pg:"1",title:"Aus der Ohnmacht ins Handeln kommen – Für eine Politisierung Sozialer Arbeit",lehrperson:"Andreas Foitzik",raum:"Seminarraum C8"},
@@ -4105,7 +4108,7 @@ const ROOMS = {
   "1-1-0029-1-12340-208208208313000": "Hörsaal C4",
   "1-1-0030-1-12340-208208208313000": "Seminarraum C8",
   "1-1-0034-1-12300-210210210000000": "Hörsaal C1",
-  "1-1-0765-1-12300-210210210000000": "Seminarraum A2",
+  "1-1-0765-1-12300-210210210000000": "Raum C10", // laut E-Mail Possinger (08.10.2026); HISinOne zeigt widersprüchlich zwei Räume
   "1-1-0007-1-12340-202202202202000": "Seminarraum C9",
 };
 
@@ -4262,7 +4265,7 @@ SEMESTERS.forEach(sem => {
 // Semester oder aktuell in den Semesterferien -> ausgeblendet statt eine
 // bedeutungslose Zahl zu zeigen).
 function updateSemProgress(sem){
-  const months = sem.months;
+  const months = sem.months.filter(mo => !mo.noProgress);
   const rangeStart = new Date(months[0].year, months[0].month, 1);
   const last = months[months.length - 1];
   const rangeEnd = new Date(last.year, last.month + 1, 0); // letzter Tag des letzten aktiven Monats
