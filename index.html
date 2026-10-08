@@ -3966,15 +3966,15 @@ const EVENTS_BY_SEMESTER = {
     return Object.keys(RAUM_BY_DATE).map(d=>({
       date:d, start:"11:30", end:"13:00", modul:"M07",
       lvnr:"1-1-0758-1-12345-207207207103203", pg:"1",
-      title:"Entwicklungs- und Sozialisationstheorien", lehrperson:"Prof. Dr.in Heike Stammer",
+      title:"Entwicklungs- und Sozialisationstheorien unter Berücksichtigung von Verhaltensauffälligkeiten", lehrperson:"Prof. Dr.in Heike Stammer",
       raum: RAUM_BY_DATE[d],
     }));
   })(),
   // M7 – Schulsozialarbeit (Block)
-  {date:"2026-11-06",start:"14:00",end:"18:00",modul:"M07",lvnr:"1-1-0025-1-12399-207207207305305",pg:"2",title:"Schulsozialarbeit, Familienhilfe und Flüchtlingshilfe unter entwicklungspsychologischer Perspektive",lehrperson:"M.A. Jeannette Schiwek-Kleijweg",raum:"Hörsaal C3"},
-  {date:"2026-11-07",start:"09:00",end:"17:00",modul:"M07",lvnr:"1-1-0025-1-12399-207207207305305",pg:"2",title:"Schulsozialarbeit, Familienhilfe und Flüchtlingshilfe unter entwicklungspsychologischer Perspektive",lehrperson:"M.A. Jeannette Schiwek-Kleijweg",raum:"Hörsaal C3"},
-  {date:"2026-11-27",start:"14:00",end:"18:00",modul:"M07",lvnr:"1-1-0025-1-12399-207207207305305",pg:"2",title:"Schulsozialarbeit, Familienhilfe und Flüchtlingshilfe unter entwicklungspsychologischer Perspektive",lehrperson:"M.A. Jeannette Schiwek-Kleijweg",raum:"Seminarraum A7"},
-  {date:"2026-11-28",start:"09:00",end:"17:00",modul:"M07",lvnr:"1-1-0025-1-12399-207207207305305",pg:"2",title:"Schulsozialarbeit, Familienhilfe und Flüchtlingshilfe unter entwicklungspsychologischer Perspektive",lehrperson:"M.A. Jeannette Schiwek-Kleijweg",raum:"Seminarraum A6"},
+  {date:"2026-11-06",start:"14:00",end:"18:00",modul:"M07",lvnr:"1-1-0025-1-12399-207207207305305",pg:"2",title:"Schulsozialarbeit, Familienhilfe und Flüchtlingshilfe unter entwicklungspsychologischer Perspektive",lehrperson:"M.A. Jeannette Schiwek-Kleijweg",raum:"findet außerhalb der EH statt"},
+  {date:"2026-11-07",start:"09:00",end:"17:00",modul:"M07",lvnr:"1-1-0025-1-12399-207207207305305",pg:"2",title:"Schulsozialarbeit, Familienhilfe und Flüchtlingshilfe unter entwicklungspsychologischer Perspektive",lehrperson:"M.A. Jeannette Schiwek-Kleijweg",raum:"Seminarraum C7"},
+  {date:"2026-11-27",start:"14:00",end:"18:00",modul:"M07",lvnr:"1-1-0025-1-12399-207207207305305",pg:"2",title:"Schulsozialarbeit, Familienhilfe und Flüchtlingshilfe unter entwicklungspsychologischer Perspektive",lehrperson:"M.A. Jeannette Schiwek-Kleijweg",raum:"Seminarraum C8"},
+  {date:"2026-11-28",start:"09:00",end:"17:00",modul:"M07",lvnr:"1-1-0025-1-12399-207207207305305",pg:"2",title:"Schulsozialarbeit, Familienhilfe und Flüchtlingshilfe unter entwicklungspsychologischer Perspektive",lehrperson:"M.A. Jeannette Schiwek-Kleijweg",raum:"Seminarraum C9"},
   // M8 – VL Inklusion-Exklusion (Di, wöchentlich)
   ...["2026-10-06","2026-10-13","2026-10-20","2026-10-27","2026-11-03","2026-11-10","2026-11-17","2026-11-24","2026-12-01","2026-12-08","2026-12-15","2027-01-12","2027-01-19","2027-01-26","2027-02-02"].map(d=>({
     date:d, start:"08:00", end:"09:30", modul:"M06",
@@ -3990,7 +3990,9 @@ const EVENTS_BY_SEMESTER = {
   ...["2026-10-06","2026-10-13","2026-10-20","2026-10-27","2026-11-03","2026-11-10","2026-11-17","2026-11-24","2026-12-01","2026-12-08","2026-12-15","2027-01-12","2027-01-19","2027-01-26","2027-02-02"].map(d=>({
     date:d, start:"09:45", end:"11:15", modul:"M08",
     lvnr:"1-1-0027-1-12340-208208208313000", pg:"1",
-    title:"Grundlagen des Kinder- und Jugendhilfe- sowie Familienrechts", lehrperson:"Prof. Dr.in Annette Rabe"
+    title:"Grundlagen des Kinder- und Jugendhilfe- sowie Familienrechts", lehrperson:"Prof. Dr.in Annette Rabe",
+    // Basisraum Seminarraum C6 (s. ROOMS), nur die ersten zwei Termine im Hörsaal C1 (HISinOne-ICS, 06.10.2026).
+    raum: {"2026-10-06":"Hörsaal C1","2026-10-13":"Hörsaal C1"}[d]
   })),
   // M9 – Sozialverwaltungsrecht (Mi, 07.10.–25.11.)
   ...["2026-10-07","2026-10-14","2026-10-21","2026-10-28","2026-11-04","2026-11-11","2026-11-18","2026-11-25"].map(d=>({
@@ -4025,13 +4027,18 @@ const EVENTS_BY_SEMESTER = {
   ...["2026-10-07","2026-10-14","2026-10-21","2026-10-28","2026-11-04","2026-11-11","2026-11-18","2026-11-25","2026-12-02","2026-12-09","2026-12-16","2027-01-13","2027-01-20","2027-01-27","2027-02-03"].map(d=>({
     date:d, start:"11:45", end:"13:15", modul:"M10",
     lvnr:"1-1-0034-1-12300-210210210000000", pg:"1",
-    title:"Methoden der empirischen Sozialforschung", lehrperson:"Prof. Dr. Peter Höfflin"
+    title:"Methoden der empirischen Sozialforschung", lehrperson:"Prof. Dr. Peter Höfflin",
+    // Basisraum Hörsaal C1 (s. ROOMS); an diesen Terminen laut HISinOne-ICS (06.10.2026) nur E-Learning.
+    raum: ["2026-10-14","2026-10-28","2026-11-04","2026-11-18","2026-12-02","2027-01-20","2027-02-03"].includes(d) ? "E-Learning – zeitunabhängig" : undefined
   })),
   // M10 – Forschungsmethoden (Do, wöchentlich)
   ...["2026-10-08","2026-10-15","2026-10-22","2026-10-29","2026-11-05","2026-11-12","2026-11-19","2026-11-26","2026-12-03","2026-12-10","2026-12-17","2027-01-14","2027-01-21","2027-01-28","2027-02-04"].map(d=>({
-    date:d, start:"17:30", end:"19:45", modul:"M10",
+    date:d, start:"15:45", end:"18:00", modul:"M10",
     lvnr:"1-1-0765-1-12300-210210210000000", pg:"2",
-    title:"Der Einsatz von Forschungsmethoden in sozialen Arbeitsfeldern", lehrperson:"Dr.in Johanna Possinger"
+    title:"Der Einsatz von Forschungsmethoden in sozialen Arbeitsfeldern", lehrperson:"Dr.in Johanna Possinger",
+    // Uhrzeit laut HISinOne-ICS (Stand 06.10.2026, geändert am 16.09.) 15:45-18:00, vorher 17:30-19:45;
+    // am 19.11. abweichend Seminarraum A8 (Basisraum A2, s. ROOMS).
+    raum: d === "2026-11-19" ? "Seminarraum A8" : undefined
   })),
   // M3 – Übungen zu Gesprächsführung und Kommunikationskompetenzen (PG5, Block)
   {date:"2027-01-15",start:"14:00",end:"18:15",modul:"M02",lvnr:"1-1-0007-1-12340-202202202202000",pg:"5",title:"Übungen zu Gesprächsführung und Kommunikationskompetenzen",lehrperson:"–"},
@@ -4039,8 +4046,8 @@ const EVENTS_BY_SEMESTER = {
   {date:"2027-01-22",start:"14:00",end:"18:15",modul:"M02",lvnr:"1-1-0007-1-12340-202202202202000",pg:"5",title:"Übungen zu Gesprächsführung und Kommunikationskompetenzen",lehrperson:"–"},
   {date:"2027-01-23",start:"10:00",end:"17:15",modul:"M02",lvnr:"1-1-0007-1-12340-202202202202000",pg:"5",title:"Übungen zu Gesprächsführung und Kommunikationskompetenzen",lehrperson:"–"},
   // Zusatzangebot
-  {date:"2026-11-23",start:"17:30",end:"19:00",modul:"ZA",lvnr:"–",pg:"1",title:"Aus der Ohnmacht ins Handeln kommen – Für eine Politisierung Sozialer Arbeit",lehrperson:"Andreas Foitzik"},
-  {date:"2026-12-12",start:"10:00",end:"17:00",modul:"ZA",lvnr:"–",pg:"1",title:"Aus der Ohnmacht ins Handeln kommen – Für eine Politisierung Sozialer Arbeit",lehrperson:"Andreas Foitzik"},
+  {date:"2026-11-23",start:"17:30",end:"19:00",modul:"ZA",lvnr:"–",pg:"1",title:"Aus der Ohnmacht ins Handeln kommen – Für eine Politisierung Sozialer Arbeit",lehrperson:"Andreas Foitzik",raum:"Seminarraum C8"},
+  {date:"2026-12-12",start:"10:00",end:"17:00",modul:"ZA",lvnr:"–",pg:"1",title:"Aus der Ohnmacht ins Handeln kommen – Für eine Politisierung Sozialer Arbeit",lehrperson:"Andreas Foitzik",raum:"Seminarraum C8"},
   ],
 };
 // ─── ENDE DATENTEIL (SEMESTERS + EVENTS_BY_SEMESTER + MODS) ─────────────────
@@ -4052,15 +4059,15 @@ const EVENTS_BY_SEMESTER = {
 // eintragen – gilt dann automatisch für alle Termine dieser Veranstaltung.
 // Beispiel:  "1-1-0021-1-12357-206206620209731": "Raum 2.14",
 const ROOMS = {
-  // Quelle: HISinOne-ICS-Export (25.08.2026). Kurse mit wechselndem Raum
+  // Quelle: HISinOne-ICS-Export (zuletzt abgeglichen 08.10.2026, vorher 25.08.2026). Kurse mit wechselndem Raum
   // stehen NICHT hier, sondern haben eigene raum:-Overrides pro Termin
   // (s. M9-Grundsicherungsrecht, M9-Grundlagen-KJ-Familienrecht,
   // M7-Entwicklungstheorien, M6-Kunst weiter unten).
   "1-1-0021-1-12357-206206620209731": "Hörsaal C1",
   "1-1-0022-1-12357-206206620109731": "Hörsaal C3",
-  "1-1-0027-1-12340-208208208313000": "Hörsaal C2",
+  "1-1-0027-1-12340-208208208313000": "Seminarraum C6",
   "1-1-0029-1-12340-208208208313000": "Hörsaal C4",
-  "1-1-0030-1-12340-208208208313000": "Seminarraum A7",
+  "1-1-0030-1-12340-208208208313000": "Seminarraum C8",
   "1-1-0034-1-12300-210210210000000": "Hörsaal C1",
   "1-1-0765-1-12300-210210210000000": "Seminarraum A2",
   "1-1-0007-1-12340-202202202202000": "Seminarraum C9",
@@ -4095,6 +4102,7 @@ function escapeHtml(str){
 function shortRoom(raum){
   if (!raum) return raum;
   if (raum.startsWith('E-Learning')) return 'E-Learning';
+  if (raum.startsWith('findet außerhalb')) return 'außerhalb EH';
   if (raum.startsWith('Werkräume ')) return raum.slice('Werkräume '.length).replace(' und ', '/');
   const m = raum.match(/([A-ZÄÖÜ]\s?\d+(\.\d+)?)\s*$/);
   return m ? m[1] : raum;
@@ -4891,6 +4899,27 @@ function migrateEffortKeysToJournalNamespace(){
   if (renames.length) scheduleGistPush();
 }
 migrateEffortKeysToJournalNamespace();
+
+// Einmalige Migration nach Zeitänderung (HISinOne-Abgleich 08.10.2026):
+// "Der Einsatz von Forschungsmethoden" liegt jetzt 15:45-18:00 statt
+// 17:30-19:45. Notizen, Termin-Status und Einzel-Aufwandsbewertungen hängen
+// über die Startzeit im Schlüssel am Termin, ohne Umbenennung wären
+// bereits gespeicherte Einträge verwaist. Läuft idempotent (verschiebt nur,
+// wenn der alte Schlüssel existiert und der neue nicht).
+function migrateStartTimeKeys(){
+  const LV = '1-1-0765-1-12300-210210210000000';
+  const dates = ["2026-10-08","2026-10-15","2026-10-22","2026-10-29","2026-11-05","2026-11-12","2026-11-19","2026-11-26","2026-12-03","2026-12-10","2026-12-17","2027-01-14","2027-01-21","2027-01-28","2027-02-04"];
+  const prefixes = ['note:', 'journal:effort:event:', 'journal:status:event:', 'journal:statustext:event:'];
+  let moved = 0;
+  dates.forEach(d => prefixes.forEach(p => {
+    const oldKey = `${p}${d}_17:30_${LV}`, newKey = `${p}${d}_15:45_${LV}`;
+    const val = localStorage.getItem(oldKey);
+    if (val !== null && localStorage.getItem(newKey) === null) { localStorage.setItem(newKey, val); moved++; }
+    if (val !== null) localStorage.removeItem(oldKey);
+  }));
+  if (moved && localStorage.getItem('gistSyncToken')) localStorage.setItem('gistPendingPush', '1');
+}
+migrateStartTimeKeys();
 
 // Ermittelt Schlüssel + Geltungsbereich für die Aufwandsbewertung eines
 // Termins. 'lvnr' = gilt für die ganze Kursreihe, 'event' = gilt nur für

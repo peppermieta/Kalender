@@ -7,6 +7,61 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.33.0] - 2026-10-08
+
+### Changed
+- **Abgleich mit dem neuesten HISinOne-ICS-Export (Stand 06.10.2026).**
+  Die Termine wurden Termin für Termin gegen den Export geprüft (Serien
+  samt Ausnahmen und einzeln verschobenen Terminen aufgelöst, 119 Termine
+  im WS 2026/27). Ergebnis: Termine und Daten sind identisch (keine
+  fehlenden oder überzähligen Termine), abweichend waren Uhrzeit, Räume
+  und ein Titel:
+  - **Uhrzeit:** "Der Einsatz von Forschungsmethoden in sozialen
+    Arbeitsfeldern" (donnerstags, alle 15 Termine) jetzt **15:45–18:00**
+    statt 17:30–19:45 (in HISinOne am 16.09.2026 geändert).
+  - **Raum "Grundlagen des Kinder- und Jugendhilfe- sowie Familienrechts"**
+    (dienstags): 06.10. und 13.10. **Hörsaal C1**, ab 20.10. (13 Termine)
+    **Seminarraum C6** statt Hörsaal C2.
+  - **Raum "Methoden der empirischen Sozialforschung"**: an 7 Terminen
+    nur **E-Learning – zeitunabhängig** (14.10., 28.10., 04.11., 18.11.,
+    02.12., 20.01., 03.02.), sonst weiter Hörsaal C1.
+  - **Raum "Der Einsatz von Forschungsmethoden"**: 19.11. abweichend
+    **Seminarraum A8** (sonst A2).
+  - **Raum "Arbeitsfelder und Aufträge Sozialer Arbeit"** (09./10.10.):
+    **Seminarraum C8** statt A7.
+  - **Raum "Schulsozialarbeit, Familienhilfe und Flüchtlingshilfe …"**:
+    06.11. **findet außerhalb der EH statt**, 07.11. **Seminarraum C7**,
+    27.11. **Seminarraum C8**, 28.11. **Seminarraum C9** (vorher
+    Hörsaal C3 / C3 / A7 / A6).
+  - **Raum Zusatzangebot "Aus der Ohnmacht ins Handeln kommen"**
+    (23.11., 12.12.): **Seminarraum C8** (vorher keiner hinterlegt).
+  - **Titel:** "Entwicklungs- und Sozialisationstheorien" jetzt mit dem
+    vollen Titel "… unter Berücksichtigung von Verhaltensauffälligkeiten".
+    Die Belegungszusätze aus HISinOne ("(Vorrang RPGP)", "(Pflicht RPGP)",
+    "(Vorrang IPHP)", betreffen andere Studiengänge) wurden bewusst
+    nicht übernommen.
+  - Unverändert und bestätigt: alle anderen Räume und Zeiten, die
+    Ausnahmen der Serien (z. B. 24.12., 31.12., 07.01.), die Räume des
+    Kunst-Workshops, der Gesprächsführungs-Übungen, der Entwicklungs-
+    theorien (05.10. Hörsaal C1, danach C2) und der Grundsicherungsrecht-
+    Wechsel.
+- Raumangabe "findet außerhalb der EH statt" wird im Raster als
+  "außerhalb EH" abgekürzt.
+- Bestehende Notizen, Status und Aufwandsbewertungen an den
+  Forschungsmethoden-Terminen werden einmalig auf die neue Startzeit
+  umgezogen (deren Schlüssel enthalten die Uhrzeit), damit sie nicht
+  verwaisen.
+
+### Fixed
+- **Kalender-Abo (ICS-Feed) war veraltet und ohne Räume:** `scripts/
+  generate-ics.js` lief seit der Einführung des Dark Modes nicht mehr
+  (Browser-Aufrufe im Datenteil brachen den festen Node-Stub), der Feed
+  stammte vom 09.08.2026 und enthielt bei allen Terminen "wird noch
+  bekannt gegeben". Der Stub ist jetzt ein robuster Proxy, und der
+  Generator berücksichtigt auch die `ROOMS`-Tabelle. Feed neu erzeugt
+  (119 Termine, alle mit Raum) und gegen den HISinOne-Export geprüft
+  (0 Abweichungen bei Datum, Zeit und Raum).
+
 ## [3.32.0] - 2026-10-08
 
 ### Added

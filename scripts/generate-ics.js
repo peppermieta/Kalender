@@ -41,15 +41,35 @@ if (!script) throw new Error('Datenteil-Script (mit SEMESTERS/EVENTS_BY_SEMESTER
 // macht diesen Aufruf hier einfach zum No-op.
 const marker = '// ─── ENDE DATENTEIL (SEMESTERS + EVENTS_BY_SEMESTER + MODS) ───';
 const dataPart = script.substring(0, script.indexOf(marker));
-const documentStub = 'const document = { documentElement: { style: { setProperty(){} } } };\n';
-const { SEMESTERS, EVENTS_BY_SEMESTER, MODS } = new Function(
-  documentStub + dataPart + '; return {SEMESTERS, EVENTS_BY_SEMESTER, MODS};'
+// Browser-Stub: der Datenteil enthält inzwischen (Dark Mode, Print-Hooks)
+// Aufrufe auf document/window/localStorage. In Node gibt es die nicht -
+// ein Proxy, der jeden Zugriff/Aufruf stillschweigend abfängt, macht diese
+// Aufrufe zum No-op, ohne dass der Stub bei jedem neuen Browser-Aufruf im
+// Datenteil erneut angepasst werden muss (der frühere feste Stub brach
+// genau daran, sobald z.B. getAttribute() dazukam).
+const browserStub = `
+  const __mk = () => new Proxy(function(){}, {
+    get: (t, k) => k === Symbol.toPrimitive ? () => '' : (k === 'getAttribute' ? () => null : __mk()),
+    apply: () => __mk(),
+  });
+  const document = __mk();
+  const window = __mk();
+  const localStorage = { getItem(){ return null; }, setItem(){}, removeItem(){} };
+`;
+// ROOMS steht bewusst NACH dem Datenteil-Marker (LV-Nummer -> Raum), muss
+// aber im Feed als Fallback mit berücksichtigt werden, sonst steht dort bei
+// allen Terminen ohne eigenes raum:-Feld "wird noch bekannt gegeben".
+const roomsMatch = script.match(/const ROOMS = (\{[\s\S]*?\n\});/);
+if (!roomsMatch) throw new Error('ROOMS-Tabelle in index.html nicht gefunden!');
+const { SEMESTERS, EVENTS_BY_SEMESTER, MODS, ROOMS } = new Function(
+  browserStub + dataPart + '; const ROOMS = ' + roomsMatch[1] + '; return {SEMESTERS, EVENTS_BY_SEMESTER, MODS, ROOMS};'
 )();
 
 // Feed enthält bewusst ALLE Semester (nicht nur das gerade aktuelle) – ein
 // einmal eingerichtetes Kalender-Abo soll auch künftige/vergangene Semester
 // mit abdecken, ohne dass sich jemand neu abonnieren muss.
-const EVENTS = SEMESTERS.flatMap(sem => EVENTS_BY_SEMESTER[sem.id] || []);
+const EVENTS = SEMESTERS.flatMap(sem => EVENTS_BY_SEMESTER[sem.id] || [])
+  .map(ev => ({ ...ev, raum: ev.raum || ROOMS[ev.lvnr] || null }));
 
 function esc(str) {
   return String(str ?? '')
