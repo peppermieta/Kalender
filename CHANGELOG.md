@@ -7,6 +7,14 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.31.1] - 2026-10-08
+
+### Changed
+- **Passwortabfrage entfällt auf dem Schreibgerät**: Ist auf einem Gerät
+  der Gist-Token hinterlegt, wird das Passwort nicht mehr abgefragt. Alle
+  anderen Geräte (ohne Token) fragen weiterhin wie bisher. Der
+  Passwortschutz bleibt ein reiner Sichtschutz, kein Sicherheitsmechanismus.
+
 ## [3.31.0] - 2026-10-06
 
 ### Added

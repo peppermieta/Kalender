@@ -7008,7 +7008,13 @@ async function refreshFeedStatus(){
       );
     }
     const SESSION_KEY = 'ws2627_auth';
-    if (sessionStorage.getItem(SESSION_KEY) === '1') {
+    // Das Schreibgerät (hat den Gist-Token hinterlegt) braucht das Passwort
+    // nicht: wer den Token eingerichtet hat, hat ohnehin vollen Zugriff auf
+    // dieses Gerät/diesen Browser. Der Passwortschutz ist ohnehin nur ein
+    // Sichtschutz, kein echter Sicherheitsmechanismus (s. README).
+    let hasGistToken = false;
+    try { hasGistToken = !!localStorage.getItem('gistSyncToken'); } catch (e) {}
+    if (hasGistToken || sessionStorage.getItem(SESSION_KEY) === '1') {
       document.getElementById('pw-overlay').style.display = 'none';
     }
     function check() {
