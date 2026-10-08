@@ -7,6 +7,16 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.32.0] - 2026-10-08
+
+### Added
+- **Beschreibung bei Status "Änderung"**: Wird ein Termin auf *Änderung*
+  gesetzt, erscheint im Termin-Detail ein Textfeld (z. B. "Neuer Raum: C3"
+  oder "Praxisbesuch statt Seminar"). Der Text wird in der Tagesansicht
+  unter dem Titel angezeigt. Das Feld gibt es nur bei diesem Status, beim
+  Wechsel auf einen anderen Status wird der Text entfernt. Lokal
+  gespeichert (`journal:statustext:event:…`), läuft über den Gist-Sync mit.
+
 ## [3.31.1] - 2026-10-08
 
 ### Changed
