@@ -7,6 +7,24 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.34.1] - 2026-10-08
+
+### Changed
+- **Seminar "Empirische Forschungsmethoden der Sozialen Arbeit" (M10, Possinger)
+  an den Seminarplan angepasst** (lvnr 1-1-0765, 15 Donnerstagstermine).
+  - Themen im Detailfenster für alle 15 Termine.
+  - E-Learning (Status "E-Learning" vorbelegt, Raum "E-Learning – zeitunabhängig"):
+    15.10., 29.10., 19.11., 03.12., 17.12., 21.01., 28.01.
+  - 26.11.: Zoom-Einheit (Status "E-Learning", Raum "Online (Zoom)").
+  - 12.11.: "Keine Einheit", Status "Entfällt" vorbelegt.
+  - 19.11.: laut Plan E-Learning, der bisherige Raum "Seminarraum A8" aus dem
+    HISinOne-ICS entfällt dadurch.
+  - Präsenz (Seminarraum A2 unverändert): 08.10., 22.10., 05.11., 10.12.,
+    14.01., 04.02.
+  - 24.12., 31.12. (Feiertag) und 07.01. (Blockwoche) sind laut Plan ohne
+    Einheit und waren in der App ohnehin nicht angelegt.
+- ICS-Feed neu erzeugt (neue Räume für die E-Learning- und Zoom-Termine).
+
 ## [3.34.0] - 2026-10-08
 
 ### Added

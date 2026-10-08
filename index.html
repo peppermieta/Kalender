@@ -3950,6 +3950,24 @@ const SOFO_THEMEN = {
   "2027-01-13":"Datenaufbereitung",
   "2027-01-27":"Datenanalyse"
 };
+const FOFO_ELEARNING = ["2026-10-15","2026-10-29","2026-11-19","2026-12-03","2026-12-17","2027-01-21","2027-01-28"];
+const FOFO_THEMEN = {
+  "2026-10-08":"Einführung in das Seminar",
+  "2026-10-15":"Forschung: Grundlagen",
+  "2026-10-22":"Qualitative Forschung: Grundlagen und Interviewarten",
+  "2026-10-29":"Qualitative Forschung: Interviews führen",
+  "2026-11-05":"Qualitative Forschung: Leitfadenerstellung",
+  "2026-11-12":"Keine Einheit: Machen Sie Ihr Interview!",
+  "2026-11-19":"Datenschutz und Transkripte. Machen Sie Ihr Interview!",
+  "2026-11-26":"Qualitative Forschung: Auswertung Teil 1. Transkribieren Sie Ihr Interview und überarbeiten Sie dieses!",
+  "2026-12-03":"Quantitative Forschung Teil 1: Grundlagen",
+  "2026-12-10":"Qualitative Forschung: Auswertung Teil 2 in Kleingruppen. Bitte bringen Sie Ihr Material mit!",
+  "2026-12-17":"Quantitative Forschung Teil 2: Fragebogenentwicklung",
+  "2027-01-14":"Auswertung in Kleingruppen",
+  "2027-01-21":"Quantitative Forschung Teil 3: Datenaufbereitung",
+  "2027-01-28":"Quantitative Forschung Teil 4: Datenanalyse",
+  "2027-02-04":"Seminarabschluss"
+};
 const EVENTS_BY_SEMESTER = {
   "ws2026-27": [
   // M6 – Kunst (Do, Einzeltermine)
@@ -4051,9 +4069,12 @@ const EVENTS_BY_SEMESTER = {
     date:d, start:"15:45", end:"18:00", modul:"M10",
     lvnr:"1-1-0765-1-12300-210210210000000", pg:"2",
     title:"Der Einsatz von Forschungsmethoden in sozialen Arbeitsfeldern", lehrperson:"Dr.in Johanna Possinger",
-    // Uhrzeit laut HISinOne-ICS (Stand 06.10.2026, geändert am 16.09.) 15:45-18:00, vorher 17:30-19:45;
-    // am 19.11. abweichend Seminarraum A8 (Basisraum A2, s. ROOMS).
-    raum: d === "2026-11-19" ? "Seminarraum A8" : undefined
+    // Uhrzeit laut HISinOne-ICS (Stand 06.10.2026, geändert am 16.09.) 15:45-18:00, vorher 17:30-19:45.
+    // Art der Einheit (Präsenz / E-Learning / Zoom / keine Einheit) und Themen laut Seminarplan
+    // Possinger (Stand 08.10.2026); der Plan geht dem ICS vor (z.B. 19.11. E-Learning statt Seminarraum A8).
+    raum: FOFO_ELEARNING.includes(d) ? "E-Learning – zeitunabhängig" : d === "2026-11-26" ? "Online (Zoom)" : undefined,
+    status: d === "2026-11-26" || FOFO_ELEARNING.includes(d) ? "elearning" : d === "2026-11-12" ? "entfaellt" : undefined,
+    thema: FOFO_THEMEN[d]
   })),
   // M3 – Übungen zu Gesprächsführung und Kommunikationskompetenzen (PG5, Block)
   {date:"2027-01-15",start:"14:00",end:"18:15",modul:"M02",lvnr:"1-1-0007-1-12340-202202202202000",pg:"5",title:"Übungen zu Gesprächsführung und Kommunikationskompetenzen",lehrperson:"–"},

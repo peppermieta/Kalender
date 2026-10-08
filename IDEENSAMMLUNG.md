@@ -1068,4 +1068,8 @@ später doch so weit kommt.
   wird als `normal` gespeichert.
 - Für weitere Veranstaltungen lässt sich beides nach demselben Muster
   ergänzen, sobald ein Seminarplan vorliegt.
+- **Nachtrag (v3.34.1):** Dasselbe Muster jetzt auch für das Seminar
+  Forschungsmethoden (Possinger) nach deren Seminarplan angewendet.
+  Offen: Abgabetermin der 5 Prüfungsbausteine am 04.03.2027 (Moodle) ist
+  noch nicht als Abgabe-Termin im Kalender angelegt.
 
