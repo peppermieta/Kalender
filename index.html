@@ -3939,6 +3939,17 @@ function detectCurrentSemesterId(){
 }
 
 // ─── ALL EVENTS, GRUPPIERT PRO SEMESTER ─────────────────────────────────────
+const SOFO_ELEARNING = ["2026-10-14","2026-10-28","2026-11-04","2026-11-18","2026-12-02","2027-01-20","2027-02-03"];
+const SOFO_THEMEN = {
+  "2026-10-07":"Einführung",
+  "2026-10-21":"Methodologie und Wissenschaftstheorie",
+  "2026-11-11":"Sampling, Ethik und Datenschutz",
+  "2026-11-25":"Forschungsdesign",
+  "2026-12-09":"Erhebungsmethoden",
+  "2026-12-16":"Befragungsmethoden",
+  "2027-01-13":"Datenaufbereitung",
+  "2027-01-27":"Datenanalyse"
+};
 const EVENTS_BY_SEMESTER = {
   "ws2026-27": [
   // M6 – Kunst (Do, Einzeltermine)
@@ -4028,8 +4039,12 @@ const EVENTS_BY_SEMESTER = {
     date:d, start:"11:45", end:"13:15", modul:"M10",
     lvnr:"1-1-0034-1-12300-210210210000000", pg:"1",
     title:"Methoden der empirischen Sozialforschung", lehrperson:"Prof. Dr. Peter Höfflin",
-    // Basisraum Hörsaal C1 (s. ROOMS); an diesen Terminen laut HISinOne-ICS (06.10.2026) nur E-Learning.
-    raum: ["2026-10-14","2026-10-28","2026-11-04","2026-11-18","2026-12-02","2027-01-20","2027-02-03"].includes(d) ? "E-Learning – zeitunabhängig" : undefined
+    // Basisraum Hörsaal C1 (s. ROOMS); an den E-Learning-Terminen laut HISinOne-ICS (06.10.2026)
+    // nur E-Learning (Raum + Status "E-Learning" als Vorbelegung, in der App änderbar).
+    // Themen laut Seminarplan (Stand 08.10.2026).
+    raum: SOFO_ELEARNING.includes(d) ? "E-Learning – zeitunabhängig" : undefined,
+    status: SOFO_ELEARNING.includes(d) ? "elearning" : undefined,
+    thema: SOFO_THEMEN[d] || "E-Learning / Blended Learning"
   })),
   // M10 – Forschungsmethoden (Do, wöchentlich)
   ...["2026-10-08","2026-10-15","2026-10-22","2026-10-29","2026-11-05","2026-11-12","2026-11-19","2026-11-26","2026-12-03","2026-12-10","2026-12-17","2027-01-14","2027-01-21","2027-01-28","2027-02-04"].map(d=>({
@@ -4655,7 +4670,14 @@ function noteKeyFor(ev){ return `note:${ev.date}_${ev.start || 'allday'}_${ev.lv
 // weiter. Nicht im ICS-Feed (der wird aus dem Repo gebaut, sieht localStorage nie).
 const STATUS_LABELS = {entfaellt: 'Entfällt', elearning: 'E-Learning', aenderung: 'Änderung'};
 function statusKeyFor(ev){ return `journal:status:event:${ev.date}_${ev.start || 'allday'}_${ev.lvnr || (ev.modul + '_' + ev.title)}`; }
-function eventStatus(ev){ const v = localStorage.getItem(statusKeyFor(ev)); return STATUS_LABELS[v] ? v : ''; }
+// ev.status ist eine Vorbelegung aus den Termindaten. Eine eigene Wahl überstimmt sie,
+// "Normal" wird dann als 'normal' gespeichert (sonst käme die Vorbelegung zurück).
+function eventStatus(ev){
+  const v = localStorage.getItem(statusKeyFor(ev));
+  if (v === 'normal') return '';
+  if (STATUS_LABELS[v]) return v;
+  return STATUS_LABELS[ev.status] ? ev.status : '';
+}
 function statusTextKeyFor(ev){ return statusKeyFor(ev).replace('journal:status:', 'journal:statustext:'); }
 function statusText(ev){ return eventStatus(ev) === 'aenderung' ? (localStorage.getItem(statusTextKeyFor(ev)) || '') : ''; }
 function statusCls(ev){ const st = eventStatus(ev); return st ? ` status-${st}` : ''; }
@@ -4686,6 +4708,7 @@ modalStatusEl.addEventListener('change', () => {
   if (!currentModalEvent) return;
   const key = statusKeyFor(currentModalEvent);
   if (modalStatusEl.value) localStorage.setItem(key, modalStatusEl.value);
+  else if (currentModalEvent.status) localStorage.setItem(key, 'normal');
   else localStorage.removeItem(key);
   // Beschreibungstext gehört nur zu "Änderung" - bei anderem Status entfernen
   if (modalStatusEl.value !== 'aenderung') localStorage.removeItem(statusTextKeyFor(currentModalEvent));
@@ -5062,6 +5085,7 @@ function openModal(ev){
   if (ev.type !== 'abgabe' && !isPersonal) rows.push(['Raum', ev.raum || 'wird noch bekannt gegeben']);
   if (!isPersonal) rows.push(['Modul', m.label]);
   if (ev.lehrperson && ev.lehrperson !== '–') rows.push(['Dozierende', ev.lehrperson]);
+  if (ev.thema) rows.push(['Thema', escapeHtml(ev.thema)]);
   if (ev.lvnr) rows.push(['LV-Nummer', ev.lvnr]);
   if (ev.pg) rows.push(['Parallelgruppe', `PG ${ev.pg}`]);
 

@@ -1055,3 +1055,17 @@ war sogar schon in der allerersten Ideensammlung vom 4. August als
 abstrakter Punkt vermerkt: "Gemeinsamer Einstiegspunkt (falls mal eine
 dritte Hauptdomain gewünscht ist)". Kein neues Konzept nötig, falls es
 später doch so weit kommt.
+
+---
+
+## Thema im Termin-Detail und vorbelegter Status (08.10.2026)
+
+**✅ Umgesetzt (v3.34.0).** Auslöser war der Abgleich der Vorlesung
+"Methoden der empirischen Sozialforschung" mit dem Seminarplan.
+- Neues optionales Termin-Feld `thema`, angezeigt als Zeile im Detailfenster.
+- Neues optionales Termin-Feld `status` als Vorbelegung (hier: die 7
+  E-Learning-Termine). Eigene Wahl überstimmt die Vorbelegung, "Normal"
+  wird als `normal` gespeichert.
+- Für weitere Veranstaltungen lässt sich beides nach demselben Muster
+  ergänzen, sobald ein Seminarplan vorliegt.
+

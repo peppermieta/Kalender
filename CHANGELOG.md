@@ -7,6 +7,29 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.34.0] - 2026-10-08
+
+### Added
+- **Thema im Termin-Detail.** Termine können ein optionales Feld `thema`
+  tragen, das im Detailfenster als Zeile "Thema" erscheint. Befüllt für die
+  Vorlesung "Methoden der empirischen Sozialforschung" (M10) laut
+  Seminarplan: 07.10. Einführung, 21.10. Methodologie und
+  Wissenschaftstheorie, 11.11. Sampling, Ethik und Datenschutz, 25.11.
+  Forschungsdesign, 09.12. Erhebungsmethoden, 16.12. Befragungsmethoden,
+  13.01. Datenaufbereitung, 27.01. Datenanalyse. Die 7 E-Learning-Termine
+  zeigen "E-Learning / Blended Learning".
+- **Vorbelegter Status aus den Termindaten.** Termine können ein Feld
+  `status` tragen, das als Vorbelegung gilt. Die 7 E-Learning-Termine der
+  Vorlesung (14.10., 28.10., 04.11., 18.11., 02.12., 20.01., 03.02.) sind
+  dadurch automatisch als "E-Learning" ausgegraut, auf jedem Gerät, ohne
+  manuelles Setzen. Eine eigene Wahl im Dropdown überstimmt die
+  Vorbelegung. Wird "Normal" gewählt, speichert die App dafür `normal`, damit
+  die Vorbelegung nicht wiederkommt.
+
+### Hinweis
+- Der ICS-Feed ist unverändert, da Thema und Status nur in der App
+  angezeigt werden.
+
 ## [3.33.0] - 2026-10-08
 
 ### Changed
