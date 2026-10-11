@@ -7,6 +7,18 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.36.0] - 2026-10-11
+
+### Added
+- **Termin-Status im exportierten Wochenbild.** Das geteilte Bild zeigt jetzt
+  dieselbe Optik wie die App: "Entfällt" blass und durchgestrichen,
+  "E-Learning" grau, "Änderung" mit gestricheltem orangem Rand. Zusätzlich
+  steht der Status als Text in der Terminzeile (z. B. "11:45 · C1 · Entfällt"),
+  damit Empfänger:innen ihn ohne Vorwissen verstehen. Bei "Änderung" erscheint
+  auch der Beschreibungstext. Gilt für Termine mit und ohne Uhrzeit.
+  Das Grau wird per Farbe erzeugt statt per Canvas-Filter, damit es auch auf
+  iOS Safari funktioniert.
+
 ## [3.35.0] - 2026-10-08
 
 ### Added

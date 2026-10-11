@@ -1072,4 +1072,6 @@ später doch so weit kommt.
   Forschungsmethoden (Possinger) nach deren Seminarplan angewendet.
   Der Abgabetermin der 5 Prüfungsbausteine (04.03.2027, Moodle) ist seit
   v3.35.0 als Abgabe angelegt, inkl. März als Monat. Raum seit v3.35.0 C10.
+- **Nachtrag (v3.36.0):** Der Termin-Status (Entfällt, E-Learning, Änderung
+  samt Text) wird jetzt auch im Wochen-Bildexport dargestellt.
 

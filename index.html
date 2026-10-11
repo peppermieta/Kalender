@@ -5675,6 +5675,19 @@ const SHARE_COLORS = {
   headerBg: '#F1F1EE', danger: '#DC2626', warn: '#EA580C',
 };
 
+// Termin-Status im geteilten Wochenbild (wie in der App: Entfällt durchgestrichen
+// und blass, E-Learning grau, Änderung gestrichelt orange). Zusätzlich steht der
+// Status als Text im Bild, weil Empfänger:innen die Bedeutung der Optik nicht
+// kennen. Grau wird bewusst per Farbe statt ctx.filter erzeugt (iOS Safari
+// unterstützt ctx.filter auf Canvas nicht).
+const SHARE_ELEARNING_PAL = {bg:'#EEEEEC', bd:'#CFCFCA', tx:'#6B6B66'};
+function shareStatusLabel(ev, roomLabel){
+  const st = eventStatus(ev);
+  if (!st) return '';
+  if (st === 'elearning') return roomLabel === 'E-Learning' ? '' : 'E-Learning';
+  return STATUS_LABELS[st];
+}
+
 function shareCanvasRoundRect(ctx, x, y, w, h, r){
   const rr = Math.max(0, Math.min(r, w/2, h/2));
   ctx.beginPath();
@@ -5783,7 +5796,8 @@ function buildWeekShareCanvas(monday){
       let stackH = 0;
       const chips = evs.map(ev => {
         const icon = TYPE_ICON[ev.type] ? `${TYPE_ICON[ev.type]} ` : '';
-        const lines = shareWrapText(measureCtx, `${icon}${ev.title}`, SHARE_COL_W - 12);
+        const stLabel = shareStatusLabel(ev, '');
+        const lines = shareWrapText(measureCtx, `${icon}${ev.title}${stLabel ? ` (${stLabel})` : ''}`, SHARE_COL_W - 12);
         const chipH = lines.length * 14 + 6;
         stackH += chipH + 3;
         return { ev, lines, chipH };
@@ -5802,9 +5816,12 @@ function buildWeekShareCanvas(monday){
       measureCtx.font = '700 12.5px Inter, system-ui, sans-serif';
       b.titleLines = shareWrapText(measureCtx, `${icon}${b.ev.title}`, widthPx - 12);
       const roomLabel = (b.ev.type !== 'abgabe' && b.ev.type !== 'eigen' && b.ev.raum) ? shortRoom(b.ev.raum) : '';
-      b.metaText = [b.ev.start, roomLabel].filter(Boolean).join(' · ');
+      b.metaText = [b.ev.start, roomLabel, shareStatusLabel(b.ev, roomLabel)].filter(Boolean).join(' · ');
+      measureCtx.font = '600 10.5px Inter, system-ui, sans-serif';
+      const chg = statusText(b.ev);
+      b.noteLines = chg ? shareWrapText(measureCtx, chg, widthPx - 12) : [];
       const naturalH = Math.max(20, ((b.endMin - b.startMin) / 60) * SHARE_HOUR_PX - 2);
-      const neededH = 8 + b.titleLines.length*16 + (b.metaText ? 14 : 0);
+      const neededH = 8 + b.titleLines.length*16 + (b.metaText ? 14 : 0) + b.noteLines.length*13 + (b.noteLines.length ? 3 : 0);
       const maxH = Math.max(naturalH, ((b.maxBottomMin - b.startMin) / 60) * SHARE_HOUR_PX - 3);
       b.blockH = Math.min(Math.max(naturalH, neededH), maxH);
     });
@@ -5876,16 +5893,27 @@ function buildWeekShareCanvas(monday){
     alldayLayout.forEach((day, i) => {
       let chipY = headerY + HEADER_H + SHARE_GAP;
       day.chips.forEach(({ev, lines, chipH}) => {
-        const m = MODS_LIGHT[ev.modul];
+        const st = eventStatus(ev);
+        const m = st === 'elearning' ? SHARE_ELEARNING_PAL : MODS_LIGHT[ev.modul];
+        ctx.save();
+        if (st === 'entfaellt') ctx.globalAlpha = 0.55;
         ctx.fillStyle = m.bg;
         shareCanvasRoundRect(ctx, dayXs[i], chipY, SHARE_COL_W, chipH, 6);
         ctx.fill();
-        ctx.strokeStyle = m.bd; ctx.lineWidth = 1;
+        ctx.strokeStyle = st === 'aenderung' ? SHARE_COLORS.warn : m.bd;
+        ctx.lineWidth = st === 'aenderung' ? 1.5 : 1;
+        if (st === 'aenderung') ctx.setLineDash([4,3]);
         shareCanvasRoundRect(ctx, dayXs[i]+0.5, chipY+0.5, SHARE_COL_W-1, chipH-1, 6);
         ctx.stroke();
+        ctx.setLineDash([]);
         ctx.fillStyle = m.tx;
         ctx.font = '600 11.5px Inter, system-ui, sans-serif';
-        lines.forEach((line, li) => ctx.fillText(line, dayXs[i] + 6, chipY + 13 + li*14));
+        lines.forEach((line, li) => {
+          const ty = chipY + 13 + li*14;
+          ctx.fillText(line, dayXs[i] + 6, ty);
+          if (st === 'entfaellt') ctx.fillRect(dayXs[i] + 6, ty - 4, ctx.measureText(line).width, 1.2);
+        });
+        ctx.restore();
         chipY += chipH + 3;
       });
     });
@@ -5915,20 +5943,23 @@ function buildWeekShareCanvas(monday){
 
   // Termin-Blöcke
   dayBlocks.forEach((blocks, i) => {
-    blocks.forEach(({ev, startMin, col, totalCols, titleLines, metaText, blockH}) => {
-      const m = MODS_LIGHT[ev.modul];
+    blocks.forEach(({ev, startMin, col, totalCols, titleLines, metaText, noteLines, blockH}) => {
+      const st = eventStatus(ev);
+      const m = st === 'elearning' ? SHARE_ELEARNING_PAL : MODS_LIGHT[ev.modul];
+      const baseAlpha = st === 'entfaellt' ? 0.55 : 1;
       const widthPx = (SHARE_COL_W / totalCols) - 2;
       const blockX = dayXs[i] + col * (SHARE_COL_W / totalCols) + 1;
       const blockTop = bodyY + ((startMin - startHour*60) / 60) * SHARE_HOUR_PX;
 
       ctx.save();
+      ctx.globalAlpha = baseAlpha;
       shareCanvasRoundRect(ctx, blockX, blockTop, widthPx, blockH, 7);
       ctx.clip();
       ctx.fillStyle = m.bg;
       ctx.fillRect(blockX, blockTop, widthPx, blockH);
-      ctx.strokeStyle = m.bd;
-      ctx.lineWidth = 1.2;
-      if (ev.type === 'eigen') ctx.setLineDash([4,3]);
+      ctx.strokeStyle = st === 'aenderung' ? SHARE_COLORS.warn : m.bd;
+      ctx.lineWidth = st === 'aenderung' ? 1.8 : 1.2;
+      if (ev.type === 'eigen' || st === 'aenderung') ctx.setLineDash([5,3]);
       shareCanvasRoundRect(ctx, blockX+0.6, blockTop+0.6, widthPx-1.2, blockH-1.2, 7);
       ctx.stroke();
       ctx.setLineDash([]);
@@ -5939,12 +5970,22 @@ function buildWeekShareCanvas(monday){
       ctx.fillStyle = m.tx;
       ctx.font = '700 12.5px Inter, system-ui, sans-serif';
       ctx.textAlign = 'left';
-      titleLines.forEach((line, li) => ctx.fillText(line, blockX + 7, blockTop + 15 + li*16));
+      titleLines.forEach((line, li) => {
+        const ty = blockTop + 15 + li*16;
+        ctx.fillText(line, blockX + 7, ty);
+        if (st === 'entfaellt') ctx.fillRect(blockX + 7, ty - 4.5, ctx.measureText(line).width, 1.4);
+      });
       if (metaText) {
         ctx.font = '400 10.5px Inter, system-ui, sans-serif';
-        ctx.globalAlpha = 0.8;
+        ctx.globalAlpha = baseAlpha * 0.8;
         ctx.fillText(metaText, blockX + 7, blockTop + 15 + titleLines.length*16 + 10);
-        ctx.globalAlpha = 1;
+        ctx.globalAlpha = baseAlpha;
+      }
+      if (noteLines && noteLines.length) {
+        ctx.font = '600 10.5px Inter, system-ui, sans-serif';
+        ctx.fillStyle = SHARE_COLORS.warn;
+        const noteTop = blockTop + 15 + titleLines.length*16 + (metaText ? 10 : -4) + 15;
+        noteLines.forEach((line, li) => ctx.fillText(line, blockX + 7, noteTop + li*13));
       }
       ctx.restore();
     });
