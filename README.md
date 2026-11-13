@@ -14,7 +14,7 @@ Privater, passwortgeschützter Vorlesungskalender für das Studium (Bachelor Soz
 - **Termin-Details per Klick/Tap** – Datum, Uhrzeit, Raum (Kurzform in Monats-/Tagesansicht, volle Bezeichnung im Detail), Modul, Dozierende, LV-Nummer und Parallelgruppe
 - **Termin-Status** – pro Einzeltermin wählbar im Termin-Detail: *Entfällt* (durchgestrichen), *Nur E-Learning/Online* (ausgegraut) oder *Änderung* (gestrichelt markiert, z. B. spontaner Praxisbesuch, mit eigenem Beschreibungsfeld für die Änderung); rein optisch, lokal gespeichert und per Gist-Sync auf andere Geräte übertragen
 - **"Was hab ich verpasst?"** – war man mindestens 2 Tage nicht im Kalender und lagen in der Zwischenzeit echte Termine, erscheint beim nächsten Öffnen ein wegklickbarer Hinweis mit einer kompakten Liste dieser Termine; Klick auf einen Eintrag springt direkt zur Detailansicht
-- **Private Notizen** – pro Termin, rein lokal im Browser gespeichert, z. B. "Buch mitbringen"; optional automatischer Sync zwischen Geräten über einen GitHub Gist (Einbahnstraßen-Modell: ein Gerät schreibt, alle anderen lesen mit); ein kleines Symbol in der Tagesansicht zeigt an, ob zu einem Termin eine Notiz existiert
+- **Private Notizen** – pro Termin, rein lokal im Browser gespeichert, z. B. "Buch mitbringen"; optional automatischer Sync zwischen Geräten über einen GitHub Gist (Einbahnstraßen-Modell: ein Gerät schreibt, alle anderen lesen mit); ein kleines Symbol in der Tagesansicht zeigt an, ob zu einem Termin eine Notiz existiert. Auf Lesegeräten (ohne Token) sind Notizen, Tagesnotizen, Status und Aufwand reine Anzeige: Eingabefelder, "+ Eigenen Termin hinzufügen" und das Löschen eigener Termine gibt es dort nicht, leere Bereiche erscheinen gar nicht
 - **Eigene Freitext-Termine** – persönliche Termine (z. B. Arzttermine) direkt in der Tagesansicht anlegen, rein lokal gespeichert, farblich und mit gestricheltem Rahmen klar von echten Veranstaltungen abgesetzt; nicht im ICS-Feed oder Ausdruck enthalten
 - **Installierbare App (PWA)** – auf Android als App installierbar (eigenes Icon, kein Browser-Rahmen), funktioniert dank Service Worker auch ohne Internetverbindung
 - **Suche** – Freitextsuche nach Veranstaltung oder Modulname direkt im Header; Klick auf ein Ergebnis springt zum passenden Monat und öffnet die Detailansicht
@@ -77,7 +77,7 @@ Danach startet der Kalender wie eine normale App (eigenes Icon, kein Browser-Rah
 
 ## Versionshistorie
 
-Alle Änderungen werden in [CHANGELOG.md](CHANGELOG.md) dokumentiert (aktuelle Version: **3.36.0**).
+Alle Änderungen werden in [CHANGELOG.md](CHANGELOG.md) dokumentiert (aktuelle Version: **3.37.0**).
 
 ## Farbpalette
 

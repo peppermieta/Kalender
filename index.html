@@ -727,6 +727,16 @@
     padding: 8px 10px;
   }
   .note-textarea:focus { outline: none; border-color: var(--accent); background: var(--surface); }
+  /* Nur-Anzeige auf Lesegeräten (ohne Gist-Token): Inhalte als reiner Text
+     statt Eingabefeld, Zeilenumbrüche bleiben erhalten. */
+  .note-ro {
+    font-size: 13px; color: var(--text); line-height: 1.5;
+    white-space: pre-wrap; overflow-wrap: anywhere;
+  }
+  .modal-status-ro { margin: 14px 0 12px; }
+  .modal-status-ro .day-event-status { margin-left: 0; }
+  .day-note-ro { margin: 4px 0 10px; }
+  body.read-only-device .week-day-col { cursor: default; }
   .note-saved {
     display: none; font-size: 11px; color: var(--success-tx); font-weight: 600; margin-top: 5px;
   }
@@ -1437,10 +1447,12 @@
         </select>
       </div>
       <input type="text" id="modalStatusText" class="modal-status-text" maxlength="200" placeholder="Was ändert sich? z. B. neuer Raum, Praxisbesuch statt Seminar …" autocomplete="off">
-      <div class="note-section">
+      <div class="modal-status-ro" id="modalStatusRo" style="display:none;"></div>
+      <div class="note-section" id="noteSection">
         <label class="note-label" for="modalNote">Notiz</label>
         <textarea id="modalNote" class="note-textarea" placeholder="z. B. Buch mitbringen, Raum prüfen …" rows="2"></textarea>
         <span class="note-saved" id="noteSaved">Gespeichert ✓</span>
+        <div class="note-ro" id="modalNoteRo" style="display:none;"></div>
       </div>
       <div class="effort-section" id="effortSection">
         <label class="note-label" id="effortLabel">Aufwand</label>
@@ -1452,6 +1464,7 @@
           <button type="button" class="effort-btn" data-level="5" title="Sehr anstrengend" aria-label="Sehr anstrengend">5</button>
         </div>
         <span class="effort-hint" id="effortHint"></span>
+        <div class="note-ro" id="effortRo" style="display:none;"></div>
       </div>
       <button type="button" id="modalDeletePersonal" class="modal-delete-btn" style="display:none;">🗑️ Eigenen Termin löschen</button>
     </div>
@@ -4707,6 +4720,21 @@ function statusText(ev){ return eventStatus(ev) === 'aenderung' ? (localStorage.
 function statusCls(ev){ const st = eventStatus(ev); return st ? ` status-${st}` : ''; }
 function statusBadgeHtml(ev){ const st = eventStatus(ev); return st ? `<span class="day-event-status st-${st}">${STATUS_LABELS[st]}</span>` : ''; }
 
+// Schreibgerät = Gerät mit hinterlegtem Gist-Token. Alle anderen Geräte
+// lesen nur (Einbahnstraßen-Sync), Eingaben dort würden beim nächsten Pull
+// ohnehin überschrieben. Deshalb zeigen Lesegeräte persönliche Inhalte
+// (Notizen, Status, Aufwand, Tagesnotiz) nur als Text an und blenden alle
+// Bearbeitungsmöglichkeiten aus. Bewusst als Funktionsdeklaration (hoisted)
+// und direkt über localStorage statt über getGistToken(), weil sie schon
+// beim ersten Rendern gebraucht werden kann, bevor die Sync-Konstanten
+// weiter unten initialisiert sind.
+function isWriterDevice(){
+  try { return !!localStorage.getItem('gistSyncToken'); } catch (e) { return false; }
+}
+function applyDeviceModeClass(){
+  document.body.classList.toggle('read-only-device', !isWriterDevice());
+}
+
 const modalStatusEl = document.getElementById('modalStatus');
 const modalStatusTextEl = document.getElementById('modalStatusText');
 function syncStatusTextField(ev){
@@ -5073,6 +5101,53 @@ function deleteFutureSeriesEvents(seriesId, fromDate){
   keysToDelete.forEach(key => localStorage.removeItem(key));
 }
 
+// Schaltet im Termin-Detail zwischen Bearbeiten (Schreibgerät) und reiner
+// Anzeige (Lesegerät) um. Auf Lesegeräten erscheint ein Bereich nur, wenn
+// er Inhalt hat, ohne Hinweis auf fehlende Einträge.
+function applyModalDeviceMode(ev){
+  const writer = isWriterDevice();
+  const statusBar = document.querySelector('.modal-status-bar');
+  const statusRo = document.getElementById('modalStatusRo');
+  const noteSection = document.getElementById('noteSection');
+  const noteRo = document.getElementById('modalNoteRo');
+  const effortSection = document.getElementById('effortSection');
+  const effortRo = document.getElementById('effortRo');
+
+  statusBar.style.display = writer ? '' : 'none';
+  modalNoteEl.style.display = writer ? '' : 'none';
+  effortScaleEl.style.display = writer ? '' : 'none';
+  effortHintEl.style.display = writer ? '' : 'none';
+  noteRo.style.display = writer ? 'none' : 'block';
+  effortRo.style.display = writer ? 'none' : 'block';
+
+  if (writer) {
+    statusRo.style.display = 'none';
+    noteSection.style.display = '';
+    effortSection.style.display = '';
+    return;
+  }
+
+  modalStatusTextEl.style.display = 'none';
+  const st = eventStatus(ev);
+  if (st) {
+    const txt = statusText(ev);
+    statusRo.innerHTML = statusBadgeHtml(ev) + (txt ? `<div class="day-event-status-text">${escapeHtml(txt)}</div>` : '');
+    statusRo.style.display = 'block';
+  } else {
+    statusRo.innerHTML = '';
+    statusRo.style.display = 'none';
+  }
+
+  const note = (localStorage.getItem(noteKeyFor(ev)) || '').trim();
+  noteRo.textContent = note;
+  noteSection.style.display = note ? '' : 'none';
+
+  const level = localStorage.getItem(effortScopeFor(ev).key);
+  const levelBtn = level ? effortScaleEl.querySelector(`.effort-btn[data-level="${level}"]`) : null;
+  effortRo.textContent = levelBtn ? `${level} · ${levelBtn.title}` : '';
+  effortSection.style.display = levelBtn ? '' : 'none';
+}
+
 function openModal(ev){
   const m = MODS[ev.modul];
   const isPersonal = ev.type === 'eigen';
@@ -5134,10 +5209,11 @@ function openModal(ev){
   syncStatusTextField(ev);
   noteSavedEl.style.display = 'none';
   renderEffortScale(ev);
+  applyModalDeviceMode(ev);
 
   // Löschen-Option nur für selbst angelegte Freitext-Termine (s. Ideensammlung)
   const deleteBtn = document.getElementById('modalDeletePersonal');
-  if (isPersonal) {
+  if (isPersonal && isWriterDevice()) {
     deleteBtn.style.display = 'block';
     deleteBtn.textContent = ev.seriesId ? '🗑️ Termin/Serie löschen' : '🗑️ Eigenen Termin löschen';
     deleteBtn.onclick = () => {
@@ -5586,6 +5662,7 @@ function renderWeek(monday){
   weekGridInner.querySelectorAll('.week-day-col').forEach((col, i) => {
     col.addEventListener('click', (e) => {
       if (e.target.closest('.week-event')) return;
+      if (!isWriterDevice()) return; // Lesegerät: keine eigenen Termine anlegen
       // Klick-Position in eine Uhrzeit umrechnen (Extra, von Anfang an
       // dabei), auf 15-Minuten-Raster gerundet, und als Vorausfüllung ins
       // bereits bestehende Tagesansicht-Formular "Eigenen Termin
@@ -6200,8 +6277,12 @@ gistTokenSaveBtn.addEventListener('click', () => {
   if (val) localStorage.setItem(GIST_TOKEN_KEY, val); else localStorage.removeItem(GIST_TOKEN_KEY);
   gistTokenInput.value = '';
   refreshGistSyncStatus();
+  // Wechsel zwischen Schreib- und Lesegerät sofort sichtbar machen
+  applyDeviceModeClass();
+  refreshViewsAfterStatus();
 });
 refreshGistSyncStatus();
+applyDeviceModeClass();
 // Pull NUR auf Lesegeräten (kein Token) – weder bei Fokuswechsel noch beim
 // Laden. Grund fürs Laden: auch dort kann eine gerade gemachte Änderung
 // noch nicht hochgeladen sein (Reload direkt nach dem Bearbeiten/Löschen,
@@ -6351,7 +6432,15 @@ function renderDayView(iso, {pushHistory=true, prefillTime=null} = {}){
   // Monatsraster. Aufklappbar wenn leer, direkt sichtbar sobald Inhalt da ist.
   const dayNoteKey = `dayNote:${iso}`;
   const existingDayNote = localStorage.getItem(dayNoteKey) || '';
-  html += `
+  const writer = isWriterDevice();
+  // Lesegerät: Tagesnotiz nur als Text (und nur, wenn vorhanden), keine
+  // Eingabe und kein "+ Eigenen Termin hinzufügen".
+  if (!writer && existingDayNote.trim()) html += `
+    <div class="day-note-ro">
+      <span class="note-label">Notiz zum Tag</span>
+      <div class="note-ro">${escapeHtml(existingDayNote)}</div>
+    </div>`;
+  if (writer) html += `
     <div class="day-add-row" id="dayNoteTrigger"${existingDayNote ? ' style="display:none;"' : ''}>+ Notiz zum Tag hinzufügen</div>
     <div class="day-note-wrap"${existingDayNote ? '' : ' style="display:none;"'} id="dayNoteWrap">
       <textarea id="dayNoteText" class="note-textarea" placeholder="Notiz zu diesem Tag …" rows="2">${escapeHtml(existingDayNote)}</textarea>
@@ -6361,7 +6450,7 @@ function renderDayView(iso, {pushHistory=true, prefillTime=null} = {}){
   // Eigene Freitext-Termine hinzufügen (rein lokal, s. Ideensammlung) – als
   // Listeneintrag ganz unten statt im Verwalten-Menü, weil es eine
   // datumsgebundene statt App-weite Aktion ist.
-  html += `
+  if (writer) html += `
     <div class="day-add-row" id="dayAddRow">+ Eigenen Termin hinzufügen</div>
     <div class="day-add-form" id="dayAddForm" style="display:none;">
       <input type="text" id="dayAddTitle" placeholder="Titel, z. B. Gruppentreffen Bibliothek" maxlength="120" autocomplete="off" />
@@ -6392,58 +6481,60 @@ function renderDayView(iso, {pushHistory=true, prefillTime=null} = {}){
   dayViewBody.innerHTML = html;
   dayViewBody.querySelectorAll('.day-event').forEach((el,i) => { el.onclick = () => openModal(events[i]); });
 
-  const dayNoteTrigger = document.getElementById('dayNoteTrigger');
-  const dayNoteWrap = document.getElementById('dayNoteWrap');
-  const dayNoteText = document.getElementById('dayNoteText');
-  const dayNoteSaved = document.getElementById('dayNoteSaved');
-  let dayNoteSaveTimer = null;
-  dayNoteTrigger.onclick = () => {
-    dayNoteTrigger.style.display = 'none';
-    dayNoteWrap.style.display = 'block';
-    dayNoteText.focus();
-  };
-  dayNoteText.addEventListener('input', () => {
-    const val = dayNoteText.value;
-    if (val.trim()) localStorage.setItem(dayNoteKey, val);
-    else localStorage.removeItem(dayNoteKey);
-    scheduleGistPush();
-    dayNoteSaved.style.display = 'inline';
-    clearTimeout(dayNoteSaveTimer);
-    dayNoteSaveTimer = setTimeout(() => { dayNoteSaved.style.display = 'none'; }, 1500);
-  });
+  if (writer) {
+    const dayNoteTrigger = document.getElementById('dayNoteTrigger');
+    const dayNoteWrap = document.getElementById('dayNoteWrap');
+    const dayNoteText = document.getElementById('dayNoteText');
+    const dayNoteSaved = document.getElementById('dayNoteSaved');
+    let dayNoteSaveTimer = null;
+    dayNoteTrigger.onclick = () => {
+      dayNoteTrigger.style.display = 'none';
+      dayNoteWrap.style.display = 'block';
+      dayNoteText.focus();
+    };
+    dayNoteText.addEventListener('input', () => {
+      const val = dayNoteText.value;
+      if (val.trim()) localStorage.setItem(dayNoteKey, val);
+      else localStorage.removeItem(dayNoteKey);
+      scheduleGistPush();
+      dayNoteSaved.style.display = 'inline';
+      clearTimeout(dayNoteSaveTimer);
+      dayNoteSaveTimer = setTimeout(() => { dayNoteSaved.style.display = 'none'; }, 1500);
+    });
 
-  const addRow = document.getElementById('dayAddRow');
-  const addForm = document.getElementById('dayAddForm');
-  const addTitle = document.getElementById('dayAddTitle');
-  const addTime = document.getElementById('dayAddTime');
-  const addDuration = document.getElementById('dayAddDuration');
-  addRow.onclick = () => {
-    addRow.style.display = 'none';
-    addForm.style.display = 'flex';
-    addTitle.focus();
-  };
-  document.getElementById('dayAddCancel').onclick = () => {
-    addForm.style.display = 'none';
-    addRow.style.display = 'flex';
-  };
-  // Dauer-Auswahl ergibt ohne Uhrzeit keinen Sinn (ganztägig kennt keine
-  // Dauer) – blendet sich daher erst ein, sobald eine Uhrzeit gesetzt ist.
-  addTime.addEventListener('input', () => {
-    addDuration.style.display = addTime.value ? 'block' : 'none';
-  });
-  document.getElementById('dayAddSave').onclick = () => savePersonalEvent(iso);
-  addTitle.addEventListener('keydown', e => { if (e.key === 'Enter') savePersonalEvent(iso); });
+    const addRow = document.getElementById('dayAddRow');
+    const addForm = document.getElementById('dayAddForm');
+    const addTitle = document.getElementById('dayAddTitle');
+    const addTime = document.getElementById('dayAddTime');
+    const addDuration = document.getElementById('dayAddDuration');
+    addRow.onclick = () => {
+      addRow.style.display = 'none';
+      addForm.style.display = 'flex';
+      addTitle.focus();
+    };
+    document.getElementById('dayAddCancel').onclick = () => {
+      addForm.style.display = 'none';
+      addRow.style.display = 'flex';
+    };
+    // Dauer-Auswahl ergibt ohne Uhrzeit keinen Sinn (ganztägig kennt keine
+    // Dauer) – blendet sich daher erst ein, sobald eine Uhrzeit gesetzt ist.
+    addTime.addEventListener('input', () => {
+      addDuration.style.display = addTime.value ? 'block' : 'none';
+    });
+    document.getElementById('dayAddSave').onclick = () => savePersonalEvent(iso);
+    addTitle.addEventListener('keydown', e => { if (e.key === 'Enter') savePersonalEvent(iso); });
 
-  // Klick auf eine leere Zelle in der Wochenansicht (Extra, von Anfang an
-  // dabei) reicht die abgelesene Uhrzeit hierher durch, statt ein eigenes
-  // Mini-Formular im Wochenraster zu bauen - nutzt den bereits bestehenden,
-  // getesteten "Eigenen Termin hinzufügen"-Ablauf direkt vorausgefüllt.
-  if (prefillTime) {
-    addRow.style.display = 'none';
-    addForm.style.display = 'flex';
-    addTime.value = prefillTime;
-    addDuration.style.display = 'block';
-    addTitle.focus();
+    // Klick auf eine leere Zelle in der Wochenansicht (Extra, von Anfang an
+    // dabei) reicht die abgelesene Uhrzeit hierher durch, statt ein eigenes
+    // Mini-Formular im Wochenraster zu bauen - nutzt den bereits bestehenden,
+    // getesteten "Eigenen Termin hinzufügen"-Ablauf direkt vorausgefüllt.
+    if (prefillTime) {
+      addRow.style.display = 'none';
+      addForm.style.display = 'flex';
+      addTime.value = prefillTime;
+      addDuration.style.display = 'block';
+      addTitle.focus();
+    }
   }
 
   dayView.classList.add('open');

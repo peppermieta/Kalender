@@ -7,6 +7,22 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.37.0] - 2026-11-12
+
+### Changed
+- **Lesegeräte zeigen persönliche Inhalte nur noch an.** Auf Geräten ohne
+  Gist-Token gibt es keine Eingabefelder mehr, weil dort Eingaben beim
+  nächsten Abgleich ohnehin überschrieben würden. Im Termin-Detail
+  erscheinen Status (als Badge samt Änderungstext), Notiz und Aufwand
+  (z. B. "4 · Anstrengend") als reiner Text und nur, wenn etwas
+  eingetragen ist. Ohne Einträge bleibt der Bereich leer, ohne Hinweis.
+  In der Tagesansicht ist die Tagesnotiz ebenfalls nur Anzeige,
+  "+ Notiz zum Tag hinzufügen" und "+ Eigenen Termin hinzufügen" entfallen.
+  Der Löschen-Button für eigene Termine und das Anlegen per Klick in eine
+  leere Stelle der Wochenansicht sind dort ebenfalls deaktiviert.
+- Wird im Verwalten-Menü ein Token eingetragen oder entfernt, wechselt die
+  Ansicht sofort zwischen Schreib- und Lesegerät, ohne Neuladen.
+
 ## [3.36.0] - 2026-10-11
 
 ### Added

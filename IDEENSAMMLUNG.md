@@ -265,6 +265,8 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   spontane Praxisbesuche zur selben Uhrzeit abdecken soll. Darstellung
   per Screenshot abgenommen. Bekannt: auf Lesegeräten (ohne Token)
   überschreibt der Gist-Abgleich lokal gesetzte Status, wie bei Notizen.
+  **Nachtrag (v3.37.0):** Erledigt, Lesegeräte zeigen den Status nur noch
+  an (s. Notiz-Sync unter "Größer").
 - **"Was hab ich verpasst?"** – kurze Zusammenfassung der Lücke, wenn man
   ein paar Tage nicht im Kalender war. Ließe sich über einen in
   `localStorage` gespeicherten Zeitstempel "zuletzt geöffnet" umsetzen:
@@ -358,6 +360,12 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   cachte Gist-API-Antworten fälschlich statt sie frisch zu holen).
   Die inzwischen überflüssige manuelle Copy-Paste-Übertragung wieder
   entfernt, Notiz-Indikator in der Tagesansicht ergänzt (v3.10.0).
+  **Nachtrag (v3.37.0, aus der Nutzung):** Lesegeräte haben keine
+  Eingabefelder mehr, da Eingaben dort beim nächsten Pull ohnehin
+  verloren gingen. Notiz, Tagesnotiz, Status und Aufwand erscheinen nur
+  als Text und nur, wenn etwas eingetragen ist (bewusst ohne Hinweis bei
+  leeren Bereichen). Eigene Termine lassen sich dort weder anlegen noch
+  löschen. Zentrale Prüfung über `isWriterDevice()`.
 - **Prospektive Belastungs-Heatmap** 🎯 **Priorität: Neuansatz
   (30.09.2026, s. u.)** – eine farbcodierte Semesterkurve,
   die zeigt, wie stark jede Woche des Semesters belastet ist
