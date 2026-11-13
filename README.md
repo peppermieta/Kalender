@@ -10,7 +10,7 @@ Privater, passwortgeschützter Vorlesungskalender für das Studium (Bachelor Soz
 - **Wochenansicht** – dritter Ansichtsmodus (Umschalter Monat/Woche/Tag oben im Kalender) mit echtem Zeit-Raster, dynamisch je Woche auf den tatsächlichen Terminbereich zugeschnitten; zeigt Belastung (B_w) und geschätztes Selbststudium (S_w) pro Woche, Notiz-Hinweise, springt per Klick auf einen Tag zur Tagesansicht und per Klick auf eine leere Zelle direkt ins Formular für eigene Termine (vorausgefüllte Uhrzeit); teilbar über einen eigenen Link (`#YYYY-Www`) oder als eigens gerendertes Bild (📤-Button, Web-Share-API bzw. Download)
 - **Mehrere Semester** – Auswahl im Header (bleibt beim Scrollen sichtbar); beim Laden automatisch das zum heutigen Datum passende Semester vorausgewählt, manuelles Umschalten (auch auf noch nicht laufende Semester) jederzeit möglich. Suche und "Nächste Veranstaltung" laufen dabei semesterübergreifend. Während des laufenden Semesters zeigt ein kleiner Fortschrittsbalken darunter die eigene Position im Verlauf ("Woche 7 von 22"), basierend auf den tatsächlich vorlesungstragenden Monaten; blendet sich außerhalb dieses Zeitraums automatisch aus.
 - **Farbcodierung nach Modul** – jede Veranstaltung ist ihrem Modul farblich zugeordnet, Legende oben auf der Seite (sortiert M02 → M10, Zusatzangebot am Ende)
-- **Mobile Ansicht** – unter 700px Breite wechselt die Seite automatisch von der 7-Spalten-Rasteransicht zu einer einspaltigen Tagesliste, damit Termine nicht abgeschnitten werden; Modulkürzel werden dort direkt am Termin angezeigt
+- **Mobile Ansicht** – unter 700px Breite wechselt die Seite automatisch von der 7-Spalten-Rasteransicht zu einer einspaltigen Tagesliste, damit Termine nicht abgeschnitten werden; Modulkürzel werden dort direkt am Termin angezeigt; beim Blättern in den aktuellen Monat, über den Heute-Button und nach dem Schließen eines Termin-Details scrollt die Liste automatisch zum heutigen Tag
 - **Termin-Details per Klick/Tap** – Datum, Uhrzeit, Raum (Kurzform in Monats-/Tagesansicht, volle Bezeichnung im Detail), Modul, Dozierende, LV-Nummer und Parallelgruppe
 - **Termin-Status** – pro Einzeltermin wählbar im Termin-Detail: *Entfällt* (durchgestrichen), *Nur E-Learning/Online* (ausgegraut) oder *Änderung* (gestrichelt markiert, z. B. spontaner Praxisbesuch, mit eigenem Beschreibungsfeld für die Änderung); rein optisch, lokal gespeichert und per Gist-Sync auf andere Geräte übertragen
 - **"Was hab ich verpasst?"** – war man mindestens 2 Tage nicht im Kalender und lagen in der Zwischenzeit echte Termine, erscheint beim nächsten Öffnen ein wegklickbarer Hinweis mit einer kompakten Liste dieser Termine; Klick auf einen Eintrag springt direkt zur Detailansicht
@@ -77,7 +77,7 @@ Danach startet der Kalender wie eine normale App (eigenes Icon, kein Browser-Rah
 
 ## Versionshistorie
 
-Alle Änderungen werden in [CHANGELOG.md](CHANGELOG.md) dokumentiert (aktuelle Version: **3.37.0**).
+Alle Änderungen werden in [CHANGELOG.md](CHANGELOG.md) dokumentiert (aktuelle Version: **3.38.0**).
 
 ## Farbpalette
 

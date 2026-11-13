@@ -7,6 +7,17 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.38.0] - 2026-11-13
+
+### Added
+- **Mobile Monatsansicht scrollt zum heutigen Tag.** In der einspaltigen
+  Tagesliste (unter 700px Breite) springt die Ansicht automatisch zum
+  heutigen Tag, sobald der aktuelle Monat angezeigt wird: über den
+  Heute-Button, beim Zurückblättern in den aktuellen Monat (Wischen,
+  Pfeile, Monatspunkte) und nach dem Schließen eines Termin-Details. Der
+  sticky Header wird dabei berücksichtigt. Bewusst nicht beim Öffnen der
+  App, nicht in anderen Monaten und nicht in der Desktop-Rasteransicht.
+
 ## [3.37.0] - 2026-11-12
 
 ### Changed

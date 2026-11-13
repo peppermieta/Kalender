@@ -4648,6 +4648,30 @@ function goTo(idx){
   if(idx<0||idx>=MONTHS.length) return;
   currentMonthIdx=idx;
   renderMonth(idx);
+  scrollMonthToToday();
+}
+
+// Mobile Monatsansicht (einspaltige Tagesliste): scrollt zum heutigen Tag,
+// sobald der angezeigte Monat "heute" enthält. Ausgelöst beim Blättern in
+// den aktuellen Monat (Wischen, Pfeile, Monatspunkte), über den
+// Heute-Button (läuft über goTo) und beim Schließen eines Termin-Details.
+// Bewusst NICHT beim Öffnen der App. Desktop-Raster bleibt unberührt, da
+// dort der ganze Monat ohnehin auf einen Blick sichtbar ist. Der sticky
+// Header wird beim Zielpunkt abgezogen, damit der Tag nicht darunter
+// verschwindet.
+function scrollMonthToToday({smooth=false} = {}){
+  if (!window.matchMedia('(max-width: 700px)').matches) return;
+  // currentView/dayView werden erst weiter unten deklariert (TDZ, falls
+  // schon während der Initialisierung aufgerufen)
+  try { if (currentView !== 'month' || dayView.classList.contains('open')) return; } catch (e) { return; }
+  const cell = document.querySelector('#calGrid .cal-cell.today:not(.other-month)');
+  if (!cell) return;
+  requestAnimationFrame(() => {
+    const header = document.querySelector('header');
+    const offset = (header ? header.getBoundingClientRect().height : 0) + 12;
+    const top = cell.getBoundingClientRect().top + window.scrollY - offset;
+    window.scrollTo({top: Math.max(0, top), behavior: smooth ? 'smooth' : 'auto'});
+  });
 }
 
 // Springt zum aktuellen Monat; liegt "heute" außerhalb des angezeigten
@@ -5252,6 +5276,7 @@ function openModal(ev){
 
 function closeModal({pushHistory=true} = {}){
   overlay.classList.remove('open');
+  scrollMonthToToday({smooth:true});
   if (pushHistory && history.state && history.state.modalOpen) history.back();
 }
 modalClose.onclick = closeModal;

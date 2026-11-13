@@ -89,6 +89,13 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   geprüft (Jahreswechsel-Wochen). Nebenbei: Zurück-/Kopieren-Buttons in
   der Tagesansicht zeigen auf Mobile jetzt nur noch die Icons (wie beim
   Verwalten-Button), sonst hätte für die KW kein Platz mehr gereicht.
+- **Mobile Monatsansicht: zum heutigen Tag scrollen** (13.11.2026, aus der
+  Nutzung) – in der einspaltigen Tagesliste musste man bisher selbst bis
+  zum heutigen Tag scrollen.
+  **✅ Umgesetzt** (v3.38.0) – `scrollMonthToToday()` greift beim
+  Heute-Button, beim Blättern in den aktuellen Monat und nach dem
+  Schließen eines Termin-Details (dann weich gescrollt). Bewusst nicht
+  beim Öffnen der App und nur auf Mobile, sticky Header wird abgezogen.
 
 ## ⚙ Mittel — machbar, etwas Umbau nötig
 
