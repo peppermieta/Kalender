@@ -4034,8 +4034,9 @@ const EVENTS_BY_SEMESTER = {
     date:d, start:"09:45", end:"11:15", modul:"M08",
     lvnr:"1-1-0027-1-12340-208208208313000", pg:"1",
     title:"Grundlagen des Kinder- und Jugendhilfe- sowie Familienrechts", lehrperson:"Prof. Dr.in Annette Rabe",
-    // Basisraum Seminarraum C6 (s. ROOMS), nur die ersten zwei Termine im Hörsaal C1 (HISinOne-ICS, 06.10.2026).
-    raum: {"2026-10-06":"Hörsaal C1","2026-10-13":"Hörsaal C1"}[d]
+    // Seit Raumänderung in HISinOne (12.11.2026) durchgehend Hörsaal C1 (s. ROOMS),
+    // nur der 01.12. ist eine asynchrone E-Learning-Einheit (HISinOne-ICS, 17.11.2026).
+    raum: {"2026-12-01":"E-Learning – zeitunabhängig"}[d]
   })),
   // M9 – Sozialverwaltungsrecht (Mi, 07.10.–25.11.)
   ...["2026-10-07","2026-10-14","2026-10-21","2026-10-28","2026-11-04","2026-11-11","2026-11-18","2026-11-25"].map(d=>({
@@ -4098,8 +4099,8 @@ const EVENTS_BY_SEMESTER = {
   // Prüfungen & Abgaben
   {date:"2027-03-04",start:null,end:null,modul:"M10",lvnr:null,pg:null,title:"Abgabe der 5 Prüfungsbausteine (Moodle), Seminar Empirische Forschungsmethoden",lehrperson:null,type:"abgabe"},
   // Zusatzangebot
-  {date:"2026-11-23",start:"17:30",end:"19:00",modul:"ZA",lvnr:"–",pg:"1",title:"Aus der Ohnmacht ins Handeln kommen – Für eine Politisierung Sozialer Arbeit",lehrperson:"Andreas Foitzik",raum:"Seminarraum C8"},
-  {date:"2026-12-12",start:"10:00",end:"17:00",modul:"ZA",lvnr:"–",pg:"1",title:"Aus der Ohnmacht ins Handeln kommen – Für eine Politisierung Sozialer Arbeit",lehrperson:"Andreas Foitzik",raum:"Seminarraum C8"},
+  {date:"2026-11-23",start:"17:30",end:"19:30",modul:"ZA",lvnr:"–",pg:"1",title:"Aus der Ohnmacht ins Handeln kommen – Für eine Politisierung Sozialer Arbeit",lehrperson:"Andreas Foitzik",raum:"Online-Seminar"},
+  {date:"2026-12-12",start:"10:00",end:"16:30",modul:"ZA",lvnr:"–",pg:"1",title:"Aus der Ohnmacht ins Handeln kommen – Für eine Politisierung Sozialer Arbeit",lehrperson:"Andreas Foitzik",raum:"Seminarraum C8"},
   ],
 };
 // ─── ENDE DATENTEIL (SEMESTERS + EVENTS_BY_SEMESTER + MODS) ─────────────────
@@ -4111,17 +4112,17 @@ const EVENTS_BY_SEMESTER = {
 // eintragen – gilt dann automatisch für alle Termine dieser Veranstaltung.
 // Beispiel:  "1-1-0021-1-12357-206206620209731": "Raum 2.14",
 const ROOMS = {
-  // Quelle: HISinOne-ICS-Export (zuletzt abgeglichen 08.10.2026, vorher 25.08.2026). Kurse mit wechselndem Raum
+  // Quelle: HISinOne-ICS-Export (zuletzt abgeglichen 17.11.2026, vorher 08.10.2026 und 25.08.2026). Kurse mit wechselndem Raum
   // stehen NICHT hier, sondern haben eigene raum:-Overrides pro Termin
   // (s. M9-Grundsicherungsrecht, M9-Grundlagen-KJ-Familienrecht,
   // M7-Entwicklungstheorien, M6-Kunst weiter unten).
   "1-1-0021-1-12357-206206620209731": "Hörsaal C1",
   "1-1-0022-1-12357-206206620109731": "Hörsaal C3",
-  "1-1-0027-1-12340-208208208313000": "Seminarraum C6",
+  "1-1-0027-1-12340-208208208313000": "Hörsaal C1", // bis 11.11.2026 Seminarraum C6
   "1-1-0029-1-12340-208208208313000": "Hörsaal C4",
   "1-1-0030-1-12340-208208208313000": "Seminarraum C8",
   "1-1-0034-1-12300-210210210000000": "Hörsaal C1",
-  "1-1-0765-1-12300-210210210000000": "Raum C10", // laut E-Mail Possinger (08.10.2026); HISinOne zeigt widersprüchlich zwei Räume
+  "1-1-0765-1-12300-210210210000000": "Seminarraum C10", // HISinOne-ICS 17.11.2026 jetzt einheitlich (vorher widersprüchlich); 19.11. bleibt laut Seminarplan E-Learning statt A8
   "1-1-0007-1-12340-202202202202000": "Seminarraum C9",
 };
 

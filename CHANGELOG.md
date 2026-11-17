@@ -7,6 +7,22 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.38.1] - 2026-11-17
+
+### Fixed
+- **Termindaten mit HISinOne-ICS-Export vom 17.11.2026 abgeglichen.**
+  - M08 Grundlagen des Kinder- und Jugendhilfe- sowie Familienrechts (Di):
+    seit der Raumänderung vom 12.11. durchgehend Hörsaal C1 statt
+    Seminarraum C6, am 01.12. asynchrone E-Learning-Einheit.
+  - Zusatzangebot "Aus der Ohnmacht ins Handeln kommen": 23.11. jetzt
+    17:30 bis 19:30 als Online-Seminar (vorher bis 19:00 in C8), 12.12.
+    endet um 16:30 statt 17:00.
+  - M10 Der Einsatz von Forschungsmethoden: Raumbezeichnung jetzt
+    einheitlich "Seminarraum C10" (vorher "Raum C10"). Der 19.11. bleibt
+    laut Seminarplan E-Learning, obwohl HISinOne dort Seminarraum A8 nennt.
+  - Alle übrigen Uhrzeiten und Räume stimmen mit dem Export überein.
+- ICS-Feed neu generiert.
+
 ## [3.38.0] - 2026-11-13
 
 ### Added
