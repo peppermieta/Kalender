@@ -96,8 +96,37 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   Heute-Button, beim Blättern in den aktuellen Monat und nach dem
   Schließen eines Termin-Details (dann weich gescrollt). Bewusst nicht
   beim Öffnen der App und nur auf Mobile, sticky Header wird abgezogen.
+- **Link zu HISinOne im Termin-Detail** (19.11.2026, aus der Durchsicht)
+  – der HISinOne-ICS-Export liefert pro Veranstaltung einen direkten
+  Link zur Detailseite (`URL:`-Feld mit `unitId`/`periodId`). Im
+  Termin-Detail als Link ergänzt, lässt sich der aktuelle Raum mit einem
+  Tipp live prüfen, statt auf den nächsten Datenabgleich zu warten
+  (Anlass: Raumänderung bei M08 am 12.11., erst am 17.11. bemerkt).
+  Daten liegen schon vor, daher geringer Aufwand: Zuordnung je LV-Nummer
+  analog zur `ROOMS`-Tabelle.
+- **Moodle-Link pro Veranstaltung** (19.11.2026, aus der Durchsicht) –
+  Materialien, Abgaben und meist auch Zoom-Links liegen in Moodle. Ein
+  Link zum jeweiligen Moodle-Kurs im Termin-Detail spart im Alltag das
+  Suchen. Technisch wie der HISinOne-Link (Zuordnung je LV-Nummer), die
+  Moodle-Kurs-Links müssen aber einmalig von Pascal geliefert werden.
 
 ## ⚙ Mittel — machbar, etwas Umbau nötig
+
+- **Hinweis auf geänderte Termine** 🎯 **Priorität (19.11.2026)** –
+  ändern sich bei einem Datenabgleich Raum oder Uhrzeit eines künftigen
+  Termins, markiert die App diesen Termin für einige Tage sichtbar (z. B.
+  "Raum geändert"), damit Änderungen wie bei M08 (12.11.2026) auffallen,
+  ohne selbst vergleichen zu müssen. Grundidee: beim Datenabgleich den
+  vorherigen Wert und das Änderungsdatum am Termin mitführen (z. B.
+  `geaendert: {am, raumVorher, zeitVorher}`), die App blendet den
+  Hinweis bis einige Tage nach der Änderung bzw. bis zum Termin ein.
+  Passt gut zusammen mit einem Abgleich-Skript (HISinOne-Export gegen
+  `EVENTS_BY_SEMESTER`, Abweichungen als Liste), das solche Änderungen
+  ohnehin erkennt und die Felder gleich mit setzen könnte.
+  **Vor der Umsetzung zu klären:** Darstellung (Badge am Termin,
+  Hinweis im Termin-Detail, ggf. Sammelhinweis), Dauer der Markierung
+  und ob auch Termine, die neu dazukommen oder wegfallen, markiert
+  werden (Varianten per Mockup vergleichen, wie üblich vor dem Code).
 
 - **Dark Mode** – umschaltbares dunkles Farbschema.
   **✅ Umgesetzt** (v3.8.0) – Umschalter im Verwalten-Menü (neue
