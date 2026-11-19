@@ -370,6 +370,19 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   alle `note:`-Einträge, deren Treffer dann über den gleichen
   Schlüssel-Aufbau (Datum/Uhrzeit/LV-Nummer) zum passenden Termin
   zurückverknüpft werden.
+  **✅ Umgesetzt** (v3.39.0, 19.11.2026): Die Suche durchsucht jetzt auch
+  Notizen zu Terminen und, auf Wunsch zusätzlich, die Tagesnotizen.
+  Gruppierte Darstellung nach Mockup-Vergleich (Variante B statt gemischt
+  chronologisch, weil Notiztreffer sonst hinter vielen Termintreffern
+  untergingen): "Notizen" zuerst, dann "Termine", je fünf Treffer plus
+  "+ n weitere". Notizen erscheinen mit Textausschnitt um den Treffer,
+  der Suchbegriff wird hervorgehoben (auch in Termintiteln). Klick auf
+  eine Tagesnotiz öffnet die Tagesansicht (`jumpToDay()`, mit
+  Semesterwechsel bei Bedarf). Mit aktivem Prüfungs-/Abgabe-Filter
+  zählen nur Notizen solcher Termine, Tagesnotizen dann nicht. Ohne
+  Notiztreffer bleibt die Liste ungruppiert wie bisher. Nebenbei
+  behoben: ganztägige Abgaben zeigten in den Suchtreffern "null" als
+  Uhrzeit.
 - **Prüfungsvorbereitungs-Rückwärtsplanung** – zu jedem Prüfungstermin
   automatisch eine empfohlene Vorbereitungszeit davor markieren,
   abgeleitet aus dem CP-Gewicht.

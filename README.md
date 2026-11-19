@@ -17,7 +17,7 @@ Privater, passwortgeschützter Vorlesungskalender für das Studium (Bachelor Soz
 - **Private Notizen** – pro Termin, rein lokal im Browser gespeichert, z. B. "Buch mitbringen"; optional automatischer Sync zwischen Geräten über einen GitHub Gist (Einbahnstraßen-Modell: ein Gerät schreibt, alle anderen lesen mit); ein kleines Symbol in der Tagesansicht zeigt an, ob zu einem Termin eine Notiz existiert. Auf Lesegeräten (ohne Token) sind Notizen, Tagesnotizen, Status und Aufwand reine Anzeige: Eingabefelder, "+ Eigenen Termin hinzufügen" und das Löschen eigener Termine gibt es dort nicht, leere Bereiche erscheinen gar nicht
 - **Eigene Freitext-Termine** – persönliche Termine (z. B. Arzttermine) direkt in der Tagesansicht anlegen, rein lokal gespeichert, farblich und mit gestricheltem Rahmen klar von echten Veranstaltungen abgesetzt; nicht im ICS-Feed oder Ausdruck enthalten
 - **Installierbare App (PWA)** – auf Android als App installierbar (eigenes Icon, kein Browser-Rahmen), funktioniert dank Service Worker auch ohne Internetverbindung
-- **Suche** – Freitextsuche nach Veranstaltung oder Modulname direkt im Header; Klick auf ein Ergebnis springt zum passenden Monat und öffnet die Detailansicht
+- **Suche** – Freitextsuche nach Veranstaltung, Modulname oder Lehrperson sowie in den eigenen Notizen zu Terminen und den Tagesnotizen, direkt im Header. Gibt es Notiztreffer, erscheinen sie als eigene Gruppe "Notizen" vor den "Terminen", mit Textausschnitt und hervorgehobenem Suchbegriff; je Gruppe zunächst fünf Treffer, "+ n weitere" klappt den Rest auf. Klick auf einen Termin springt zum passenden Monat und öffnet die Detailansicht, Klick auf eine Tagesnotiz öffnet die Tagesansicht
 - **Kalender-Abo (ICS)** – Termine lassen sich per Klick zu Google Kalender hinzufügen oder als Link für andere Kalender-Apps kopieren, inkl. automatischer Aktualisierung bei Änderungen und über alle Semester hinweg (siehe Abschnitt "Kalender-Abo" unten)
 - **Druckansicht** – eigenes Stylesheet für den Ausdruck (Strg/Cmd+P oder eigener "Drucken"-Button im Footer, nützlich als installierte App ohne Browser-Menü): saubere Monatsübersicht mit Farblegende, ohne Bedienelemente/Overlays; zeigt auf Papier immer alle Termine eines Tages, auch wenn auf dem Bildschirm wegen Platzmangel nur "+N weitere" steht
 - **Modulverzeichnis** – seit Version 2.1.0 ein eigenständiges, öffentlich mit anderen Studierenden geteiltes Projekt: [module.xn--peppermita-lnb.de](https://module.xn--peppermita-lnb.de/) (eigenes Repo: [peppermieta/Modulverzeichnis](https://github.com/peppermieta/Modulverzeichnis)), verlinkt aus dem Kalender-Header. Alle 28 Module, Semesterauswahl, Farben nach Studienbereich, Modulverantwortliche, Workload-Aufteilung, Verwendbarkeit in anderen Studiengängen. Frei zugänglich, ohne Passwortschutz.
@@ -77,7 +77,7 @@ Danach startet der Kalender wie eine normale App (eigenes Icon, kein Browser-Rah
 
 ## Versionshistorie
 
-Alle Änderungen werden in [CHANGELOG.md](CHANGELOG.md) dokumentiert (aktuelle Version: **3.38.1**).
+Alle Änderungen werden in [CHANGELOG.md](CHANGELOG.md) dokumentiert (aktuelle Version: **3.39.0**).
 
 ## Farbpalette
 

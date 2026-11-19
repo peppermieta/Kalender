@@ -7,6 +7,23 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.39.0] - 2026-11-19
+
+### Added
+- **Suche in Notizen.** Die Suche im Header durchsucht jetzt auch die
+  Notizen zu Terminen und die Tagesnotizen. Gibt es Notiztreffer, zeigt
+  die Liste zwei Gruppen: "Notizen" zuerst (mit Textausschnitt um den
+  Treffer), danach "Termine". Je Gruppe erscheinen zunächst fünf
+  Treffer, "+ n weitere" klappt den Rest auf. Der Suchbegriff wird
+  hervorgehoben, auch in Termintiteln. Ein Klick auf eine Tagesnotiz
+  öffnet die Tagesansicht des Tages. Mit aktivem Prüfungs-/Abgabe-Filter
+  zählen nur Notizen solcher Termine. Platzhalter des Suchfelds lautet
+  jetzt "Termine und Notizen suchen…".
+
+### Fixed
+- Ganztägige Abgaben zeigten in den Suchtreffern "null" statt einer
+  Uhrzeit.
+
 ## [3.38.1] - 2026-11-17
 
 ### Fixed
