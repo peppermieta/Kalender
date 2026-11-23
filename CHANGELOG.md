@@ -7,6 +7,26 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.39.1] - 2026-11-23
+
+### Fixed
+Sechs Fehler aus der Design-Bestandsaufnahme vom 23.11.2026, vorab und
+unabhängig vom geplanten Redesign behoben:
+- Wochenansicht im Dark Mode: Die Tagesköpfe (außer heute) leuchteten
+  hell, weil der Browser-Standardstil der Buttons nicht zurückgesetzt war.
+- Wochenübersicht: Wochen heißen jetzt "KW 48" wie im Rest der App statt
+  "2026-W48".
+- Tagesansicht: Der Hinweis zum laufenden bzw. nächsten Termin beginnt
+  nicht mehr mit Strich und Klammer, sondern zeigt "Läuft gerade, noch …"
+  bzw. "Startet in …" und darunter den Titel.
+- Nächster Termin (Mobile): Der einzelne Trennpunkt am Ende der
+  Datumszeile ist weg.
+- Verwalten-Menü: Der Platzhalter im Token-Feld wurde auf dem Handy
+  abgeschnitten, er lautet jetzt kurz "GitHub-Token".
+- Belastungsübersicht: Monatsnamen überlappten, wenn ein Monat nur eine
+  Woche hatte (z. B. "Sep" direkt vor "Okt"). Solche Labels entfallen
+  jetzt, die übrigen stehen linksbündig.
+
 ## [3.39.0] - 2026-11-19
 
 ### Added

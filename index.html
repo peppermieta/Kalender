@@ -896,8 +896,8 @@
   }
   .heatmap-ticks { display: flex; gap: 3px; margin-top: 6px; min-width: min-content; }
   .heatmap-tick {
-    flex: 1; min-width: 16px; text-align: center; font-size: 10px; color: var(--muted);
-    white-space: nowrap;
+    flex: 1; min-width: 16px; text-align: left; font-size: 10px; color: var(--muted);
+    white-space: nowrap; overflow: visible;
   }
 
   /* Ansichts-Umschalter (Monat/Woche/Tag), ersetzt das frühere Belastungs-
@@ -962,6 +962,9 @@
   .week-day-header {
     text-align: center; font-size: 11.5px; color: var(--muted);
     padding: 6px 2px; cursor: pointer; border-radius: 6px 6px 0 0;
+    /* <button>: Browser-Standard (heller Hintergrund, Rahmen) zurücksetzen,
+       sonst leuchten die Tagesköpfe im Dark Mode hell */
+    background: none; border: 0; font-family: inherit; width: 100%;
   }
   .week-day-header:hover { background: var(--bg); }
   .week-day-header.today { background: var(--accent-soft-bg); color: var(--accent); font-weight: 700; }
@@ -1019,6 +1022,7 @@
     margin-bottom: 18px; font-size: 13.5px;
   }
   .day-focus-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .day-focus-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
   .day-focus-status { font-weight: 700; }
   .day-focus-detail { opacity: .85; }
 
@@ -1106,6 +1110,7 @@
     header { padding: 12px; }
     .next-up { padding: 10px 12px; font-size: 12.5px; }
     .next-up-label { display: none; } /* auf Mobile reicht Uhrzeit + Titel, spart Platz */
+    .next-up-sep { display: none; } /* Titel bricht auf Mobile in eine eigene Zeile um, der Punkt bliebe sonst allein stehen */
     .missed-banner { padding: 10px 12px; font-size: 12.5px; }
     .toolbar { padding: 10px 12px; gap: 8px; }
     .search-wrap { max-width: none; flex: 1 1 auto; }
@@ -1428,7 +1433,7 @@
       <div class="subscribe-wrap" style="margin-bottom:4px;flex-wrap:wrap;">
         <input type="password" id="gistTokenInput" class="note-textarea"
                style="min-height:auto;flex:1 1 180px;"
-               placeholder="GitHub-Token (nur auf diesem Gerät)" autocomplete="off">
+               placeholder="GitHub-Token" autocomplete="off">
         <button id="gistTokenSaveBtn" class="subscribe-copy" type="button">Speichern</button>
       </div>
       <div class="feed-status" id="gistSyncStatusText">Lädt …</div>
@@ -5439,13 +5444,23 @@ async function renderHeatmapView(){
 
   // Monatsticks unter dem Band, ein Label pro Monatswechsel, sonst leer -
   // dieselbe Spaltenbreite wie die Balken darüber sorgt für Ausrichtung.
+  // Liegt ein Label weniger als drei Spalten hinter dem vorherigen (z. B.
+  // nur eine September-Woche vor dem Oktober), entfällt das vorherige,
+  // sonst überlappen die Beschriftungen.
   let lastMonth = '';
-  const ticks = bwList.map(w => {
+  const tickLabels = bwList.map(w => {
     const monthKey = `${w.monday.getFullYear()}-${w.monday.getMonth()}`;
-    let label = '';
-    if (monthKey !== lastMonth) { label = MONTH_NAMES_SHORT[w.monday.getMonth()]; lastMonth = monthKey; }
-    return `<div class="heatmap-tick">${label}</div>`;
-  }).join('');
+    if (monthKey === lastMonth) return '';
+    lastMonth = monthKey;
+    return MONTH_NAMES_SHORT[w.monday.getMonth()];
+  });
+  let prevIdx = -1;
+  tickLabels.forEach((l, i) => {
+    if (!l) return;
+    if (prevIdx !== -1 && i - prevIdx < 3) tickLabels[prevIdx] = '';
+    prevIdx = i;
+  });
+  const ticks = tickLabels.map(l => `<div class="heatmap-tick">${l}</div>`).join('');
 
   const statusNote = workloadData ? '' : `<div class="heatmap-hint">Selbststudium-Daten aktuell nicht erreichbar – Farben basieren nur auf Kontaktzeit und Prüfungen/Abgaben.</div>`;
 
@@ -6398,11 +6413,11 @@ function updateDayFocus(events){
   if(running){
     m = MODS[running.ev.modul];
     const minsLeft = Math.max(1, Math.round((running.endDt-now)/60000));
-    statusHtml = `<span class="day-focus-status">Läuft gerade</span> <span class="day-focus-detail">– endet in ${formatCountdown(minsLeft)} (${escapeHtml(running.ev.title)})</span>`;
+    statusHtml = `<span class="day-focus-text"><span class="day-focus-status">Läuft gerade, noch ${formatCountdown(minsLeft)}</span><span class="day-focus-detail">${escapeHtml(running.ev.title)}</span></span>`;
   } else if(next){
     m = MODS[next.ev.modul];
     const minsLeft = Math.max(1, Math.round((next.startDt-now)/60000));
-    statusHtml = `<span class="day-focus-status">Startet in ${formatCountdown(minsLeft)}</span> <span class="day-focus-detail">– ${escapeHtml(next.ev.title)}</span>`;
+    statusHtml = `<span class="day-focus-text"><span class="day-focus-status">Startet in ${formatCountdown(minsLeft)}</span><span class="day-focus-detail">${escapeHtml(next.ev.title)}</span></span>`;
   } else {
     statusHtml = `<span class="day-focus-status">Keine weiteren Termine heute</span>`;
   }
@@ -7190,7 +7205,7 @@ function renderWeekOverviewRow(w, paByWeek, todayKey, selfStudyByWeek, chipColor
   const chip = chipColor
     ? `<span class="week-overview-chip" style="background:${chipColor}" title="Belastung dieser Woche"></span>`
     : `<span class="week-overview-chip-placeholder"></span>`;
-  const weekRow = `${chip}<span class="mono">${w.key}</span><span>ab ${dateLabel}</span><span>${hoursLabel}</span>`;
+  const weekRow = `${chip}<span class="mono">KW ${w.key.split('-W')[1].replace(/^0/, '')}</span><span>ab ${dateLabel}</span><span>${hoursLabel}</span>`;
 
   const items = paByWeek[w.key] || [];
   let paLine = '';
