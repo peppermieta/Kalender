@@ -7,6 +7,28 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.40.0] - 2026-11-23
+
+### Changed
+- **Designsystem, Schritt 1: Grundbausteine eingeführt** (Redesign nach der
+  Bestandsaufnahme vom 23.11.2026, Tokens im Design-System-Artifact
+  „Vorlesungskalender“).
+  - Akzentfarbe Gunmetal `#403F4C` (Dunkel `#DCDAE3`) statt Lila. Das Lila
+    war identisch mit der Modulfarbe von M07, Heute-Markierung und
+    M07-Termine waren dadurch kaum zu unterscheiden. Der bisher blaue
+    Ansichtsumschalter, die Jetzt-Linie und der B_w-Chip nutzen jetzt
+    ebenfalls den Akzent, es gibt nur noch eine Akzentfarbe.
+  - Gedämpfter Text `#6E6C65` statt `#7A7870`, damit er auf dem Seitengrund
+    4,5:1 Kontrast erreicht.
+  - Schriftgrößen auf sechs Stufen vereinheitlicht (11, 12, 13, 15, 17,
+    22 px statt 17 verschiedener Werte), Gewichte auf 400, 500 und 700.
+  - Eckenradien auf vier Stufen (`--radius-sm` 4, `--radius-md` 8,
+    `--radius-lg` 12, `--radius-full`) statt 14 Werten.
+  - Abstände (gap, padding, margin) auf ein 4er-Raster gerundet, neue
+    Variablen `--space-1` bis `--space-8`.
+  - Theme-Farbe (Browserleiste, Manifest) und das geteilte Wochenbild an
+    den neuen Akzent angepasst. Ausdrucke bleiben unverändert hell.
+
 ## [3.39.1] - 2026-11-23
 
 ### Fixed

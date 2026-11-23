@@ -77,13 +77,15 @@ Danach startet der Kalender wie eine normale App (eigenes Icon, kein Browser-Rah
 
 ## Versionshistorie
 
-Alle Änderungen werden in [CHANGELOG.md](CHANGELOG.md) dokumentiert (aktuelle Version: **3.39.1**).
+Alle Änderungen werden in [CHANGELOG.md](CHANGELOG.md) dokumentiert (aktuelle Version: **3.40.0**).
 
 ## Farbpalette
 
 ![Website-Farbpalette](docs/website-palette.svg)
 
 Vollständige Werte (Hex, RGB, CMYK, HSB, HSL, Lab) in [PALETTE.md](PALETTE.md).
+
+**Seit v3.40.0 gilt für den Kalender ein eigenes Designsystem** (Design-System-Artifact „Vorlesungskalender“ auf claude.ai, nur für den Kalender, das Modulverzeichnis bleibt unverändert): Akzent Gunmetal `#403F4C` (dunkel `#DCDAE3`) statt Lila, weil Lila identisch mit der Modulfarbe von M07 war; gedämpfter Text `#6E6C65` statt `#7A7870` (Kontrast 4,5:1); sechs Schriftstufen (11, 12, 13, 15, 17, 22 px), drei Gewichte (400, 500, 700), vier Radien (`--radius-sm/md/lg/full`) und ein 4er-Raster für Abstände (`--space-*`). Palette-Grafik und PALETTE.md zeigen noch den Stand davor.
 
 ## Tech-Stack
 

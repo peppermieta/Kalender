@@ -391,6 +391,27 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
 
 ## 🏗 Größer — größere technische Themen
 
+- **Redesign nach eigenem Designsystem** (23.11.2026): Ausgangspunkt ist
+  die Bestandsaufnahme vom 23.11.2026 (Artifact „Bestandsaufnahme
+  Kalenderdesign“), das Designsystem liegt als Artifact
+  „Vorlesungskalender“ (Typ Design System) vor. Es gilt nur für den
+  Kalender, das Modulverzeichnis behält bewusst seine Gestaltung.
+  Entscheidungen: Akzent Gunmetal statt Lila (Kollision mit M07), sechs
+  Schriftstufen, drei Gewichte, vier Radien, 4er-Raster, vier Buttonstile,
+  Linien-Icons aus Tabler Icons statt Emoji.
+  Etappen, jeweils Mockup, Entscheidung, Umsetzung, Release:
+  0. Sechs Fehler aus der Bestandsaufnahme **✅ Umgesetzt** (v3.39.1)
+  1. Grundbausteine (Farben, Schrift, Radien, Abstände) **✅ Umgesetzt** (v3.40.0)
+  2. Buttons und Icons vereinheitlichen
+  3. Kopfbereich mit nächstem Termin, Umschalter und Suche (Platzproblem
+     auf dem Handy, Beschriftung „Nächste Veranstaltung“ dort klären)
+  4. Einheitliche Terminkarte für Monat, Woche und Tag
+  5. Monatsansicht (leere Tage, Desktop-Raster)
+  6. Tagesansicht und Termin-Detail
+  7. Verwalten-Menü und Analysen
+  8. Passwortseite
+  9. Abschluss: neue Bestandsaufnahme zum Vergleich
+
 - **Echter geräteübergreifender Notiz-Sync** – ein richtiges Backend
   statt des manuellen Export/Imports, damit Notizen automatisch zwischen
   Geräten synchron bleiben. Bewusst als Fernziel zurückgestellt.
