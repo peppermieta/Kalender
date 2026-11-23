@@ -7,6 +7,24 @@ Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/).
 
 _Noch keine offenen Änderungen._
 
+## [3.41.0] - 2026-11-23
+
+### Changed
+- **Designsystem, Schritt 2: Buttons und Icons.**
+  - Vier Buttonstile statt 13 eigener: Primär (nur „Heute“ und Speichern
+    im Formular für eigene Termine), Sekundär (Navigation, Menüaktionen,
+    Filter), Leise (Menü, Schließen, Zurück, Link kopieren, Teilen) und
+    Gefahr (Termin löschen). Einheitliche Höhe 36 px, auf dem Handy 44 px
+    Tippfläche. Gedrückte Buttons (Filter) erscheinen jetzt im
+    Akzent-Grau statt in den Prüfungsfarben.
+  - Alle Emoji in der Oberfläche durch Linien-Icons ersetzt (Tabler Icons
+    3.19.0, MIT): Menü, Pfeile, Suche, Filter, Schließen, Link, Teilen,
+    Abonnieren, QR-Code, Drucken, Analysen, Dark Mode, Löschen,
+    Überschneidung, Notiz, Prüfung und Abgabe, Erinnerung im
+    Verpasst-Hinweis. Nur das geteilte Wochenbild (Canvas) nutzt für
+    Prüfungen und Abgaben vorerst weiter Emoji.
+  - Das Weihnachtsbaum-Emoji vor „Weihnachtsferien“ entfällt.
+
 ## [3.40.0] - 2026-11-23
 
 ### Changed

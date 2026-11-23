@@ -168,28 +168,38 @@
     align-items: center;
     gap: 8px;
   }
-  .nav-btn {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    padding: 8px 12px;
-    font-size: 15px;
-    font-family: inherit;
-    cursor: pointer;
-    color: var(--text);
-    transition: background .15s;
-    font-weight: 500;
+  /* ── DESIGNSYSTEM: Buttons und Icons (v3.41.0) ──
+     Vier Stile wie im Design-System-Artifact "Vorlesungskalender":
+     btn-primary (höchstens einmal pro Ansicht), btn-secondary (Standard),
+     btn-ghost (Werkzeuge), btn-danger (Löschen); btn-icon für quadratische
+     Icon-Buttons. Icons: Tabler Icons 3.19.0 (MIT), Strich 1,75. */
+  .icon { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+  .icon-sm { width: 16px; height: 16px; }
+  .icon-inline { width: 1.15em; height: 1.15em; vertical-align: -0.2em; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: var(--space-1);
+    height: var(--control-h); padding: 0 var(--space-3); border-radius: var(--radius-md);
+    border: 1px solid transparent; font: 500 13px/18px 'Inter', system-ui, sans-serif;
+    cursor: pointer; white-space: nowrap; color: var(--text); background: none;
+    transition: background .15s, border-color .15s, color .15s, filter .15s;
   }
-  .nav-btn:hover { background: var(--border); }
-  .manage-btn { font-size: 22px; line-height: 1; padding: 4px 12px; }
-  .today-btn {
-    margin-left: 4px;
-    font-size: 13px;
-    padding: 8px 12px;
-    color: var(--accent);
-    border-color: #B8A8F0;
+  .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .btn-primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+  .btn-primary:hover { filter: brightness(1.15); }
+  .btn-secondary { background: var(--surface); border-color: var(--border); color: var(--text); }
+  .btn-secondary:hover { background: var(--accent-soft-bg); }
+  .btn-ghost:hover { background: var(--accent-soft-bg); }
+  .btn-danger { background: var(--surface); border-color: var(--danger-bd); color: var(--danger-tx); }
+  .btn-danger:hover { background: var(--danger-bg); }
+  .btn-icon { width: var(--control-h); padding: 0; }
+  .btn[aria-pressed="true"], .btn.active { background: var(--accent-soft-bg); border-color: var(--accent); color: var(--accent); }
+  .btn.copied { color: var(--success-tx); border-color: var(--success-bd); }
+  .conflict-icon { color: var(--warn-tx); }
+  @media (max-width: 700px) {
+    .btn { height: var(--touch-h); }
+    .btn-icon { width: var(--touch-h); }
   }
-  .today-btn:hover { background: var(--accent-soft-bg); }
+  .today-btn { margin-left: 4px; }
   .month-label {
     font-size: 17px;
     font-weight: 700;
@@ -285,20 +295,7 @@
   }
   .missed-banner-item-title { font-weight: 500; }
   .missed-banner-more { color: var(--muted); font-size: 12px; margin-top: 2px; }
-  .missed-banner-close {
-    flex-shrink: 0;
-    width: 24px; height: 24px;
-    border: none;
-    background: transparent;
-    color: var(--muted);
-    cursor: pointer;
-    border-radius: var(--radius-md);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 17px;
-    line-height: 1;
-  }
-  .missed-banner-close:hover { background: rgba(0,0,0,.06); color: var(--text); }
-  :root[data-theme="dark"] .missed-banner-close:hover { background: rgba(255,255,255,.08); }
+  .missed-banner-close { flex-shrink: 0; color: inherit; }
 
   /* ── SUCHE + ABO-TOOLBAR ── */
   .toolbar {
@@ -314,7 +311,7 @@
   .search-wrap { position: relative; flex: 1 1 260px; max-width: 360px; }
   .search-icon {
     position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
-    font-size: 13px; opacity: .55; pointer-events: none;
+    display: flex; color: var(--muted); pointer-events: none;
   }
   #searchInput {
     width: 100%; box-sizing: border-box;
@@ -372,19 +369,9 @@
   .search-more:hover { background: var(--bg); }
   .search-empty { padding: 12px; font-size: 13px; color: var(--muted); text-align: center; }
 
-  .search-filter-btn {
-    flex-shrink: 0;
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 34px; height: 34px; padding: 0;
-    border-radius: var(--radius-md); border: 1px solid var(--border);
-    background: var(--bg); color: var(--muted); cursor: pointer;
-    transition: background .15s, border-color .15s, color .15s;
-  }
-  .search-filter-btn:hover { background: var(--surface); color: var(--text); }
-  /* Gleiche Farben wie das bestehende Prüfungstermin-Badge im Termin-Detail
-     (.modal-type-badge.type-pruefung), damit der aktive Zustand sich
-     erkennbar auf dieselbe Terminart bezieht. */
-  .search-filter-btn.active { background: var(--danger-bg); border-color: var(--danger-bd); color: var(--danger-tx); }
+  /* Aktiver Zustand seit v3.41.0 wie alle gedrückten Buttons (accent-soft),
+     vorher in den Prüfungsfarben. */
+  .search-filter-btn { flex-shrink: 0; }
   .toolbar-kw {
     flex-shrink: 0;
     font-family: 'JetBrains Mono', monospace; font-size: 12px;
@@ -392,13 +379,6 @@
   }
 
   .subscribe-wrap { display: flex; align-items: center; gap: 8px; flex-shrink: 0; flex-wrap: wrap; }
-  .subscribe-copy {
-    font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500;
-    padding: 8px 8px; border-radius: var(--radius-md); border: 1px solid var(--border);
-    background: var(--bg); color: var(--muted); cursor: pointer; white-space: nowrap;
-  }
-  .subscribe-copy:hover { background: var(--surface); color: var(--text); }
-  .subscribe-copy.copied { color: var(--success-tx); border-color: var(--success-bd); }
 
   .feed-status { font-size: 11px; color: var(--muted); margin-top: 8px; }
 
@@ -715,19 +695,7 @@
     box-shadow: var(--shadow); display: flex; align-items: center; justify-content: center;
     font-size: 11px; font-weight: 700; color: var(--accent); line-height: 1;
   }
-  .modal-close {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    width: 32px; height: 32px;
-    border-radius: var(--radius-md);
-    cursor: pointer;
-    font-size: 17px;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    color: var(--text);
-    transition: background .15s;
-  }
-  .modal-close:hover { background: var(--border); }
+  .modal-close { flex-shrink: 0; }
 
   .modal-title {
     padding: 8px 20px 0;
@@ -740,14 +708,7 @@
   .modal-body { padding: 16px 20px 20px; }
 
   .note-section { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border); }
-  .modal-delete-btn {
-    margin-top: 12px; width: 100%;
-    font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
-    padding: 8px 12px; border-radius: var(--radius-md); border: 1px solid var(--border);
-    background: var(--bg); color: var(--muted); cursor: pointer;
-    transition: background .15s, border-color .15s, color .15s;
-  }
-  .modal-delete-btn:hover { background: var(--danger-bg); border-color: var(--danger-bd); color: var(--danger-tx); }
+  .modal-delete-btn { margin-top: 12px; width: 100%; }
   .note-label {
     display: block; font-size: 11px; font-weight: 700; text-transform: uppercase;
     letter-spacing: .4px; color: var(--muted); margin-bottom: 8px;
@@ -847,25 +808,11 @@
     border-bottom: 1px solid var(--border);
     z-index: 1;
   }
-  .day-view-back {
-    background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-md);
-    padding: 8px 12px; font-size: 13px; font-family: inherit; cursor: pointer; color: var(--text);
-    transition: background .15s; display: inline-flex; align-items: center; gap: 8px;
-  }
-  .day-view-back:hover { background: var(--border); }
   .day-view-date { font-size: 15px; font-weight: 700; letter-spacing: -.2px; text-align: center; }
   .day-view-week-chip {
     display: none; width: 9px; height: 9px; border-radius: var(--radius-sm);
     margin-left: 4px; vertical-align: 2px;
   }
-  .day-view-copy {
-    font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500;
-    padding: 8px 8px; border-radius: var(--radius-md); border: 1px solid var(--border);
-    background: var(--bg); color: var(--muted); cursor: pointer; white-space: nowrap;
-    display: inline-flex; align-items: center; gap: 8px;
-  }
-  .day-view-copy:hover { background: var(--surface); color: var(--text); }
-  .day-view-copy.copied { color: var(--success-tx); border-color: var(--success-bd); }
 
   .day-view-body { max-width: 640px; margin: 0 auto; padding: 20px 24px 40px; width: 100%; box-sizing: border-box; }
 
@@ -943,25 +890,12 @@
   }
   .week-title { font-size: 13px; font-weight: 500; flex: 1; }
   .week-nav-btns { display: flex; gap: 4px; flex-shrink: 0; }
-  .week-nav-btn {
-    font: inherit; font-size: 15px; font-weight: 700; line-height: 1;
-    background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-md);
-    width: 26px; height: 26px; display: flex; align-items: center; justify-content: center;
-    cursor: pointer; color: var(--text); padding: 0;
-  }
-  .week-nav-btn:hover { border-color: var(--accent); color: var(--accent); }
   .week-bw-chip {
     font-size: 11px; font-weight: 500; padding: 4px 8px; border-radius: var(--radius-full);
     background: var(--switch-active-bg); color: var(--switch-active-tx); white-space: nowrap;
   }
   .week-sw-hint { font-size: 11px; color: var(--muted); white-space: nowrap; }
-  .week-copy-link {
-    font: inherit; font-size: 12px; background: var(--bg); border: 1px solid var(--border);
-    border-radius: var(--radius-md); padding: 4px 8px; cursor: pointer; color: var(--muted); flex-shrink: 0;
-  }
-  .week-copy-link:hover { color: var(--text); border-color: var(--accent); }
-  .week-copy-link.copied { color: var(--success-tx); border-color: var(--success-bd); }
-  .week-copy-link svg { display: block; }
+  .week-copy-link { flex-shrink: 0; }
 
   .week-grid-scroll { overflow-x: auto; padding: 0 24px 20px; }
   .week-grid-inner { min-width: 760px; }
@@ -1085,13 +1019,6 @@
   }
   .day-add-recurring-label input { cursor: pointer; }
   .day-add-form-actions { display: flex; gap: 8px; }
-  .day-add-form-actions button {
-    font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
-    padding: 8px 16px; border-radius: var(--radius-md); border: 1px solid var(--border); cursor: pointer;
-  }
-  #dayAddSave { background: var(--EIGEN-bg); border-color: var(--EIGEN-bd); color: var(--EIGEN-tx); }
-  #dayAddSave:hover { filter: brightness(.97); }
-  #dayAddCancel { background: var(--bg); color: var(--muted); }
   #dayAddCancel:hover { background: var(--border); }
 
   /* ── SCROLL NAV DOTS ── */
@@ -1194,7 +1121,7 @@
       font-size: 13px; flex: 1; min-width: 0;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
-    .day-view-back, .day-view-copy { flex-shrink: 0; font-size: 12px; padding: 8px 8px; }
+    .day-view-back, .day-view-copy { flex-shrink: 0; width: var(--touch-h); padding: 0; }
     .day-view-back-label, .day-view-copy-label { display: none; } /* nur Icon, s. day-view-date Platzproblem unten */
     .day-view-body { padding: 12px 12px 28px; }
   }
@@ -1318,22 +1245,22 @@
     </div>
   </div>
   <div class="nav-controls">
-    <button class="nav-btn manage-btn" id="manageMenuBtn" type="button" aria-label="Verwalten" title="Verwalten">⋮</button>
-    <button class="nav-btn" id="prevBtn">&#8592;</button>
+    <button class="nav-btn manage-btn btn btn-ghost btn-icon" id="manageMenuBtn" type="button" aria-label="Verwalten" title="Verwalten"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /> <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /> <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /></svg></button>
+    <button class="nav-btn btn btn-secondary btn-icon" id="prevBtn" type="button" aria-label="Zurück" title="Zurück"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6l6 6" /></svg></button>
     <span class="month-label" id="monthLabel"></span>
-    <button class="nav-btn" id="nextBtn">&#8594;</button>
-    <button class="nav-btn today-btn" id="todayBtn">Heute</button>
+    <button class="nav-btn btn btn-secondary btn-icon" id="nextBtn" type="button" aria-label="Weiter" title="Weiter"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6l-6 6" /></svg></button>
+    <button class="nav-btn today-btn btn btn-primary" id="todayBtn" type="button">Heute</button>
   </div>
 </header>
 
 <!-- WAS HAB ICH VERPASST -->
 <div class="missed-banner" id="missedBanner" style="display:none;">
-  <span class="missed-banner-icon" aria-hidden="true">🔔</span>
+  <span class="missed-banner-icon" aria-hidden="true"><svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" /> <path d="M9 17v1a3 3 0 0 0 6 0v-1" /></svg></span>
   <div class="missed-banner-body">
     <div class="missed-banner-head" id="missedBannerHead"></div>
     <div class="missed-banner-list" id="missedBannerList"></div>
   </div>
-  <button type="button" class="missed-banner-close" id="missedBannerClose" aria-label="Schließen" title="Schließen">✕</button>
+  <button type="button" class="missed-banner-close btn btn-ghost btn-icon" id="missedBannerClose" aria-label="Schließen" title="Schließen"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6l-12 12" /> <path d="M6 6l12 12" /></svg></button>
 </div>
 
 <!-- NÄCHSTE VERANSTALTUNG -->
@@ -1351,15 +1278,11 @@
 <!-- SUCHE -->
 <div class="toolbar">
   <div class="search-wrap">
-    <span class="search-icon">🔍</span>
+    <span class="search-icon"><svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" /> <path d="M21 21l-6 -6" /></svg></span>
     <input id="searchInput" type="text" placeholder="Termine und Notizen suchen…" autocomplete="off" />
     <div id="searchResults" class="search-results"></div>
   </div>
-  <button id="searchTypeFilterBtn" class="search-filter-btn" type="button" aria-pressed="false" aria-label="Nur Prüfungen/Abgaben" title="Nur Prüfungen/Abgaben">
-    <svg viewBox="0 0 24 24" width="16" height="16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <path d="M4 5 L20 5 L14 13 L14 19 L10 19 L10 13 Z" fill="currentColor"/>
-    </svg>
-  </button>
+  <button id="searchTypeFilterBtn" class="search-filter-btn btn btn-secondary btn-icon" type="button" aria-pressed="false" aria-label="Nur Prüfungen/Abgaben" title="Nur Prüfungen/Abgaben"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v2.172a2 2 0 0 1 -.586 1.414l-4.414 4.414v7l-6 2v-8.5l-4.48 -4.928a2 2 0 0 1 -.52 -1.345v-2.227z" /></svg></button>
   <span class="toolbar-kw" id="toolbarKw" title="Aktuelle Kalenderwoche"></span>
 </div>
 
@@ -1379,18 +1302,14 @@
 <div class="week-wrap" id="weekWrap" style="display:none;">
   <div class="week-title-row">
     <div class="week-nav-btns">
-      <button type="button" class="week-nav-btn" id="weekPrevBtn" aria-label="Vorherige Woche" title="Vorherige Woche">‹</button>
-      <button type="button" class="week-nav-btn" id="weekNextBtn" aria-label="Nächste Woche" title="Nächste Woche">›</button>
+      <button type="button" class="week-nav-btn btn btn-secondary btn-icon" id="weekPrevBtn" aria-label="Vorherige Woche" title="Vorherige Woche"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6l6 6" /></svg></button>
+      <button type="button" class="week-nav-btn btn btn-secondary btn-icon" id="weekNextBtn" aria-label="Nächste Woche" title="Nächste Woche"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6l-6 6" /></svg></button>
     </div>
     <span class="week-title" id="weekTitle"></span>
     <span class="week-sw-hint" id="weekSwHint" style="display:none;"></span>
     <span class="week-bw-chip" id="weekBwChip" style="display:none;" title="Belastung dieser Woche (B_w)"></span>
-    <button type="button" class="week-copy-link" id="weekCopyLink" title="Link zu dieser Woche kopieren">🔗</button>
-    <button type="button" class="week-copy-link" id="weekShareImgBtn" title="Woche als Bild teilen">
-      <svg viewBox="0 0 24 24" width="14" height="14" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path fill="currentColor" fill-rule="evenodd" d="M12 3l4.5 4.5-1.4 1.4L13 6.8V15h-2V6.8L8.9 8.9 7.5 7.5 12 3zM5 17h2v2a1 1 0 001 1h8a1 1 0 001-1v-2h2v2a3 3 0 01-3 3H8a3 3 0 01-3-3v-2z"/>
-      </svg>
-    </button>
+    <button type="button" class="week-copy-link btn btn-ghost btn-icon" id="weekCopyLink" title="Link zu dieser Woche kopieren" aria-label="Link zu dieser Woche kopieren"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 15l6 -6" /> <path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464" /> <path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463" /></svg></button>
+    <button type="button" class="week-copy-link btn btn-ghost btn-icon" id="weekShareImgBtn" title="Woche als Bild teilen" aria-label="Woche als Bild teilen"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" /> <path d="M18 6m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" /> <path d="M18 18m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" /> <path d="M8.7 10.7l6.6 -3.4" /> <path d="M8.7 13.3l6.6 3.4" /></svg></button>
   </div>
   <div class="week-grid-scroll">
     <div class="week-grid-inner" id="weekGridInner"></div>
@@ -1404,17 +1323,17 @@
 <div class="modal-overlay" id="manageMenuOverlay">
   <div class="modal" id="manageMenuModal">
     <div class="modal-header">
-      <div class="modal-badges"><span style="font-weight:700;font-size:15px;">⚙️ Kalender verwalten</span></div>
-      <button class="modal-close" id="manageMenuClose">✕</button>
+      <div class="modal-badges"><span style="font-weight:700;font-size:15px;display:inline-flex;align-items:center;gap:var(--space-2);"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z" /> <path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" /></svg>Kalender verwalten</span></div>
+      <button class="modal-close btn btn-ghost btn-icon" id="manageMenuClose" type="button" aria-label="Schließen"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6l-12 12" /> <path d="M6 6l12 12" /></svg></button>
     </div>
     <div class="modal-body">
       <div class="modal-divider" style="margin-top:0;"></div>
 
       <span class="note-label">Abonnieren</span>
       <div class="subscribe-wrap" style="margin-bottom:4px;">
-        <button id="googleCalBtn" class="subscribe-copy" type="button">📅 Zu Google Kalender hinzufügen</button>
-        <button id="copyFeedBtn" class="subscribe-copy" type="button">🔗 Abo-Link kopieren</button>
-        <button id="qrToggleBtn" class="subscribe-copy" type="button">📱 QR-Code anzeigen</button>
+        <button id="googleCalBtn" class="subscribe-copy btn btn-secondary" type="button"><svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.5 21h-6.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v5" /> <path d="M16 3v4" /> <path d="M8 3v4" /> <path d="M4 11h16" /> <path d="M16 19h6" /> <path d="M19 16v6" /></svg><span>Zu Google Kalender hinzufügen</span></button>
+        <button id="copyFeedBtn" class="subscribe-copy btn btn-secondary" type="button"><svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 15l6 -6" /> <path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464" /> <path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463" /></svg><span>Abo-Link kopieren</span></button>
+        <button id="qrToggleBtn" class="subscribe-copy btn btn-secondary" type="button"><svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" /> <path d="M7 17l0 .01" /> <path d="M14 4m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" /> <path d="M7 7l0 .01" /> <path d="M4 14m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" /> <path d="M17 7l0 .01" /> <path d="M14 14l3 0" /> <path d="M20 14l0 .01" /> <path d="M14 14l0 3" /> <path d="M14 20l3 0" /> <path d="M17 17l3 0" /> <path d="M20 17l0 3" /></svg><span>QR-Code anzeigen</span></button>
       </div>
       <div class="feed-status" id="feedStatusText">Aktualität wird geprüft …</div>
       <div id="qrCodeWrap" style="display:none;"></div>
@@ -1423,15 +1342,15 @@
 
       <span class="note-label">Drucken</span>
       <div class="subscribe-wrap" style="margin-bottom:4px;">
-        <button id="printBtn" class="subscribe-copy" type="button">🖨️ Drucken</button>
+        <button id="printBtn" class="subscribe-copy btn btn-secondary" type="button"><svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 17h2a2 2 0 0 0 2 -2v-4a2 2 0 0 0 -2 -2h-14a2 2 0 0 0 -2 2v4a2 2 0 0 0 2 2h2" /> <path d="M17 9v-4a2 2 0 0 0 -2 -2h-6a2 2 0 0 0 -2 2v4" /> <path d="M7 13m0 2a2 2 0 0 1 2 -2h6a2 2 0 0 1 2 2v4a2 2 0 0 1 -2 2h-6a2 2 0 0 1 -2 -2z" /></svg><span>Drucken</span></button>
       </div>
 
       <div class="modal-divider"></div>
 
       <span class="note-label">Analyse (Beta)</span>
       <div class="subscribe-wrap" style="margin-bottom:4px;">
-        <button id="weekOverviewToggleBtn" class="subscribe-copy" type="button">📊 Wochenübersicht anzeigen</button>
-        <button id="heatmapViewOpenBtn" class="subscribe-copy" type="button">🌡️ Belastungsübersicht anzeigen</button>
+        <button id="weekOverviewToggleBtn" class="subscribe-copy btn btn-secondary" type="button"><svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" /> <path d="M15 9a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v10a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" /> <path d="M9 5a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v14a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" /> <path d="M4 20h14" /></svg><span>Wochenübersicht anzeigen</span></button>
+        <button id="heatmapViewOpenBtn" class="subscribe-copy btn btn-secondary" type="button"><svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /> <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /> <path d="M13.41 10.59l2.59 -2.59" /> <path d="M7 12a5 5 0 0 1 5 -5" /></svg><span>Belastungsübersicht anzeigen</span></button>
       </div>
       <div id="weekOverviewWrap" style="display:none;"></div>
 
@@ -1442,7 +1361,7 @@
         <input type="password" id="gistTokenInput" class="note-textarea"
                style="min-height:auto;flex:1 1 180px;"
                placeholder="GitHub-Token" autocomplete="off">
-        <button id="gistTokenSaveBtn" class="subscribe-copy" type="button">Speichern</button>
+        <button id="gistTokenSaveBtn" class="subscribe-copy btn btn-secondary" type="button">Speichern</button>
       </div>
       <div class="feed-status" id="gistSyncStatusText">Lädt …</div>
 
@@ -1450,7 +1369,7 @@
 
       <span class="note-label">Einstellungen</span>
       <div class="settings-row">
-        <label class="switch-label" for="darkModeToggle">🌙 Dark Mode</label>
+        <label class="switch-label" for="darkModeToggle" style="display:inline-flex;align-items:center;gap:var(--space-2);"><svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" /></svg>Dark Mode</label>
         <label class="switch">
           <input type="checkbox" id="darkModeToggle">
           <span class="switch-track"></span>
@@ -1468,7 +1387,7 @@
         <a class="modal-modul-badge" id="modalBadge" target="_blank" rel="noopener"></a>
         <span class="modal-type-badge" id="modalTypeBadge"></span>
       </div>
-      <button class="modal-close" id="modalClose">✕</button>
+      <button class="modal-close btn btn-ghost btn-icon" id="modalClose" type="button" aria-label="Schließen"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6l-12 12" /> <path d="M6 6l12 12" /></svg></button>
     </div>
     <div class="modal-title" id="modalTitle"></div>
     <div class="modal-body">
@@ -1489,7 +1408,7 @@
       <div class="note-section" id="noteSection">
         <label class="note-label" for="modalNote">Notiz</label>
         <textarea id="modalNote" class="note-textarea" placeholder="z. B. Buch mitbringen, Raum prüfen …" rows="2"></textarea>
-        <span class="note-saved" id="noteSaved">Gespeichert ✓</span>
+        <span class="note-saved" id="noteSaved">Gespeichert <svg class="icon icon-inline" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5l10 -10" /></svg></span>
         <div class="note-ro" id="modalNoteRo" style="display:none;"></div>
       </div>
       <div class="effort-section" id="effortSection">
@@ -1504,7 +1423,7 @@
         <span class="effort-hint" id="effortHint"></span>
         <div class="note-ro" id="effortRo" style="display:none;"></div>
       </div>
-      <button type="button" id="modalDeletePersonal" class="modal-delete-btn" style="display:none;">🗑️ Eigenen Termin löschen</button>
+      <button type="button" id="modalDeletePersonal" class="modal-delete-btn btn btn-danger" style="display:none;"><svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7l16 0" /> <path d="M10 11l0 6" /> <path d="M14 11l0 6" /> <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /> <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg><span>Eigenen Termin löschen</span></button>
     </div>
   </div>
 </div>
@@ -1513,13 +1432,13 @@
 <!-- TAGESANSICHT (Fokus-Ansicht für heute / Tagesausblick für andere Tage) -->
 <div class="day-view" id="dayView">
   <div class="day-view-header">
-    <button class="day-view-back" id="dayViewBack" type="button">
-      <span class="day-view-back-icon" aria-hidden="true">&#8592;</span>
+    <button class="day-view-back btn btn-ghost" id="dayViewBack" type="button" aria-label="Zurück">
+      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6l6 6" /></svg>
       <span class="day-view-back-label">Zurück</span>
     </button>
     <div class="day-view-date" id="dayViewDate"></div>
-    <button class="day-view-copy" id="dayViewCopy" type="button">
-      <span class="day-view-copy-icon" aria-hidden="true">🔗</span>
+    <button class="day-view-copy btn btn-ghost" id="dayViewCopy" type="button" aria-label="Link kopieren">
+      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 15l6 -6" /> <path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464" /> <path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463" /></svg>
       <span class="day-view-copy-label">Kopieren</span>
     </button>
   </div>
@@ -1529,8 +1448,8 @@
 <!-- BELASTUNGSÜBERSICHT (Heatmap, Etappe 7) -->
 <div class="heatmap-view" id="heatmapView">
   <div class="day-view-header">
-    <button class="day-view-back" id="heatmapViewBack" type="button">
-      <span class="day-view-back-icon" aria-hidden="true">&#8592;</span>
+    <button class="day-view-back btn btn-ghost" id="heatmapViewBack" type="button" aria-label="Zurück">
+      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6l6 6" /></svg>
       <span class="day-view-back-label">Zurück</span>
     </button>
     <div class="day-view-date">Belastungsübersicht (Beta)</div>
@@ -4171,7 +4090,17 @@ const ROOMS = {
 // Veranstaltung wie bisher. ev.start/ev.end sind bei diesen beiden Typen
 // optional (z.B. eine Abgabefrist ohne genaue Uhrzeit) – Sortierung und
 // Live-Status-Berechnung sind entsprechend null-sicher.
+// Emoji nur noch fürs geteilte Wochenbild (Canvas), in der Oberfläche Icons
 const TYPE_ICON = {pruefung: '📝', abgabe: '📤'};
+const ICON_PATHS = {"dots-vertical": "<path d=\"M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0\" /> <path d=\"M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0\" /> <path d=\"M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0\" />", "chevron-left": "<path d=\"M15 6l-6 6l6 6\" />", "chevron-right": "<path d=\"M9 6l6 6l-6 6\" />", "bell": "<path d=\"M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6\" /> <path d=\"M9 17v1a3 3 0 0 0 6 0v-1\" />", "x": "<path d=\"M18 6l-12 12\" /> <path d=\"M6 6l12 12\" />", "search": "<path d=\"M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0\" /> <path d=\"M21 21l-6 -6\" />", "filter": "<path d=\"M4 4h16v2.172a2 2 0 0 1 -.586 1.414l-4.414 4.414v7l-6 2v-8.5l-4.48 -4.928a2 2 0 0 1 -.52 -1.345v-2.227z\" />", "link": "<path d=\"M9 15l6 -6\" /> <path d=\"M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464\" /> <path d=\"M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463\" />", "share": "<path d=\"M6 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0\" /> <path d=\"M18 6m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0\" /> <path d=\"M18 18m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0\" /> <path d=\"M8.7 10.7l6.6 -3.4\" /> <path d=\"M8.7 13.3l6.6 3.4\" />", "settings": "<path d=\"M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z\" /> <path d=\"M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0\" />", "calendar-plus": "<path d=\"M12.5 21h-6.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v5\" /> <path d=\"M16 3v4\" /> <path d=\"M8 3v4\" /> <path d=\"M4 11h16\" /> <path d=\"M16 19h6\" /> <path d=\"M19 16v6\" />", "qrcode": "<path d=\"M4 4m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z\" /> <path d=\"M7 17l0 .01\" /> <path d=\"M14 4m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z\" /> <path d=\"M7 7l0 .01\" /> <path d=\"M4 14m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z\" /> <path d=\"M17 7l0 .01\" /> <path d=\"M14 14l3 0\" /> <path d=\"M20 14l0 .01\" /> <path d=\"M14 14l0 3\" /> <path d=\"M14 20l3 0\" /> <path d=\"M17 17l3 0\" /> <path d=\"M20 17l0 3\" />", "printer": "<path d=\"M17 17h2a2 2 0 0 0 2 -2v-4a2 2 0 0 0 -2 -2h-14a2 2 0 0 0 -2 2v4a2 2 0 0 0 2 2h2\" /> <path d=\"M17 9v-4a2 2 0 0 0 -2 -2h-6a2 2 0 0 0 -2 2v4\" /> <path d=\"M7 13m0 2a2 2 0 0 1 2 -2h6a2 2 0 0 1 2 2v4a2 2 0 0 1 -2 2h-6a2 2 0 0 1 -2 -2z\" />", "chart-bar": "<path d=\"M3 13a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z\" /> <path d=\"M15 9a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v10a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z\" /> <path d=\"M9 5a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v14a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z\" /> <path d=\"M4 20h14\" />", "gauge": "<path d=\"M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0\" /> <path d=\"M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0\" /> <path d=\"M13.41 10.59l2.59 -2.59\" /> <path d=\"M7 12a5 5 0 0 1 5 -5\" />", "moon": "<path d=\"M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z\" />", "check": "<path d=\"M5 12l5 5l10 -10\" />", "trash": "<path d=\"M4 7l16 0\" /> <path d=\"M10 11l0 6\" /> <path d=\"M14 11l0 6\" /> <path d=\"M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12\" /> <path d=\"M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3\" />", "pencil": "<path d=\"M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4\" /> <path d=\"M13.5 6.5l4 4\" />", "upload": "<path d=\"M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2\" /> <path d=\"M7 9l5 -5l5 5\" /> <path d=\"M12 4l0 12\" />", "alert-triangle": "<path d=\"M12 9v4\" /> <path d=\"M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0z\" /> <path d=\"M12 16h.01\" />", "notes": "<path d=\"M5 3m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z\" /> <path d=\"M9 7l6 0\" /> <path d=\"M9 11l6 0\" /> <path d=\"M9 15l4 0\" />", "arrow-up-right": "<path d=\"M17 7l-10 10\" /> <path d=\"M8 7l9 0l0 9\" />"};
+// Inline-SVG aus dem Icon-Satz des Designsystems (Tabler Icons 3.19.0, MIT).
+function iconSvg(name, cls = ''){
+  return `<svg class="icon${cls ? ' ' + cls : ''}" viewBox="0 0 24 24" aria-hidden="true">${ICON_PATHS[name] || ''}</svg>`;
+}
+const TYPE_ICON_NAME = {pruefung: 'pencil', abgabe: 'upload'};
+// Typ-Symbol für Prüfung/Abgabe als Inline-Icon (mit folgendem Leerzeichen), sonst leer
+function typeIconHtml(type){ return TYPE_ICON_NAME[type] ? iconSvg(TYPE_ICON_NAME[type], 'icon-inline') + ' ' : ''; }
+
 
 // Escaped Text beim Einfügen in innerHTML. Bisher unnötig, weil alle
 // Termin-Titel fest im Quellcode standen (vertrauenswürdig) – seit eigenen
@@ -4644,14 +4573,14 @@ function renderMonth(idx){
       const typeCls = ev.type ? ` event-type-${ev.type}` : '';
       chip.className = `event-chip chip-${ev.modul}${typeCls}${statusCls(ev)}${conflicts.length ? ' has-conflict' : ''}`;
       const modLabel = ev.type === 'eigen' ? 'Privat' : ev.modul;
-      const typeIcon = TYPE_ICON[ev.type] ? `${TYPE_ICON[ev.type]} ` : '';
+      const typeIcon = typeIconHtml(ev.type);
       const timeLabel = ev.start ? ev.start : 'Ganztägig';
       const roomHtml = ev.raum ? ` <span class="chip-room">· ${escapeHtml(shortRoom(ev.raum))}</span>` : '';
       // Icon bewusst VOR dem Titel statt dahinter: die Chip-Zeile kürzt lange
       // Titel per Ellipsis ab (white-space:nowrap), ein nachgestelltes Icon
       // würde bei langen Titeln mit abgeschnitten und wäre unsichtbar.
       const conflictIcon = conflicts.length
-        ? `<span class="chip-conflict-icon" title="Überschneidet sich mit: ${escapeHtml(conflicts.map(c=>c.title).join(', '))}">⚠️ </span>`
+        ? `<span class="chip-conflict-icon conflict-icon" title="Überschneidet sich mit: ${escapeHtml(conflicts.map(c=>c.title).join(', '))}">${iconSvg('alert-triangle', 'icon-inline')} </span>`
         : '';
       // Bewusst ein eigenes Symbol/eigene Farbe statt Rot/Orange, damit es
       // sich nicht mit den bereits vergebenen Prüfungs-/Abgabe-Akzenten
@@ -5215,7 +5144,8 @@ function openModal(ev){
   const m = MODS[ev.modul];
   const isPersonal = ev.type === 'eigen';
   const badge = document.getElementById('modalBadge');
-  badge.textContent = ev.modul === 'ZA' ? 'Zusatzangebot' : (isPersonal ? 'Eigener Termin' : `${ev.modul} ↗`);
+  if (ev.modul === 'ZA' || isPersonal) badge.textContent = ev.modul === 'ZA' ? 'Zusatzangebot' : 'Eigener Termin';
+  else badge.innerHTML = `${ev.modul} ${iconSvg('arrow-up-right', 'icon-inline')}`;
   badge.style.cssText = `background:${m.bg};color:${m.tx};border-color:${m.bd}`;
   if (ev.modul === 'ZA' || isPersonal) {
     badge.removeAttribute('href');
@@ -5228,8 +5158,8 @@ function openModal(ev){
 
   const typeBadge = document.getElementById('modalTypeBadge');
   typeBadge.className = 'modal-type-badge';
-  if (ev.type === 'pruefung') { typeBadge.textContent = '📝 Prüfungstermin'; typeBadge.classList.add('type-pruefung'); }
-  else if (ev.type === 'abgabe') { typeBadge.textContent = '📤 Abgabetermin'; typeBadge.classList.add('type-abgabe'); }
+  if (ev.type === 'pruefung') { typeBadge.innerHTML = `${typeIconHtml('pruefung')}Prüfungstermin`; typeBadge.classList.add('type-pruefung'); }
+  else if (ev.type === 'abgabe') { typeBadge.innerHTML = `${typeIconHtml('abgabe')}Abgabetermin`; typeBadge.classList.add('type-abgabe'); }
   else { typeBadge.textContent = ''; }
 
   document.getElementById('modalTitle').textContent = ev.title;
@@ -5260,7 +5190,7 @@ function openModal(ev){
   const conflicts = findConflicts(ev);
   if (conflicts.length) {
     const names = conflicts.map(c => `${escapeHtml(c.title)} (${c.start}–${c.end})`).join(', ');
-    conflictHint.innerHTML = `⚠️ <span>Überschneidet sich mit: ${names}</span>`;
+    conflictHint.innerHTML = `${iconSvg('alert-triangle', 'icon-inline conflict-icon')} <span>Überschneidet sich mit: ${names}</span>`;
     conflictHint.style.display = 'flex';
   } else {
     conflictHint.style.display = 'none';
@@ -5278,7 +5208,7 @@ function openModal(ev){
   const deleteBtn = document.getElementById('modalDeletePersonal');
   if (isPersonal && isWriterDevice()) {
     deleteBtn.style.display = 'block';
-    deleteBtn.textContent = ev.seriesId ? '🗑️ Termin/Serie löschen' : '🗑️ Eigenen Termin löschen';
+    deleteBtn.innerHTML = `${iconSvg('trash', 'icon-sm')}<span>${ev.seriesId ? 'Termin/Serie löschen' : 'Eigenen Termin löschen'}</span>`;
     deleteBtn.onclick = () => {
       if (ev.seriesId) {
         const deleteWholeSeries = confirm(`"${ev.title}" gehört zu einer wöchentlichen Serie.\n\nOK: diesen und alle künftigen Termine der Serie löschen.\nAbbrechen: nur diesen einen Termin löschen (nach Rückfrage).`);
@@ -5444,8 +5374,8 @@ async function renderHeatmapView(){
     // gelöst - Symbol statt Farbcode).
     const items = paByWeek[w.key] || [];
     let marker = '';
-    if (items.some(i => i.type === 'pruefung')) marker = '<span class="heatmap-bar-marker" aria-hidden="true">📝</span>';
-    else if (items.some(i => i.type === 'abgabe')) marker = '<span class="heatmap-bar-marker" aria-hidden="true">📤</span>';
+    if (items.some(i => i.type === 'pruefung')) marker = `<span class="heatmap-bar-marker" aria-hidden="true">${iconSvg('pencil', 'icon-sm')}</span>`;
+    else if (items.some(i => i.type === 'abgabe')) marker = `<span class="heatmap-bar-marker" aria-hidden="true">${iconSvg('upload', 'icon-sm')}</span>`;
     const barHeightPct = 8 + t * 92; // Mindesthöhe, damit auch ruhigste Wochen als Balken sichtbar bleiben
     return `<button type="button" class="heatmap-bar-col" data-monday="${mondayIso}" title="KW ${weekNum} · ab ${dateLabel} · B_w ≈ ${w.bw.toFixed(1)} Std.">${marker}<span class="heatmap-bar" style="height:${barHeightPct}%;background:${color}"></span></button>`;
   }).join('');
@@ -5475,7 +5405,7 @@ async function renderHeatmapView(){
   heatmapViewBody.innerHTML = `
     <div class="heatmap-legend"><span>Ruhig</span><div class="heatmap-legend-gradient"></div><span>Intensiv</span></div>
     <div class="heatmap-hint">Höhe und Farbe zeigen die Belastung relativ zu diesem Semester (Kontaktzeit,
-    geschätztes Selbststudium, Prüfungen/Abgaben, gewichtet mit deiner Aufwandsbewertung). 📝/📤 markieren
+    geschätztes Selbststudium, Prüfungen/Abgaben, gewichtet mit deiner Aufwandsbewertung). Stift- und Upload-Symbol markieren
     Prüfungs-/Abgabewochen unabhängig von der Farbe. Antippen springt zur jeweiligen Woche.</div>
     ${statusNote}
     <div class="heatmap-ribbon-scroll">
@@ -5666,7 +5596,7 @@ function renderWeek(monday){
     if (!evs.length) return `<div class="week-allday-cell" data-iso="${iso}"></div>`;
     const chips = evs.map(ev => {
       const m = MODS[ev.modul];
-      const typeIcon = TYPE_ICON[ev.type] ? `${TYPE_ICON[ev.type]} ` : '';
+      const typeIcon = typeIconHtml(ev.type);
       const idx = eventsByIso[i].indexOf(ev);
       return `<span class="week-allday-chip${statusCls(ev)}" data-iso="${iso}" data-ev-idx="${idx}" style="background:${m.bg};color:${m.tx};border-color:${m.bd}">${typeIcon}${escapeHtml(ev.title)}</span>`;
     }).join('');
@@ -5780,9 +5710,9 @@ function renderWeek(monday){
   weekCopyLink.onclick = () => {
     const url = `${location.origin}${location.pathname}#${weekKey}`;
     navigator.clipboard.writeText(url).then(() => {
-      weekCopyLink.textContent = '✓';
+      weekCopyLink.innerHTML = iconSvg('check');
       weekCopyLink.classList.add('copied');
-      setTimeout(() => { weekCopyLink.textContent = '🔗'; weekCopyLink.classList.remove('copied'); }, 2000);
+      setTimeout(() => { weekCopyLink.innerHTML = iconSvg('link'); weekCopyLink.classList.remove('copied'); }, 2000);
     });
   };
 
@@ -6462,7 +6392,7 @@ function renderDayView(iso, {pushHistory=true, prefillTime=null} = {}){
   const isToday = iso === todayISO;
 
   let html = '';
-  if(FERIEN.has(iso)) html += `<div class="day-ferien-note">🎄 Weihnachtsferien</div>`;
+  if(FERIEN.has(iso)) html += `<div class="day-ferien-note">Weihnachtsferien</div>`;
   if(isToday) html += `<div class="day-focus" id="dayFocus"></div>`;
 
   if(!events.length){
@@ -6472,15 +6402,15 @@ function renderDayView(iso, {pushHistory=true, prefillTime=null} = {}){
       const m = MODS[ev.modul];
       const conflicts = findConflicts(ev);
       const typeCls = ev.type ? ` event-type-${ev.type}` : '';
-      const typeIcon = TYPE_ICON[ev.type] ? `${TYPE_ICON[ev.type]} ` : '';
+      const typeIcon = typeIconHtml(ev.type);
       const timeLabel = ev.start ? ev.start : 'Ganztägig';
       const roomLine = (ev.type === 'abgabe' || ev.type === 'eigen') ? '' : `<div class="day-event-room">${escapeHtml(ev.raum ? shortRoom(ev.raum) : 'Raum offen')}</div>`;
       // Notiz-Indikator: prüft nur, OB eine Notiz existiert (kein Vorschau-
       // Text), damit die Zeile nicht unterschiedlich hoch wird je nach Länge.
       const hasNote = !!(localStorage.getItem(noteKeyFor(ev)) || '').trim();
-      const noteIcon = hasNote ? ' <span class="day-event-note-icon" title="Notiz vorhanden">🗒️</span>' : '';
+      const noteIcon = hasNote ? ` <span class="day-event-note-icon" title="Notiz vorhanden">${iconSvg('notes', 'icon-inline')}</span>` : '';
       const conflictIcon = conflicts.length
-        ? ` <span class="day-event-note-icon" title="Überschneidet sich mit: ${escapeHtml(conflicts.map(c=>c.title).join(', '))}">⚠️</span>`
+        ? ` <span class="day-event-note-icon conflict-icon" title="Überschneidet sich mit: ${escapeHtml(conflicts.map(c=>c.title).join(', '))}">${iconSvg('alert-triangle', 'icon-inline')}</span>`
         : '';
       const effortLevel = getEffortLevel(ev);
       const effortBadge = (effortLevel === '4' || effortLevel === '5')
@@ -6518,7 +6448,7 @@ function renderDayView(iso, {pushHistory=true, prefillTime=null} = {}){
     <div class="day-add-row" id="dayNoteTrigger"${existingDayNote ? ' style="display:none;"' : ''}>+ Notiz zum Tag hinzufügen</div>
     <div class="day-note-wrap"${existingDayNote ? '' : ' style="display:none;"'} id="dayNoteWrap">
       <textarea id="dayNoteText" class="note-textarea" placeholder="Notiz zu diesem Tag …" rows="2">${escapeHtml(existingDayNote)}</textarea>
-      <span class="note-saved" id="dayNoteSaved">Gespeichert ✓</span>
+      <span class="note-saved" id="dayNoteSaved">Gespeichert ${iconSvg('check', 'icon-inline')}</span>
     </div>`;
 
   // Eigene Freitext-Termine hinzufügen (rein lokal, s. Ideensammlung) – als
@@ -6547,8 +6477,8 @@ function renderDayView(iso, {pushHistory=true, prefillTime=null} = {}){
         Wiederholt sich wöchentlich (bis Semesterende)
       </label>
       <div class="day-add-form-actions">
-        <button type="button" id="dayAddSave">Speichern</button>
-        <button type="button" id="dayAddCancel">Abbrechen</button>
+        <button type="button" id="dayAddSave" class="btn btn-primary">Speichern</button>
+        <button type="button" id="dayAddCancel" class="btn btn-secondary">Abbrechen</button>
       </div>
     </div>`;
 
@@ -6699,10 +6629,10 @@ dayViewCopy.addEventListener('click', () => {
   if(!currentDayIso) return;
   const url = `${location.origin}${location.pathname}#${currentDayIso}`;
   navigator.clipboard.writeText(url).then(() => {
-    dayViewCopy.innerHTML = '<span class="day-view-copy-icon" aria-hidden="true">✓</span><span class="day-view-copy-label">Kopiert</span>';
+    dayViewCopy.innerHTML = `${iconSvg('check')}<span class="day-view-copy-label">Kopiert</span>`;
     dayViewCopy.classList.add('copied');
     setTimeout(() => {
-      dayViewCopy.innerHTML = '<span class="day-view-copy-icon" aria-hidden="true">🔗</span><span class="day-view-copy-label">Kopieren</span>';
+      dayViewCopy.innerHTML = `${iconSvg('link')}<span class="day-view-copy-label">Kopieren</span>`;
       dayViewCopy.classList.remove('copied');
     }, 2000);
   });
@@ -6835,7 +6765,7 @@ function renderNextUp(){
     typeRowHtml = `
       <div class="next-up-row next-up-type-row">
         <span class="next-up-dot" style="background:${tm.dot}"></span>
-        <span class="next-up-label">${TYPE_ICON[nextTypeEv.type]} ${typeLabel}</span>
+        <span class="next-up-label">${typeIconHtml(nextTypeEv.type)}${typeLabel}</span>
         <span class="next-up-when">${tWhen}</span>
         <span class="next-up-sep">·</span>
         <span class="next-up-title">${escapeHtml(nextTypeEv.title)}</span>
@@ -6878,7 +6808,7 @@ function renderMissedBanner(missed, daysSince){
   missedBannerList.innerHTML = shown.map((ev, i) => {
     const dObj = new Date(ev.date + 'T12:00:00Z');
     const dateLabel = `${WEEKDAY_ABBR[dObj.getUTCDay()]}, ${dObj.getUTCDate()}. ${MONTH_NAMES_SHORT[dObj.getUTCMonth()]}.`;
-    const icon = (ev.type === 'pruefung' || ev.type === 'abgabe') ? `${TYPE_ICON[ev.type]} ` : '';
+    const icon = typeIconHtml(ev.type);
     return `<div class="missed-banner-item" data-idx="${i}"><span class="missed-banner-date">${dateLabel}</span><span class="missed-banner-item-title">${icon}${escapeHtml(ev.title)}</span></div>`;
   }).join('');
 
@@ -7054,7 +6984,7 @@ function renderSearchResults(query) {
 
   const eventRow = (ev, i, snippetHtml, titleHl) => {
     const m = MODS[ev.modul];
-    const typeIcon = TYPE_ICON[ev.type] ? `${TYPE_ICON[ev.type]} ` : '';
+    const typeIcon = typeIconHtml(ev.type);
     return `<div class="search-result" data-kind="event" data-i="${i}">
       <span class="search-result-dot" style="background:${m.dot}"></span>
       <div class="search-result-main">
@@ -7141,9 +7071,9 @@ const FEED_WEBCAL_URL = 'webcal://kalender.xn--peppermita-lnb.de/feed-7b77b19da1
 const copyFeedBtn = document.getElementById('copyFeedBtn');
 copyFeedBtn.addEventListener('click', () => {
   navigator.clipboard.writeText(FEED_HTTPS_URL).then(() => {
-    copyFeedBtn.textContent = '✓ Kopiert';
+    copyFeedBtn.innerHTML = `${iconSvg('check', 'icon-sm')}<span>Kopiert</span>`;
     copyFeedBtn.classList.add('copied');
-    setTimeout(() => { copyFeedBtn.textContent = '🔗 Abo-Link kopieren'; copyFeedBtn.classList.remove('copied'); }, 2000);
+    setTimeout(() => { copyFeedBtn.innerHTML = `${iconSvg('link', 'icon-sm')}<span>Abo-Link kopieren</span>`; copyFeedBtn.classList.remove('copied'); }, 2000);
   });
 });
 
@@ -7186,7 +7116,7 @@ qrToggleBtn.addEventListener('click', () => {
   if (!qrBuilt) { buildFeedQr(); qrBuilt = true; }
   const show = qrCodeWrap.style.display === 'none';
   qrCodeWrap.style.display = show ? 'block' : 'none';
-  qrToggleBtn.textContent = show ? '📱 QR-Code ausblenden' : '📱 QR-Code anzeigen';
+  qrToggleBtn.innerHTML = `${iconSvg('qrcode', 'icon-sm')}<span>${show ? 'QR-Code ausblenden' : 'QR-Code anzeigen'}</span>`;
 });
 
 // ─── Wochenübersicht (Etappe 1/1b, Belastungs-Heatmap-Vorstufe) ──────────
@@ -7224,9 +7154,9 @@ function renderWeekOverviewRow(w, paByWeek, todayKey, selfStudyByWeek, chipColor
     const pCount = items.filter(i => i.type === 'pruefung').length;
     const aCount = items.filter(i => i.type === 'abgabe').length;
     const badges = [];
-    if (pCount) badges.push(`<span class="week-overview-pa pa-pruefung">📝 ${pCount}× Prüfung</span>`);
-    if (aCount) badges.push(`<span class="week-overview-pa pa-abgabe">📤 ${aCount}× Abgabe</span>`);
-    const titleAttr = escapeHtml(items.map(i => `${TYPE_ICON[i.type]} ${i.title} (${i.date})`).join(' · '));
+    if (pCount) badges.push(`<span class="week-overview-pa pa-pruefung">${typeIconHtml('pruefung')}${pCount}× Prüfung</span>`);
+    if (aCount) badges.push(`<span class="week-overview-pa pa-abgabe">${typeIconHtml('abgabe')}${aCount}× Abgabe</span>`);
+    const titleAttr = escapeHtml(items.map(i => `${i.type === 'pruefung' ? 'Prüfung' : 'Abgabe'}: ${i.title} (${i.date})`).join(' · '));
     paLine = `<div class="week-overview-pa-line" title="${titleAttr}">${badges.join(' ')}</div>`;
   }
 
@@ -7280,7 +7210,7 @@ weekOverviewToggleBtn.addEventListener('click', () => {
   if (!weekOverviewBuilt) { buildWeekOverview(); weekOverviewBuilt = true; }
   const show = weekOverviewWrap.style.display === 'none';
   weekOverviewWrap.style.display = show ? 'block' : 'none';
-  weekOverviewToggleBtn.textContent = show ? '📊 Wochenübersicht ausblenden' : '📊 Wochenübersicht anzeigen';
+  weekOverviewToggleBtn.innerHTML = `${iconSvg('chart-bar', 'icon-sm')}<span>${show ? 'Wochenübersicht ausblenden' : 'Wochenübersicht anzeigen'}</span>`;
 });
 
 // ─── FEED-AKTUALITÄT ─────────────────────────────────────────────────────────

@@ -402,7 +402,8 @@ Noch nicht umgesetzte Funktionen, sortiert nach Umsetzbarkeit/Aufwand.
   Etappen, jeweils Mockup, Entscheidung, Umsetzung, Release:
   0. Sechs Fehler aus der Bestandsaufnahme **✅ Umgesetzt** (v3.39.1)
   1. Grundbausteine (Farben, Schrift, Radien, Abstände) **✅ Umgesetzt** (v3.40.0)
-  2. Buttons und Icons vereinheitlichen
+  2. Buttons und Icons vereinheitlichen **✅ Umgesetzt** (v3.41.0), offen:
+     Emoji im geteilten Wochenbild (Canvas)
   3. Kopfbereich mit nächstem Termin, Umschalter und Suche (Platzproblem
      auf dem Handy, Beschriftung „Nächste Veranstaltung“ dort klären)
   4. Einheitliche Terminkarte für Monat, Woche und Tag
